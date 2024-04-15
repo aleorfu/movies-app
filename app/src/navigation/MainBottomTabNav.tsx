@@ -6,10 +6,11 @@ import { ProfileScreen } from "../screens/ProfileScreen";
 import { MoviesScreen } from "../screens/MoviesScreen";
 import { styles, colors } from "../styles/global";
 import { images } from "../constants/images";
+import { ComponentType } from "react";
 
 const Tab = createBottomTabNavigator();
 
-function getTabScreen(name: string, component: any, icon: number) {
+function getTabScreen(name: string, component: ComponentType, icon: number) {
   return (
     <Tab.Screen
       name={name}
