@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@babel/preset-env": "7.1.6",
+    "@react-native-firebase/app": "^19.2.2",
+    "@react-native-firebase/auth": "^19.2.2",
+    "@react-native-firebase/crashlytics": "^19.2.2",
     "@react-native/babel-preset": "*",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
