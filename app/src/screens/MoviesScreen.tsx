@@ -1,5 +1,8 @@
-import MovieDetailsNav from "../navigation/MovieDetailsNav";
+import { Component, ReactNode } from "react";
+import MovieDetailsNav from "../navigations/MovieDetailsNav";
 
-export function MoviesScreen() {
-  return <MovieDetailsNav />;
+export class MoviesScreen extends Component {
+  public render(): ReactNode {
+    return <MovieDetailsNav />;
+  }
 }
