@@ -1,8 +1,8 @@
 import { View, Text, Image, ActivityIndicator } from "react-native";
 import { Movie } from "../services/altenHybridApi";
 import { TouchableHighlight } from "react-native-gesture-handler";
-import { Component } from "react";
-import { colors } from "../styles/global";
+import { Component, ReactNode } from "react";
+import { colors } from "../styles/tailwindColors";
 
 export type MovieCardProps = {
   movie: Movie;
@@ -35,7 +35,7 @@ export class MovieCard extends Component<MovieCardProps, MovieCardState> {
     this.setState({ loadingImage: false });
   }
 
-  public render() {
+  public render(): ReactNode {
     return (
       <View className="bg-tertiary_color m-5 flex-col rounded-lg">
         <TouchableHighlight onPress={this.openDetails}>
