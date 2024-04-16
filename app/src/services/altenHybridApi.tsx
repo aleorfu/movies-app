@@ -16,7 +16,10 @@ const instance = axios.create({
 });
 instance.defaults.headers.common["Accept"] = "application/json";
 
-async function getPetition(url: string, config: AxiosRequestConfig = {}) {
+async function getPetition(
+  url: string,
+  config: AxiosRequestConfig = {}
+): Promise<any> {
   try {
     const response = await instance.get(url, config);
     return response.data;
@@ -26,12 +29,16 @@ async function getPetition(url: string, config: AxiosRequestConfig = {}) {
   }
 }
 
-export async function getMovieByIdApi(id: string | number) {
-  const movie: Movie = await getPetition(`/movies/${id}`);
+export async function getMovieByIdApi(id: string | number): Promise<Movie> {
+  const movie: Movie = Object.values(
+    await getPetition(`/movies/${id}`)
+  )[0] as Movie;
   return movie;
 }
 
-export async function getAllMoviesApi() {
-  const movies: Movie[] = Object.values(await getPetition("/movies"));
+export async function getAllMoviesApi(): Promise<Movie[]> {
+  const movies: Movie[] = Object.values(
+    await getPetition("/movies")
+  ) as Movie[];
   return movies;
 }
