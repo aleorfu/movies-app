@@ -1,5 +1,5 @@
 import { Component, ReactNode } from "react";
-import MainBottomTabNav from "./app/src/navigations/MainBottomTabNav";
+import { MainBottomTabNav } from "./app/src/navigations/MainBottomTabNav";
 import auth from "@react-native-firebase/auth";
 
 export default class App extends Component {
