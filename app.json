@@ -12,11 +12,6 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true,
-      "googleServicesFile": "./private/GoogleService-Info.plist",
-      "bundleIdentifier": "com.iendawel.moviesapp"
-    },
     "android": {
       "googleServicesFile": "./private/google-services.json",
       "package": "com.iendawel.moviesapp",
@@ -31,15 +26,7 @@
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "@react-native-firebase/crashlytics",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static"
-          }
-        }
-      ]
+      "@react-native-firebase/crashlytics"
     ]
   }
 }
