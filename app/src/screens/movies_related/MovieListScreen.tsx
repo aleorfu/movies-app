@@ -9,11 +9,11 @@ import { getAllMoviesApi, Movie } from "../../services/altenHybridApi";
 import { colors } from "../../styles/tailwindColors";
 import { MovieCard } from "../../components/MovieCard";
 
-function renderMovieCard(movie: Movie, navigation: any) {
+const renderMovieCard = (movie: Movie, navigation: any) => {
   return <MovieCard movie={movie} navigation={navigation} />;
-}
+};
 
-export function MovieListScreen({ navigation }: { navigation: any }) {
+const MovieListScreen = ({ navigation }: { navigation: any }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -78,4 +78,6 @@ export function MovieListScreen({ navigation }: { navigation: any }) {
       />
     </View>
   );
-}
+};
+
+export { MovieListScreen };
