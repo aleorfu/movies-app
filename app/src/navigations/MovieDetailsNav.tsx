@@ -4,40 +4,34 @@ import { MovieListScreen } from "../screens/movies_related/MovieListScreen";
 import { MovieDetailsScreen } from "../screens/movies_related/MovieDetailsScreen";
 import { colors } from "../styles/tailwindColors";
 import { images } from "../constants/images";
-import { Component, ComponentType, ReactNode } from "react";
+import { ComponentType } from "react";
 
-export default class MovieDetailsNav extends Component {
-  private Stack: any;
+const Stack = createStackNavigator();
 
-  constructor(props: {}) {
-    super(props);
+const getStackScreen = (name: string, component: ComponentType) => {
+  return (
+    <Stack.Screen
+      name={name}
+      component={component}
+      options={{
+        headerTitleAlign: "center",
+        headerStyle: { backgroundColor: colors.primary_color },
+        headerTitleStyle: { color: colors.quaternary_color },
+        headerBackImage: () => (
+          <Image className="w-6 h-6" source={images.back_icon} />
+        ),
+      }}
+    />
+  );
+};
 
-    this.Stack = createStackNavigator();
-  }
+const MovieDetailsNav = () => {
+  return (
+    <Stack.Navigator>
+      {getStackScreen("List", MovieListScreen as ComponentType)}
+      {getStackScreen("Details", MovieDetailsScreen as ComponentType)}
+    </Stack.Navigator>
+  );
+};
 
-  private getStackScreen(name: string, component: ComponentType) {
-    return (
-      <this.Stack.Screen
-        name={name}
-        component={component}
-        options={{
-          headerTitleAlign: "center",
-          headerStyle: { backgroundColor: colors.primary_color },
-          headerTitleStyle: { color: colors.quaternary_color },
-          headerBackImage: () => (
-            <Image className="w-6 h-6" source={images.back_icon} />
-          ),
-        }}
-      />
-    );
-  }
-
-  public render(): ReactNode {
-    return (
-      <this.Stack.Navigator>
-        {this.getStackScreen("List", MovieListScreen as ComponentType)}
-        {this.getStackScreen("Details", MovieDetailsScreen as ComponentType)}
-      </this.Stack.Navigator>
-    );
-  }
-}
+export { MovieDetailsNav };
