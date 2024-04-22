@@ -1,7 +1,6 @@
-import { View, Image, Text, ScrollView, ActivityIndicator } from "react-native";
+import { View, Image, Text, ScrollView } from "react-native";
 import { Movie, getMovieByIdApi } from "../../services/altenHybridApi";
 import { Fragment, useState } from "react";
-import { colors } from "../../styles/tailwindColors";
 
 const ListCard = ({ title, content }: { title: string; content: string[] }) => {
   return (
@@ -36,30 +35,20 @@ const TextCard = ({ title, content }: { title: string; content: string }) => {
   );
 };
 
-const loadMovie = async (
-  setMovie: Function,
-  setLoaded: Function,
-  movieId: string
-) => {
-  setMovie(await getMovieByIdApi(movieId));
-  setLoaded(true);
+const loadMovie = (setMovie: Function, movieId: string) => {
+  getMovieByIdApi(movieId).then((movie) => {
+    setMovie(movie);
+  });
 };
 
 const MovieDetailsScreen = ({ route }: { route: any }) => {
   const { movieId }: { movieId: string } = route.params;
-  const [movie, setMovie] = useState({} as Movie);
-  const [loaded, setLoaded] = useState(false);
-  loadMovie(setMovie, setLoaded, movieId);
-  console.log(movie);
+  const [movie, setMovie] = useState<Movie>();
+  loadMovie(setMovie, movieId);
+
   return (
     <ScrollView className="flex-1 bg-secondary_color">
-      {loaded ? (
-        <ActivityIndicator
-          size="large"
-          className={"flex-1 items-center justify-center"}
-          color={colors.tertiary_color}
-        />
-      ) : (
+      {movie && (
         <Fragment>
           <Image
             source={{ uri: movie.pictureUrl }}

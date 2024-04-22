@@ -1,8 +1,6 @@
 import { View, Text, Image, ActivityIndicator } from "react-native";
 import { Movie } from "../services/altenHybridApi";
 import { TouchableHighlight } from "react-native-gesture-handler";
-import { useState } from "react";
-import { colors } from "../styles/tailwindColors";
 
 const MovieCard = ({
   navigation,
@@ -11,8 +9,6 @@ const MovieCard = ({
   navigation: any;
   movie: Movie;
 }) => {
-  const [loadingImage, setLoadingImage] = useState(false);
-
   return (
     <View className="bg-tertiary_color m-5 flex-col rounded-lg">
       <TouchableHighlight
@@ -29,12 +25,7 @@ const MovieCard = ({
             source={{ uri: movie.pictureUrl }}
             className="aspect-square rounded-bl-lg rounded-br-lg"
             resizeMode="cover"
-            onLoadStart={() => setLoadingImage(true)}
-            onLoadEnd={() => setLoadingImage(false)}
           />
-          {loadingImage && (
-            <ActivityIndicator size="large" color={colors.tertiary_color} />
-          )}
         </View>
       </TouchableHighlight>
     </View>

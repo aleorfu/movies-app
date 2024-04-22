@@ -19,7 +19,7 @@ instance.defaults.headers.common["Accept"] = "application/json";
 const getPetition = async (
   url: string,
   config: AxiosRequestConfig = {}
-): Promise<any> => {
+): Promise<Movie | Movie[]> => {
   try {
     const response = await instance.get(url, config);
     return response.data;
@@ -30,16 +30,12 @@ const getPetition = async (
 };
 
 const getMovieByIdApi = async (id: string | number): Promise<Movie> => {
-  const movie: Movie = Object.values(
-    await getPetition(`/movies/${id}`)
-  )[0] as Movie;
+  const movie: any = await getPetition(`/movies/${id}`);
   return movie;
 };
 
 const getAllMoviesApi = async (): Promise<Movie[]> => {
-  const movies: Movie[] = Object.values(
-    await getPetition("/movies")
-  ) as Movie[];
+  const movies: Movie[] = Object.values(await getPetition("/movies"));
   return movies;
 };
 
