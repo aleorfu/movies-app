@@ -16,10 +16,10 @@ const instance = axios.create({
 });
 instance.defaults.headers.common["Accept"] = "application/json";
 
-async function getPetition(
+const getPetition = async (
   url: string,
   config: AxiosRequestConfig = {}
-): Promise<any> {
+): Promise<any> => {
   try {
     const response = await instance.get(url, config);
     return response.data;
@@ -27,18 +27,20 @@ async function getPetition(
     console.error(`There has been an error with api get petition: ${error}`);
     throw error;
   }
-}
+};
 
-export async function getMovieByIdApi(id: string | number): Promise<Movie> {
+const getMovieByIdApi = async (id: string | number): Promise<Movie> => {
   const movie: Movie = Object.values(
     await getPetition(`/movies/${id}`)
   )[0] as Movie;
   return movie;
-}
+};
 
-export async function getAllMoviesApi(): Promise<Movie[]> {
+const getAllMoviesApi = async (): Promise<Movie[]> => {
   const movies: Movie[] = Object.values(
     await getPetition("/movies")
   ) as Movie[];
   return movies;
-}
+};
+
+export { getMovieByIdApi, getAllMoviesApi };
