@@ -40,7 +40,7 @@ const getTabScreen = (name: string, component: ComponentType, icon: number) => {
   );
 };
 
-const MainBottom = () => {
+const MainBottomTabNav = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
@@ -52,4 +52,4 @@ const MainBottom = () => {
   );
 };
 
-export { MainBottom };
+export { MainBottomTabNav };
