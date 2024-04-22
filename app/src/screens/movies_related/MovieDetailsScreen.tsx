@@ -1,6 +1,8 @@
 import { View, Image, Text, ScrollView } from "react-native";
+import { Movie, getMovieByIdApi } from "../../services/altenHybridApi";
+import { Fragment, useState } from "react";
 
-function ListCard({ title, content }: { title: string; content: string[] }) {
+const ListCard = ({ title, content }: { title: string; content: string[] }) => {
   return (
     <View className="bg-tertiary_color m-5 rounded-lg">
       <Text className="text-xl font-extrabold text-center m-2.5 text-quaternary_color">
@@ -18,9 +20,9 @@ function ListCard({ title, content }: { title: string; content: string[] }) {
       </View>
     </View>
   );
-}
+};
 
-function TextCard({ title, content }: { title: string; content: string }) {
+const TextCard = ({ title, content }: { title: string; content: string }) => {
   return (
     <View className="bg-tertiary_color m-5 rounded-lg">
       <Text className="text-xl font-extrabold text-center m-2.5 text-quaternary_color">
@@ -31,28 +33,45 @@ function TextCard({ title, content }: { title: string; content: string }) {
       </Text>
     </View>
   );
-}
+};
 
-export default function MovieDetailsScreen({ route }: { route: any }) {
-  const { item } = route.params;
+const loadMovie = (setMovie: Function, movieId: string) => {
+  getMovieByIdApi(movieId).then((movie) => {
+    setMovie(movie);
+  });
+};
+
+const MovieDetailsScreen = ({ route }: { route: any }) => {
+  const { movieId }: { movieId: string } = route.params;
+  const [movie, setMovie] = useState<Movie>();
+  loadMovie(setMovie, movieId);
 
   return (
     <ScrollView className="flex-1 bg-secondary_color">
-      <Image
-        source={{ uri: item.pictureUrl }}
-        className="aspect-square"
-        resizeMode="cover"
-      />
-      <Text className="text-quaternary_color text-3xl font-extrabold text-center m-2.5">
-        {item.name}
-      </Text>
-      <TextCard title={"Descripción"} content={item.description} />
-      <ListCard title={"Actores"} content={item.actors} />
-      <ListCard title={"Categoría"} content={item.categories} />
-      <ListCard
-        title={"Otros datos"}
-        content={[`Duración: ${item.duration}`, `Valoración: ${item.rating}/5`]}
-      />
+      {movie && (
+        <Fragment>
+          <Image
+            source={{ uri: movie.pictureUrl }}
+            className="aspect-square"
+            resizeMode="cover"
+          />
+          <Text className="text-quaternary_color text-3xl font-extrabold text-center m-2.5">
+            {movie.name}
+          </Text>
+          <TextCard title={"Descripción"} content={movie.description} />
+          <ListCard title={"Actores"} content={movie.actors} />
+          <ListCard title={"Categoría"} content={movie.categories} />
+          <ListCard
+            title={"Otros datos"}
+            content={[
+              `Duración: ${movie.duration}`,
+              `Valoración: ${movie.rating}/5`,
+            ]}
+          />
+        </Fragment>
+      )}
     </ScrollView>
   );
-}
+};
+
+export { MovieDetailsScreen };

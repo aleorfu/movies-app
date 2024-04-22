@@ -1,14 +1,14 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { Image } from "react-native";
-import MovieListScreen from "../screens/movies_related/MovieListScreen";
-import MovieDetailsScreen from "../screens/movies_related/MovieDetailsScreen";
-import { colors, styles } from "../styles/global";
+import { MovieListScreen } from "../screens/movies_related/MovieListScreen";
+import { MovieDetailsScreen } from "../screens/movies_related/MovieDetailsScreen";
+import { colors } from "../styles/tailwindColors";
 import { images } from "../constants/images";
 import { ComponentType } from "react";
 
 const Stack = createStackNavigator();
 
-function getStackScreen(name: string, component: ComponentType) {
+const getStackScreen = (name: string, component: ComponentType) => {
   return (
     <Stack.Screen
       name={name}
@@ -18,18 +18,20 @@ function getStackScreen(name: string, component: ComponentType) {
         headerStyle: { backgroundColor: colors.primary_color },
         headerTitleStyle: { color: colors.quaternary_color },
         headerBackImage: () => (
-          <Image className={styles.icon_size} source={images.back_icon} />
+          <Image className="w-6 h-6" source={images.back_icon} />
         ),
       }}
     />
   );
-}
+};
 
-export default function MovieDetailsNav() {
+const MovieDetailsNav = () => {
   return (
     <Stack.Navigator>
       {getStackScreen("List", MovieListScreen as ComponentType)}
       {getStackScreen("Details", MovieDetailsScreen as ComponentType)}
     </Stack.Navigator>
   );
-}
+};
+
+export { MovieDetailsNav };

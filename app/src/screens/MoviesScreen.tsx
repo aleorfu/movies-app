@@ -1,5 +1,7 @@
-import MovieDetailsNav from "../navigation/MovieDetailsNav";
+import { MovieDetailsNav } from "../navigations/MovieDetailsNav";
 
-export function MoviesScreen() {
+const MoviesScreen = () => {
   return <MovieDetailsNav />;
-}
+};
+
+export { MoviesScreen };

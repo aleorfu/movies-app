@@ -4,13 +4,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from "../screens/HomeScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
 import { MoviesScreen } from "../screens/MoviesScreen";
-import { styles, colors } from "../styles/global";
+import { colors } from "../styles/tailwindColors";
 import { images } from "../constants/images";
 import { ComponentType } from "react";
 
 const Tab = createBottomTabNavigator();
 
-function getTabScreen(name: string, component: ComponentType, icon: number) {
+const getTabScreen = (name: string, component: ComponentType, icon: number) => {
   return (
     <Tab.Screen
       name={name}
@@ -20,7 +20,7 @@ function getTabScreen(name: string, component: ComponentType, icon: number) {
         tabBarIcon: ({ focused }) => (
           <Image
             source={icon}
-            className={styles.icon_size}
+            className="w-6 h-6"
             style={{
               tintColor: focused
                 ? colors.tertiary_color
@@ -38,9 +38,9 @@ function getTabScreen(name: string, component: ComponentType, icon: number) {
       }}
     />
   );
-}
+};
 
-export default function MainBottomTabNav() {
+const MainBottomTabNav = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
@@ -50,4 +50,6 @@ export default function MainBottomTabNav() {
       </Tab.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+export { MainBottomTabNav };
