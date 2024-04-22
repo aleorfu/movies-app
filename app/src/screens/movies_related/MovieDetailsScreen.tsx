@@ -3,7 +3,7 @@ import { Movie, getMovieByIdApi } from "../../services/altenHybridApi";
 import { Fragment, useState } from "react";
 import { colors } from "../../styles/tailwindColors";
 
-function ListCard({ title, content }: { title: string; content: string[] }) {
+const ListCard = ({ title, content }: { title: string; content: string[] }) => {
   return (
     <View className="bg-tertiary_color m-5 rounded-lg">
       <Text className="text-xl font-extrabold text-center m-2.5 text-quaternary_color">
@@ -21,9 +21,9 @@ function ListCard({ title, content }: { title: string; content: string[] }) {
       </View>
     </View>
   );
-}
+};
 
-function TextCard({ title, content }: { title: string; content: string }) {
+const TextCard = ({ title, content }: { title: string; content: string }) => {
   return (
     <View className="bg-tertiary_color m-5 rounded-lg">
       <Text className="text-xl font-extrabold text-center m-2.5 text-quaternary_color">
@@ -34,18 +34,18 @@ function TextCard({ title, content }: { title: string; content: string }) {
       </Text>
     </View>
   );
-}
+};
 
-async function loadMovie(
+const loadMovie = async (
   setMovie: Function,
   setLoaded: Function,
   movieId: string
-) {
+) => {
   setMovie(await getMovieByIdApi(movieId));
   setLoaded(true);
-}
+};
 
-export function MovieDetailsScreen({ route }: { route: any }) {
+const MovieDetailsScreen = ({ route }: { route: any }) => {
   const { movieId }: { movieId: string } = route.params;
   const [movie, setMovie] = useState({} as Movie);
   const [loaded, setLoaded] = useState(false);
@@ -83,4 +83,6 @@ export function MovieDetailsScreen({ route }: { route: any }) {
       )}
     </ScrollView>
   );
-}
+};
+
+export { MovieDetailsScreen };
