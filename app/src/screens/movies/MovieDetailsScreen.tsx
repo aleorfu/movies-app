@@ -1,7 +1,7 @@
 import { View, Image, Text, ScrollView } from "react-native";
 import { Movie, getMovieByIdApi } from "../../services/altenHybridApi";
 import { Fragment, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 
 const ListCard = ({ title, content }: { title: string; content: string[] }) => {
   return (

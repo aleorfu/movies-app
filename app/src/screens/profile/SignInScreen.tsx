@@ -10,7 +10,15 @@ const textInputClassName =
 
 const signIn = (email: string, password: string, navigation: any) => {
   if (email != "" && password != "") {
-    auth().signInWithEmailAndPassword(email, password);
+    auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log("Signed in!");
+      })
+      .catch((error) => {
+        console.log("Authentication error");
+        console.error(error);
+      });
     navigation.goBack();
   }
 };
@@ -18,8 +26,12 @@ const signIn = (email: string, password: string, navigation: any) => {
 const recoverPassword = (email: string) => {
   auth()
     .sendPasswordResetEmail(email)
-    .catch(() => {
+    .then(() => {
+      console.log("Reset password email sent!");
+    })
+    .catch((error) => {
       console.log("That email address doesn't exists!");
+      console.error(error);
     });
 };
 
