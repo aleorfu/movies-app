@@ -14,6 +14,7 @@ const signUp = (email: string, password: string, navigation: any) => {
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
         console.log("User account created & signed in!");
+        auth().currentUser?.sendEmailVerification();
         navigation.goBack();
       })
       .catch((error) => {
