@@ -1,7 +1,7 @@
-import { View } from "react-native";
+import { AuthNav } from "../navigations/AuthNav";
 
 const ProfileScreen = () => {
-  return <View className="flex-1 bg-secondary_color"></View>;
+  return <AuthNav />;
 };
 
 export { ProfileScreen };
