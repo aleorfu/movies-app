@@ -6,6 +6,15 @@ import { colors } from "../styles/tailwindColors";
 import { Image } from "react-native";
 import { images } from "../constants/images";
 import { ComponentType } from "react";
+import { NavigationProp } from "@react-navigation/native";
+
+type ScreenNames = [
+  "ProfileProfileStack",
+  "ProfileSign-InStack",
+  "ProfileSign-UpStack"
+];
+type RootStackParamList = Record<ScreenNames[number], {}>;
+type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();
 
@@ -41,4 +50,4 @@ const ProfileNav = () => {
   );
 };
 
-export { ProfileNav };
+export { ProfileNav, StackNavigation as ProfileNavStackNavigation };
