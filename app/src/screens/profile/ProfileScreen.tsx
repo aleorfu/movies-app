@@ -1,7 +1,7 @@
 import { View } from "react-native";
 
-const SignInScreen = () => {
+const ProfileScreen = () => {
   return <View></View>;
 };
 
-export { SignInScreen };
+export { ProfileScreen };

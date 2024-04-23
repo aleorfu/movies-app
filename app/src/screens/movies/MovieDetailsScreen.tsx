@@ -41,7 +41,7 @@ const loadMovie = (setMovie: Function, movieId: string) => {
   });
 };
 
-const MovieDetailsScreen = ({ route }: { route: any }) => {
+const MovieDetailsScreen = ({ route }: { route?: any }) => {
   const { movieId }: { movieId: string } = route.params;
   const [movie, setMovie] = useState<Movie>();
   loadMovie(setMovie, movieId);

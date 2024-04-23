@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator } from "react-native";
+import { View, Text, Image } from "react-native";
 import { Movie } from "../services/altenHybridApi";
 import { TouchableHighlight } from "react-native-gesture-handler";
 

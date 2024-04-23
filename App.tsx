@@ -1,13 +1,7 @@
-import { MainBottomTabNav } from "./app/src/navigations/MainBottomTabNav";
-import auth from "@react-native-firebase/auth";
-
-const authTest = async (email: string, password: string) => {
-  const user = await auth().signInWithEmailAndPassword(email, password);
-  console.log(user);
-};
+import { MainNav } from "./app/src/navigations/MainNav";
 
 const App = () => {
-  return <MainBottomTabNav />;
+  return <MainNav />;
 };
 
 export default App;

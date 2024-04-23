@@ -27,7 +27,7 @@ const fetchFiveMovies = (
   });
 };
 
-const MovieListScreen = ({ navigation }: { navigation: any }) => {
+const MovieListScreen = ({ navigation }: { navigation?: any }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   fetchFiveMovies(setMovies);
   return (
