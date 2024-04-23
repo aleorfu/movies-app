@@ -12,6 +12,7 @@ const Tab = createBottomTabNavigator();
 
 const getTabScreen = (
   name: string,
+  title: string,
   component: ComponentType,
   icon: number,
   headerShown: boolean = true
@@ -21,7 +22,7 @@ const getTabScreen = (
       name={name}
       component={component}
       options={{
-        title: name,
+        title: title,
         tabBarIcon: ({ focused }: { focused: boolean }) => (
           <Image
             source={icon}
@@ -50,9 +51,15 @@ const MainNav = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        {getTabScreen("Home", HomeScreen, images.home_icon)}
-        {getTabScreen("Movies", MoviesNav, images.list_icon)}
-        {getTabScreen("Profile", ProfileNav, images.profile_icon, false)}
+        {getTabScreen("HomeTab", "Home", HomeScreen, images.home_icon)}
+        {getTabScreen("MoviesTab", "Movies", MoviesNav, images.list_icon)}
+        {getTabScreen(
+          "ProfileTab",
+          "Profile",
+          ProfileNav,
+          images.profile_icon,
+          false
+        )}
       </Tab.Navigator>
     </NavigationContainer>
   );

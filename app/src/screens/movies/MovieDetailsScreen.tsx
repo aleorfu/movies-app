@@ -1,6 +1,7 @@
 import { View, Image, Text, ScrollView } from "react-native";
 import { Movie, getMovieByIdApi } from "../../services/altenHybridApi";
 import { Fragment, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const ListCard = ({ title, content }: { title: string; content: string[] }) => {
   return (
@@ -41,8 +42,10 @@ const loadMovie = (setMovie: Function, movieId: string) => {
   });
 };
 
-const MovieDetailsScreen = ({ route }: { route?: any }) => {
-  const { movieId }: { movieId: string } = route.params;
+const MovieDetailsScreen = () => {
+  const { movieId } = useRoute().params as {
+    movieId: string;
+  };
   const [movie, setMovie] = useState<Movie>();
   loadMovie(setMovie, movieId);
 

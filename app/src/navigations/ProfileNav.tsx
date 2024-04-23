@@ -9,12 +9,17 @@ import { ComponentType } from "react";
 
 const Stack = createStackNavigator();
 
-const getStackScreen = (name: string, component: ComponentType) => {
+const getStackScreen = (
+  name: string,
+  title: string,
+  component: ComponentType
+) => {
   return (
     <Stack.Screen
       name={name}
       component={component}
       options={{
+        title: title,
         headerTitleAlign: "center",
         headerStyle: { backgroundColor: colors.primary_color },
         headerTitleStyle: { color: colors.quaternary_color },
@@ -29,9 +34,9 @@ const getStackScreen = (name: string, component: ComponentType) => {
 const ProfileNav = () => {
   return (
     <Stack.Navigator>
-      {getStackScreen("Profile", ProfileScreen)}
-      {getStackScreen("Sign-In", SignInScreen)}
-      {getStackScreen("Sign-Up", SignUpScreen)}
+      {getStackScreen("ProfileProfileStack", "Profile", ProfileScreen)}
+      {getStackScreen("ProfileSign-InStack", "Sign-In", SignInScreen)}
+      {getStackScreen("ProfileSign-UpStack", "Sign-Up", SignUpScreen)}
     </Stack.Navigator>
   );
 };
