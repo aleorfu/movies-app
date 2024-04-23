@@ -3,22 +3,30 @@ import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../../components/Button";
 import auth from "@react-native-firebase/auth";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const textInputClassName =
   "text-primary_color bg-quaternary_color mx-5 my-3 p-3 rounded-md";
 
-const signIn = (email: string, password: string) => {
-  if (email != "" && password != "")
+const signIn = (email: string, password: string, navigation: any) => {
+  if (email != "" && password != "") {
     auth().signInWithEmailAndPassword(email, password);
+    navigation.goBack();
+  }
 };
 
 const recoverPassword = (email: string) => {
-  auth().sendPasswordResetEmail(email);
+  auth()
+    .sendPasswordResetEmail(email)
+    .catch(() => {
+      console.log("That email address doesn't exists!");
+    });
 };
 
 const SignInScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigation = useNavigation();
   return (
     <View className="flex-1 bg-secondary_color justify-center">
       <TextInput
@@ -42,7 +50,7 @@ const SignInScreen = () => {
       <Button
         text="Sign-In"
         onPress={() => {
-          signIn(email, password);
+          signIn(email, password, navigation);
           setEmail("");
           setPassword("");
         }}
@@ -56,6 +64,7 @@ const SignInScreen = () => {
         onPress={() => {
           recoverPassword(email);
           setEmail("");
+          setPassword("");
         }}
       />
     </View>
