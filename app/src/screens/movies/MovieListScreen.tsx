@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { View, useColorScheme } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
 import { MovieCard } from "../../components/MovieCard";
@@ -29,9 +29,15 @@ const fetchFiveMovies = (
 
 const MovieListScreen = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const isLight = useColorScheme() === "light";
   fetchFiveMovies(setMovies);
+
   return (
-    <View className="flex-1 bg-secondary_color">
+    <View
+      className={
+        isLight ? "flex-1 bg-secondary_light" : "flex-1 bg-secondary_dark"
+      }
+    >
       <FlatList
         data={movies}
         renderItem={({ item }) => <MovieCard movie={item} />}

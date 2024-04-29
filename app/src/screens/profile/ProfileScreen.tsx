@@ -1,23 +1,33 @@
 import { Fragment, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View, useColorScheme } from "react-native";
 import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { ProfileNavStackNavigation } from "../../navigations/ProfileNav";
 import auth from "@react-native-firebase/auth";
 
-const buttonClassName =
-  "bg-primary_color mx-8 rounded-md p-3 my-2 shadow-lg shadow-black";
-const textClassName = "text-quaternary_color text-lg font-bold text-center";
-
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);
+  const isLight = useColorScheme() === "light";
   const navigation = useNavigation() as ProfileNavStackNavigation;
   auth().onAuthStateChanged((currentUser) => {
     setUser(currentUser);
   });
 
+  const buttonClassName = isLight
+    ? "bg-primary_light mx-8 rounded-md p-3 my-2 shadow-lg shadow-black"
+    : "bg-primary_dark mx-8 rounded-md p-3 my-2 shadow-lg shadow-white";
+  const textClassName = isLight
+    ? "text-quaternary_light text-lg font-bold text-center"
+    : "text-quaternary_dark text-lg font-bold text-center";
+
   return (
-    <View className="flex-1 bg-secondary_color justify-center ">
+    <View
+      className={
+        isLight
+          ? "flex-1 bg-secondary_light justify-center"
+          : "flex-1 bg-secondary_dark justify-center"
+      }
+    >
       {!user ? (
         <Fragment>
           <Button
@@ -39,7 +49,13 @@ const ProfileScreen = () => {
         </Fragment>
       ) : (
         <Fragment>
-          <Text className="text-quaternary_color text-lg my-3 text-center">
+          <Text
+            className={
+              isLight
+                ? "text-quaternary_light text-lg my-3 text-center"
+                : "text-quaternary_dark text-lg my-3 text-center"
+            }
+          >
             {auth().currentUser?.email}
           </Text>
           <Button

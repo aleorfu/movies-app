@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, useColorScheme } from "react-native";
 import { Movie } from "../services/altenHybridApi";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
@@ -6,8 +6,16 @@ import { MoviesNavStackNavigation } from "../navigations/MoviesNav";
 
 const MovieCard = ({ movie }: { movie: Movie }) => {
   const navigation = useNavigation() as MoviesNavStackNavigation;
+  const isLight = useColorScheme() === "light";
+
   return (
-    <View className="bg-primary_color m-5 flex-col rounded-lg shadow-lg shadow-black">
+    <View
+      className={
+        isLight
+          ? "bg-primary_light m-5 flex-col rounded-lg shadow-lg shadow-black"
+          : "bg-primary_dark m-5 flex-col rounded-lg shadow-lg shadow-white"
+      }
+    >
       <TouchableOpacity
         onPress={() => {
           const movieId = movie.id;
@@ -15,7 +23,13 @@ const MovieCard = ({ movie }: { movie: Movie }) => {
         }}
       >
         <View>
-          <Text className="text-quaternary_color text-center font-bold text-xl my-2.5">
+          <Text
+            className={
+              isLight
+                ? "text-quaternary_light text-center font-bold text-xl my-2.5"
+                : "text-quaternary_dark text-center font-bold text-xl my-2.5"
+            }
+          >
             {movie.name}
           </Text>
           <Image

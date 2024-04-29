@@ -1,7 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { MovieListScreen } from "../screens/movies/MovieListScreen";
 import { MovieDetailsScreen } from "../screens/movies/MovieDetailsScreen";
-import { Image } from "react-native";
+import { Image, useColorScheme } from "react-native";
 import { colors } from "../styles/tailwindColors";
 import { images } from "../constants/images";
 import { ComponentType } from "react";
@@ -18,6 +18,8 @@ const getStackScreen = (
   title: string,
   component: ComponentType
 ) => {
+  const isLight = useColorScheme() === "light";
+
   return (
     <Stack.Screen
       name={name}
@@ -25,14 +27,25 @@ const getStackScreen = (
       options={{
         title: title,
         headerTitleAlign: "center",
-        headerStyle: {
-          backgroundColor: colors.primary_color,
-          shadowColor: "black",
-        },
-        headerTitleStyle: { color: colors.quaternary_color },
+        headerStyle: isLight
+          ? {
+              backgroundColor: colors.primary_light,
+              shadowColor: "black",
+            }
+          : {
+              backgroundColor: colors.primary_dark,
+              shadowColor: "white",
+            },
+        headerTitleStyle: isLight
+          ? { color: colors.quaternary_light }
+          : { color: colors.quaternary_dark },
         headerBackImage: () => (
           <Image
-            style={{ tintColor: colors.quaternary_color }}
+            style={
+              isLight
+                ? { tintColor: colors.quaternary_light }
+                : { tintColor: colors.quaternary_dark }
+            }
             className="w-6 h-6"
             source={images.back_icon}
           />

@@ -4,7 +4,7 @@ import { HomeScreen } from "../screens/HomeScreen";
 import { images } from "../constants/images";
 import { ProfileNav } from "./ProfileNav";
 import { MoviesNav } from "./MoviesNav";
-import { Image } from "react-native";
+import { Image, useColorScheme } from "react-native";
 import { colors } from "../styles/tailwindColors";
 import { ComponentType } from "react";
 
@@ -17,6 +17,8 @@ const getTabScreen = (
   icon: number,
   headerShown: boolean = true
 ) => {
+  const isLight = useColorScheme() === "light";
+
   return (
     <Tab.Screen
       name={name}
@@ -27,21 +29,35 @@ const getTabScreen = (
           <Image
             source={icon}
             className="w-6 h-6"
-            style={{
-              tintColor: colors.quaternary_color,
-            }}
+            style={
+              isLight
+                ? {
+                    tintColor: colors.quaternary_light,
+                  }
+                : { tintColor: colors.quaternary_dark }
+            }
           />
         ),
-        tabBarActiveTintColor: colors.quaternary_color,
-        tabBarInactiveTintColor: colors.quaternary_color,
-        tabBarInactiveBackgroundColor: colors.primary_color,
-        tabBarActiveBackgroundColor: colors.secondary_color,
+        tabBarActiveTintColor: isLight
+          ? colors.quaternary_light
+          : colors.quaternary_dark,
+        tabBarInactiveTintColor: isLight
+          ? colors.quaternary_light
+          : colors.quaternary_dark,
+        tabBarInactiveBackgroundColor: isLight
+          ? colors.primary_light
+          : colors.primary_dark,
+        tabBarActiveBackgroundColor: isLight
+          ? colors.secondary_light
+          : colors.secondary_dark,
         tabBarLabelStyle: { fontSize: 12 },
         headerStyle: {
-          backgroundColor: colors.primary_color,
-          shadowColor: "black",
+          backgroundColor: isLight ? colors.primary_light : colors.primary_dark,
+          shadowColor: isLight ? "black" : "white",
         },
-        headerTitleStyle: { color: colors.quaternary_color },
+        headerTitleStyle: isLight
+          ? { color: colors.quaternary_light }
+          : { color: colors.quaternary_dark },
         headerTitleAlign: "center",
         headerShown: headerShown,
       }}
