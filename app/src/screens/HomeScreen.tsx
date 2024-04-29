@@ -35,8 +35,8 @@ const HomeScreen = () => {
     <View className="flex-1 bg-secondary_color justify-center">
       <Button
         text={isSubscribed ? "Unsubscribe" : "Subscribe"}
-        buttonClassName="bg-tertiary_color mx-8 rounded-md p-3 my-2"
-        textClassName="text-quaternary_color text-lg"
+        buttonClassName="bg-primary_color mx-8 rounded-md p-3 my-2 shadow-lg shadow-black"
+        textClassName="text-quaternary_color text-lg font-bold text-center"
         onPress={() => {
           toggleSubscribed(setSubscribed);
         }}

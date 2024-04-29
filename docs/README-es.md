@@ -56,4 +56,4 @@ En cuanto a por qué no se deben usar más de un gestor de paquetes por proyecto
 
 # Recursos
 
-- [Colores usados en el proyecto](https://colorhunt.co/palette/22283131363f76abaeeeeeee)
+- [Colores usados en el proyecto](https://www.color-hex.com/color-palette/106748)

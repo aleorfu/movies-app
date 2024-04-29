@@ -6,7 +6,7 @@ import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 
 const textInputClassName =
-  "text-primary_color bg-quaternary_color mx-5 my-3 p-3 rounded-md";
+  "text-quaternary_color bg-primary_color mx-5 my-3 p-3 rounded-md shadow-lg shadow-black";
 
 const signUp = (email: string, password: string, navigation: any) => {
   if (email != "" && password != "") {
@@ -57,8 +57,8 @@ const SignUpScreen = () => {
       />
       <Button
         text="Sign-Up"
-        buttonClassName="bg-tertiary_color p-3 mx-5 my-3 rounded-md"
-        textClassName="text-quaternary_color"
+        buttonClassName="bg-primary_color p-3 mx-5 my-3 rounded-md shadow-lg shadow-black"
+        textClassName="text-quaternary_color text-lg font-bold text-center"
         onPress={() => {
           signUp(email, password, navigation);
           setEmail("");
