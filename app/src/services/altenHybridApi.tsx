@@ -23,7 +23,7 @@ type Movie = {
 const instance = axios.create({
   baseURL: "https://api-w6avz2it7a-uc.a.run.app",
 });
-instance.defaults.headers.common["Accept"] = "application/json";
+instance.defaults.headers["Accept"] = "application/json";
 
 const getPetition = async (
   url: string,
@@ -40,10 +40,11 @@ const getPetition = async (
 
 const putPetition = async (
   url: string,
+  data: any,
   config: AxiosRequestConfig = {}
 ): Promise<Movie | never> => {
   try {
-    const response = await instance.put(url, config);
+    const response = await instance.put(url, data, config);
     return response.data;
   } catch (error) {
     console.error(`There has been an error with api put petition: ${error}`);
@@ -57,18 +58,15 @@ const getMovieByIdApi = async (id: string): Promise<Movie | never> =>
 const getAllMoviesApi = async (): Promise<Movie[] | never> =>
   Object.values(await getPetition("/movies"));
 
-const rateMovie = async (id: string, rating: Rating): Promise<Movie | never> =>
-  (await putPetition(`/movies/${id}/rate`, { data: rating })) as Movie;
+const rateMovie = async (id: string, rating: Rating): Promise<void> => {
+  let config = {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  };
 
-const likeMovie = async (id: string, userId: string): Promise<void | never> => {
-  await putPetition(`/movies/${id}/like`, { data: { userId: userId } });
+  await putPetition(`/movies/${id}/rate`, JSON.stringify(rating), config);
 };
 
-export {
-  getMovieByIdApi,
-  getAllMoviesApi,
-  rateMovie,
-  likeMovie,
-  Movie,
-  Rating,
-};
+export { getMovieByIdApi, getAllMoviesApi, rateMovie, Movie, Rating };
