@@ -61,4 +61,4 @@ As for why you should not use more than one package manager per project, the mai
 
 # Resources
 
-- [Colors used in the project](https://colorhunt.co/palette/22283131363f76abaeeeeeee)
+- [Colors used in the project](https://www.color-hex.com/color-palette/106748)

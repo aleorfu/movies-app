@@ -5,7 +5,7 @@ import { useRoute } from "@react-navigation/native";
 
 const ListCard = ({ title, content }: { title: string; content: string[] }) => {
   return (
-    <View className="bg-tertiary_color m-5 rounded-lg">
+    <View className="bg-primary_color m-5 rounded-lg shadow-lg shadow-black">
       <Text className="text-xl font-extrabold text-center m-2.5 text-quaternary_color">
         {title}
       </Text>
@@ -25,7 +25,7 @@ const ListCard = ({ title, content }: { title: string; content: string[] }) => {
 
 const TextCard = ({ title, content }: { title: string; content: string }) => {
   return (
-    <View className="bg-tertiary_color m-5 rounded-lg">
+    <View className="bg-primary_color m-5 rounded-lg shadow-lg shadow-black">
       <Text className="text-xl font-extrabold text-center m-2.5 text-quaternary_color">
         {title}
       </Text>

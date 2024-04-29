@@ -5,8 +5,9 @@ import { useNavigation } from "@react-navigation/native";
 import { ProfileNavStackNavigation } from "../../navigations/ProfileNav";
 import auth from "@react-native-firebase/auth";
 
-const buttonClassName = "bg-tertiary_color mx-8 rounded-md p-3 my-2";
-const textClassName = "text-quaternary_color text-lg ";
+const buttonClassName =
+  "bg-primary_color mx-8 rounded-md p-3 my-2 shadow-lg shadow-black";
+const textClassName = "text-quaternary_color text-lg font-bold text-center";
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);

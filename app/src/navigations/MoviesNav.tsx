@@ -25,10 +25,17 @@ const getStackScreen = (
       options={{
         title: title,
         headerTitleAlign: "center",
-        headerStyle: { backgroundColor: colors.primary_color },
+        headerStyle: {
+          backgroundColor: colors.primary_color,
+          shadowColor: "black",
+        },
         headerTitleStyle: { color: colors.quaternary_color },
         headerBackImage: () => (
-          <Image className="w-6 h-6" source={images.back_icon} />
+          <Image
+            style={{ tintColor: colors.quaternary_color }}
+            className="w-6 h-6"
+            source={images.back_icon}
+          />
         ),
       }}
     />

@@ -23,22 +23,24 @@ const getTabScreen = (
       component={component}
       options={{
         title: title,
-        tabBarIcon: ({ focused }: { focused: boolean }) => (
+        tabBarIcon: () => (
           <Image
             source={icon}
             className="w-6 h-6"
             style={{
-              tintColor: focused
-                ? colors.tertiary_color
-                : colors.quaternary_color,
+              tintColor: colors.quaternary_color,
             }}
           />
         ),
-        tabBarActiveTintColor: colors.tertiary_color,
+        tabBarActiveTintColor: colors.quaternary_color,
         tabBarInactiveTintColor: colors.quaternary_color,
-        tabBarInactiveBackgroundColor: colors.secondary_color,
-        tabBarActiveBackgroundColor: colors.primary_color,
-        headerStyle: { backgroundColor: colors.primary_color },
+        tabBarInactiveBackgroundColor: colors.primary_color,
+        tabBarActiveBackgroundColor: colors.secondary_color,
+        tabBarLabelStyle: { fontSize: 12 },
+        headerStyle: {
+          backgroundColor: colors.primary_color,
+          shadowColor: "black",
+        },
         headerTitleStyle: { color: colors.quaternary_color },
         headerTitleAlign: "center",
         headerShown: headerShown,
@@ -52,7 +54,13 @@ const MainNav = () => {
     <NavigationContainer>
       <Tab.Navigator>
         {getTabScreen("HomeTab", "Home", HomeScreen, images.home_icon)}
-        {getTabScreen("MoviesTab", "Movies", MoviesNav, images.list_icon)}
+        {getTabScreen(
+          "MoviesTab",
+          "Movies",
+          MoviesNav,
+          images.list_icon,
+          false
+        )}
         {getTabScreen(
           "ProfileTab",
           "Profile",
