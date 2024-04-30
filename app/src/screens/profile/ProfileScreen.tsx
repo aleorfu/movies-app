@@ -4,44 +4,65 @@ import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { ProfileNavStackNavigation } from "../../navigations/ProfileNav";
 import auth from "@react-native-firebase/auth";
+import { joinClassNames } from "../../utils/styleExtras";
+
+class LocalStyle {
+  public static getButtonStyle(): string {
+    const commonStyle: string = "mx-8 rounded-md p-3 my-2 shadow-lg";
+    const lightStyle: string = "bg-primary_light shadow-black";
+    const darkStyle: string = "bg-primary_dark shadow-white";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getTextStyle(): string {
+    const commonStyle: string = "text-lg font-bold text-center";
+    const lightStyle: string = "text-quaternary_light";
+    const darkStyle: string = "text-quaternary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getViewStyle(): string {
+    const commonStyle: string = "flex-1 justify-center";
+    const lightStyle: string = "bg-secondary_light";
+    const darkStyle: string = "bg-secondary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getEmailStyle(): string {
+    const commonStyle: string = "text-lg my-3 text-center";
+    const lightStyle: string = "text-quaternary_light";
+    const darkStyle: string = "text-quaternary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+}
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);
-  const isLight = useColorScheme() === "light";
   const navigation = useNavigation() as ProfileNavStackNavigation;
   auth().onAuthStateChanged((currentUser) => {
     setUser(currentUser);
   });
 
-  const buttonClassName = isLight
-    ? "bg-primary_light mx-8 rounded-md p-3 my-2 shadow-lg shadow-black"
-    : "bg-primary_dark mx-8 rounded-md p-3 my-2 shadow-lg shadow-white";
-  const textClassName = isLight
-    ? "text-quaternary_light text-lg font-bold text-center"
-    : "text-quaternary_dark text-lg font-bold text-center";
-
   return (
-    <View
-      className={
-        isLight
-          ? "flex-1 bg-secondary_light justify-center"
-          : "flex-1 bg-secondary_dark justify-center"
-      }
-    >
+    <View className={LocalStyle.getViewStyle()}>
       {!user ? (
         <Fragment>
           <Button
             text="Sign-In"
-            buttonClassName={buttonClassName}
-            textClassName={textClassName}
+            buttonClassName={LocalStyle.getButtonStyle()}
+            textClassName={LocalStyle.getTextStyle()}
             onPress={() => {
               navigation.navigate("ProfileSign-InStack", {});
             }}
           />
           <Button
             text="Sign-Up"
-            buttonClassName={buttonClassName}
-            textClassName={textClassName}
+            buttonClassName={LocalStyle.getButtonStyle()}
+            textClassName={LocalStyle.getTextStyle()}
             onPress={() => {
               navigation.navigate("ProfileSign-UpStack", {});
             }}
@@ -49,19 +70,13 @@ const ProfileScreen = () => {
         </Fragment>
       ) : (
         <Fragment>
-          <Text
-            className={
-              isLight
-                ? "text-quaternary_light text-lg my-3 text-center"
-                : "text-quaternary_dark text-lg my-3 text-center"
-            }
-          >
+          <Text className={LocalStyle.getEmailStyle()}>
             {auth().currentUser?.email}
           </Text>
           <Button
             text="Sign-Out"
-            buttonClassName={buttonClassName}
-            textClassName={textClassName}
+            buttonClassName={LocalStyle.getButtonStyle()}
+            textClassName={LocalStyle.getTextStyle()}
             onPress={() => {
               auth().signOut();
               setUser(auth().currentUser);
