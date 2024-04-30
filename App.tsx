@@ -1,19 +1,16 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MainNav } from "./app/src/navigations/MainNav";
-import { PermissionsAndroid, useColorScheme } from "react-native";
+import { PermissionsAndroid } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { joinStyles } from "./app/src/utils/joinStyles";
 
 class LocalStyle {
-  private static getIsLight(): boolean {
-    return useColorScheme() === "light";
-  }
-
   public static getSafeAreaView(): string {
     const commonStyle: string = "flex-1";
     const lightStyle: string = "bg-primary_light";
     const darkStyle: string = "bg-primary_dark";
 
-    return [commonStyle, this.getIsLight() ? lightStyle : darkStyle].join(" ");
+    return joinStyles(commonStyle, [lightStyle, darkStyle]);
   }
 }
 
