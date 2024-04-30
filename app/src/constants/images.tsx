@@ -16,4 +16,4 @@ const images: ImageDictionary = {
   profile_icon: require("../../assets/img/profile-icon.png"),
 };
 
-export { images, ImageDictionary };
+export { images };
