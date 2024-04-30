@@ -31,15 +31,17 @@ class LocalStyle {
   }
 }
 
-const navigateToDetails = (movieId: string): void => {
-  const navigation = useNavigation() as MoviesNavStackNavigation;
-  navigation.navigate("MovieDetailsStack", { movieId });
-};
-
 const MovieCard = ({ movie }: MovieCardProps) => {
+  const movieId = movie.id;
+  const navigation = useNavigation() as MoviesNavStackNavigation;
+
   return (
     <View className={LocalStyle.getCardStyle()}>
-      <TouchableOpacity onPress={() => navigateToDetails(movie.id)}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("MovieDetailsStack", { movieId });
+        }}
+      >
         <View>
           <Text className={LocalStyle.getTitleStyle()}>{movie.name}</Text>
           <Image
