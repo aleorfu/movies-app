@@ -2,19 +2,32 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MainNav } from "./app/src/navigations/MainNav";
 import { PermissionsAndroid, useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { colors } from "./app/src/styles/tailwindColors";
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+
+class LocalStyle {
+  private static getIsLight(): boolean {
+    return useColorScheme() === "light";
+  }
+
+  public static getSafeAreaView(): string {
+    const commonStyle: string = "flex-1";
+    const lightStyle: string = "bg-primary_light";
+    const darkStyle: string = "bg-primary_dark";
+
+    return [commonStyle, this.getIsLight() ? lightStyle : darkStyle].join(" ");
+  }
+}
+
+const requestPermissions = async () => {
+  await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+  );
+};
 
 const App = () => {
-  const isLight = useColorScheme() === "light";
+  requestPermissions();
+
   return (
-    <SafeAreaView
-      style={
-        isLight
-          ? { flex: 1, backgroundColor: colors.primary_light }
-          : { flex: 1, backgroundColor: colors.primary_dark }
-      }
-    >
+    <SafeAreaView className={LocalStyle.getSafeAreaView()}>
       <MainNav />
       <StatusBar style="auto" />
     </SafeAreaView>
