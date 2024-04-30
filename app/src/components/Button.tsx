@@ -1,30 +1,23 @@
 import { GestureResponderEvent, Pressable, Text } from "react-native";
 
+type ButtonProps = {
+  text?: string;
+  buttonClassName?: string;
+  textClassName?: string;
+  onPress?: ((event: GestureResponderEvent) => void) | null | undefined;
+};
+
 const Button = ({
   text,
   buttonClassName,
   textClassName,
   onPress,
-  onPressIn,
-  onPressOut,
-}: {
-  text: string;
-  buttonClassName?: string;
-  textClassName?: string;
-  onPress?: ((event: GestureResponderEvent) => void) | null | undefined;
-  onPressIn?: ((event: GestureResponderEvent) => void) | null | undefined;
-  onPressOut?: ((event: GestureResponderEvent) => void) | null | undefined;
-}) => {
+}: ButtonProps) => {
   return (
-    <Pressable
-      className={buttonClassName}
-      onPress={onPress}
-      onPressIn={onPressIn}
-      onPressOut={onPressOut}
-    >
+    <Pressable className={buttonClassName} onPress={onPress}>
       <Text className={textClassName}>{text}</Text>
     </Pressable>
   );
 };
 
-export { Button };
+export { Button, ButtonProps };
