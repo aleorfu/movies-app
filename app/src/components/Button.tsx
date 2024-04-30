@@ -12,7 +12,7 @@ const Button = ({
   buttonClassName,
   textClassName,
   onPress,
-}: ButtonProps) => {
+}: ButtonProps): React.JSX.Element => {
   return (
     <Pressable className={buttonClassName} onPress={onPress}>
       <Text className={textClassName}>{text}</Text>

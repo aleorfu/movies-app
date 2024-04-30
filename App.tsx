@@ -2,7 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MainNav } from "./app/src/navigations/MainNav";
 import { PermissionsAndroid } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { joinStyles } from "./app/src/utils/joinStyles";
+import { joinClassNames } from "./app/src/utils/styleExtras";
 
 class LocalStyle {
   public static getSafeAreaView(): string {
@@ -10,7 +10,7 @@ class LocalStyle {
     const lightStyle: string = "bg-primary_light";
     const darkStyle: string = "bg-primary_dark";
 
-    return joinStyles(commonStyle, [lightStyle, darkStyle]);
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
   }
 }
 

@@ -3,7 +3,7 @@ import { Movie } from "../services/altenHybridApi";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { MoviesNavStackNavigation } from "../navigations/MoviesNav";
-import { joinStyles } from "../utils/joinStyles";
+import { joinClassNames } from "../utils/styleExtras";
 
 type MovieCardProps = { movie: Movie };
 
@@ -13,7 +13,7 @@ class LocalStyle {
     const lightStyle: string = "bg-primary_light shadow-black";
     const darkStyle: string = "bg-primary_dark shadow-white";
 
-    return joinStyles(commonStyle, [lightStyle, darkStyle]);
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
   }
 
   public static getTitleStyle(): string {
@@ -21,7 +21,7 @@ class LocalStyle {
     const lightStyle: string = "text-quaternary_light";
     const darkStyle: string = "text-quaternary_dark";
 
-    return joinStyles(commonStyle, [lightStyle, darkStyle]);
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
   }
 
   public static getImageStyle(): string {
