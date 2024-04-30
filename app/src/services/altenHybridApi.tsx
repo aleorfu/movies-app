@@ -33,22 +33,24 @@ const getPetition = async (
     const response = await instance.get(url, config);
     return response.data;
   } catch (error) {
-    console.error(`There has been an error with api get petition: ${error}`);
-    throw error;
+    throw new Error(
+      `There has been an error with api "get" petition:\n\t${error}`
+    );
   }
 };
 
 const putPetition = async (
   url: string,
-  data: any,
+  data: string,
   config: AxiosRequestConfig = {}
 ): Promise<Movie | never> => {
   try {
     const response = await instance.put(url, data, config);
     return response.data;
   } catch (error) {
-    console.error(`There has been an error with api put petition: ${error}`);
-    throw error;
+    throw new Error(
+      `There has been an error with api "put" petition:\n\t${error}`
+    );
   }
 };
 
@@ -59,10 +61,9 @@ const getAllMoviesApi = async (): Promise<Movie[] | never> =>
   Object.values(await getPetition("/movies"));
 
 const rateMovie = async (id: string, rating: Rating): Promise<void> => {
-  let config = {
+  const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json",
     },
   };
 
