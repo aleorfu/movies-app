@@ -1,5 +1,5 @@
 /*
-I you want to add an image into the dictionary you must add it first to "ImageKeys".
+If you want to add an image into the dictionary you must add it first to "ImageKeys".
 This is because I want "images" to return numbers, which is the data type for images source.
 */
 
