@@ -1,4 +1,4 @@
-import { StyleProp, useColorScheme } from "react-native";
+import { StyleProp } from "react-native";
 
 /**
  * @param 0 - Light style
