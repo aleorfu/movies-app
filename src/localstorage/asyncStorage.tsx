@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const saveSubscribed = async (value: boolean): Promise<void | never> => {
   try {
-    const data = JSON.stringify(value);
+    const data: string = JSON.stringify(value);
     await AsyncStorage.setItem("subscribed", data);
   } catch (error) {
     throw new Error(
@@ -13,7 +13,7 @@ const saveSubscribed = async (value: boolean): Promise<void | never> => {
 
 const getSubscribed = async (): Promise<boolean | never> => {
   try {
-    const data = await AsyncStorage.getItem("subscribed");
+    const data: string | null = await AsyncStorage.getItem("subscribed");
     return data ? JSON.parse(data, Boolean) : false;
   } catch (error) {
     throw new Error(
