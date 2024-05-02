@@ -1,4 +1,4 @@
-import { View, useColorScheme } from "react-native";
+import { View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../../components/Button";
 import { useState } from "react";
