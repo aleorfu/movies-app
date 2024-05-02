@@ -52,7 +52,7 @@ const verifyNumber = (text: string): string => {
 const DoubleTextInput = ({
   topTextUseState,
   bottomTextUseState,
-}: DoubleTextInputProps) => {
+}: DoubleTextInputProps): React.JSX.Element => {
   const [topText, setTopText]: TextUseState = topTextUseState;
   const [bottomText, setBottomText]: TextUseState = bottomTextUseState;
 

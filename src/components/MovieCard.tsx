@@ -31,7 +31,7 @@ class LocalStyle {
   }
 }
 
-const MovieCard = ({ movie }: MovieCardProps) => {
+const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
   const movieId: string = movie.id;
   const navigation: MoviesNavStackNavigation =
     useNavigation() as MoviesNavStackNavigation;

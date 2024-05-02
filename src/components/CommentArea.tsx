@@ -57,7 +57,7 @@ const sendComment = async (
   }
 };
 
-const CommentArea = ({ movie }: CommentAreaProps) => {
+const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
   const [ratingText, setRatingText]: TextUseState = useState<string>("");
   const [contentText, setContentText]: TextUseState = useState<string>("");
 
