@@ -51,7 +51,7 @@ const getOptions = (title: string): StackNavigationOptions => {
   };
 };
 
-const ProfileNav = () => {
+const ProfileNav = (): React.JSX.Element => {
   return (
     <Stack.Navigator>
       <Stack.Screen
