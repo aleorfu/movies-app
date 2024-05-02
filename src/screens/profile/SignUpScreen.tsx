@@ -5,6 +5,43 @@ import { useState } from "react";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../styles/tailwindColors";
+import { joinClassNames, selectStyle } from "../../utils/styleExtras";
+
+class LocalStyle {
+  public static getTextInputStyle(): string {
+    const commonStyle: string = "mx-5 my-3 p-3 rounded-md shadow-lg";
+    const lightStyle: string =
+      "text-quaternary_light bg-primary_light shadow-black";
+    const darkStyle: string =
+      "text-quaternary_dark bg-primary_dark shadow-white";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getViewStyle(): string {
+    const commonStyle: string = "flex-1 justify-center";
+    const lightStyle: string = "bg-secondary_light";
+    const darkStyle: string = "bg-secondary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getButtonStyle(): string {
+    const commonStyle: string = "p-3 mx-5 my-3 rounded-md shadow-lg";
+    const lightStyle: string = "bg-primary_light shadow-black";
+    const darkStyle: string = "bg-primary_dark shadow-white";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getButtonTextStyle(): string {
+    const commonStyle: string = "text-md font-bold";
+    const lightStyle: string = "text-quaternary_light";
+    const darkStyle: string = "text-quaternary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+}
 
 const signUp = (email: string, password: string, navigation: any) => {
   if (email != "" && password != "") {
@@ -31,58 +68,41 @@ const signUp = (email: string, password: string, navigation: any) => {
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
-  const isLight = useColorScheme() === "light";
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
 
-  const textInputClassName = isLight
-    ? "text-quaternary_light bg-primary_light mx-5 my-3 p-3 rounded-md shadow-lg shadow-black"
-    : "text-quaternary_dark bg-primary_dark mx-5 my-3 p-3 rounded-md shadow-lg shadow-white";
-
   return (
-    <View
-      className={
-        isLight
-          ? "flex-1 bg-secondary_light justify-center"
-          : "flex-1 bg-secondary_dark justify-center"
-      }
-    >
+    <View className={LocalStyle.getViewStyle()}>
       <TextInput
-        className={textInputClassName}
+        className={LocalStyle.getTextInputStyle()}
         keyboardType="email-address"
         onChangeText={(text) => {
           setEmail(text);
         }}
         value={email}
         placeholder="Email"
-        placeholderTextColor={
-          isLight ? colors.quaternary_light : colors.quaternary_dark
-        }
+        placeholderTextColor={selectStyle([
+          colors.quaternary_light,
+          colors.quaternary_dark,
+        ])}
       />
       <TextInput
-        className={textInputClassName}
+        className={LocalStyle.getTextInputStyle()}
         secureTextEntry={true}
         onChangeText={(text) => {
           setPassword(text);
         }}
         value={password}
         placeholder="Password"
-        placeholderTextColor={
-          isLight ? colors.quaternary_light : colors.quaternary_dark
-        }
+        placeholderTextColor={selectStyle([
+          colors.quaternary_light,
+          colors.quaternary_dark,
+        ])}
       />
       <Button
         text="Sign-Up"
-        buttonClassName={
-          isLight
-            ? "bg-primary_light p-3 mx-5 my-3 rounded-md shadow-lg shadow-black"
-            : "bg-primary_dark p-3 mx-5 my-3 rounded-md shadow-lg shadow-white"
-        }
-        textClassName={
-          isLight
-            ? "text-quaternary_light text-lg font-bold text-center"
-            : "text-quaternary_dark text-lg font-bold text-center"
-        }
+        buttonClassName={LocalStyle.getButtonStyle()}
+        textClassName={LocalStyle.getButtonTextStyle()}
         onPress={() => {
           signUp(email, password, navigation);
           setEmail("");
