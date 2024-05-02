@@ -5,14 +5,14 @@ import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
 import { MovieCard } from "../../components/MovieCard";
 import { joinClassNames } from "../../utils/styleExtras";
 
-let page = 1;
-let isLoading = false;
+let page: number = 1;
+let isLoading: boolean = false;
 
 class LocalStyle {
   public static getViewStyle(): string {
-    const commonStyle = "flex-1";
-    const lightStyle = "bg-secondary_light";
-    const darkStyle = "bg-secondary_dark";
+    const commonStyle: string = "flex-1";
+    const lightStyle: string = "bg-secondary_light";
+    const darkStyle: string = "bg-secondary_dark";
 
     return joinClassNames(commonStyle, [lightStyle, darkStyle]);
   }
@@ -25,7 +25,7 @@ const fetchFiveMovies = (
 
   isLoading = true;
   getAllMoviesApi().then((movies: Movie[]) => {
-    const newMovies = movies.slice((page - 1) * 5, page * 5);
+    const newMovies: Movie[] = movies.slice((page - 1) * 5, page * 5);
     if (newMovies.length == 0) {
       page = 1;
       isLoading = false;
