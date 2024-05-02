@@ -3,10 +3,20 @@ import { View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
 import { MovieCard } from "../../components/MovieCard";
-import { selectStyle } from "../../utils/styleExtras";
+import { joinClassNames } from "../../utils/styleExtras";
 
 let page = 1;
 let isLoading = false;
+
+class LocalStyle {
+  public static getViewStyle(): string {
+    const commonStyle = "flex-1";
+    const lightStyle = "bg-secondary_light";
+    const darkStyle = "bg-secondary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+}
 
 const fetchFiveMovies = (
   setMovies: React.Dispatch<React.SetStateAction<Movie[]>>
@@ -33,12 +43,7 @@ const MovieListScreen = () => {
   fetchFiveMovies(setMovies);
 
   return (
-    <View
-      className={selectStyle<string>([
-        "flex-1 bg-secondary_light",
-        "flex-1 bg-secondary_dark",
-      ])}
-    >
+    <View className={LocalStyle.getViewStyle()}>
       <FlatList
         data={movies}
         renderItem={({ item }) => <MovieCard movie={item} />}
