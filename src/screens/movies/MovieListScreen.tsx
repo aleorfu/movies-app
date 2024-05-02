@@ -42,11 +42,22 @@ const MovieListScreen = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   fetchFiveMovies(setMovies);
 
+  const [refresh, setRefresh] = useState<boolean>(true);
+
+  const refreshData = (): void => {
+    setRefresh(!refresh);
+    setMovies([]);
+    page = 0;
+    fetchFiveMovies(setMovies);
+  };
+
   return (
     <View className={LocalStyle.getViewStyle()}>
       <FlatList
         data={movies}
-        renderItem={({ item }) => <MovieCard movie={item} />}
+        renderItem={({ item }) => (
+          <MovieCard movie={item} refreshData={refreshData} />
+        )}
         keyExtractor={(_, index) => index.toString()}
         onEndReached={() => fetchFiveMovies(setMovies)}
         removeClippedSubviews={true}
