@@ -70,4 +70,25 @@ const rateMovie = async (id: string, rating: Rating): Promise<void> => {
   await putPetition(`/movies/${id}/rate`, JSON.stringify(rating), config);
 };
 
-export { getMovieByIdApi, getAllMoviesApi, rateMovie, Movie, Rating };
+const likeMovie = async (id: string, userId: string): Promise<void> => {
+  const config: AxiosRequestConfig = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const data: { userId: string } = {
+    userId: userId,
+  };
+
+  await putPetition(`/movies/${id}/like`, JSON.stringify(data), config);
+};
+
+export {
+  getMovieByIdApi,
+  getAllMoviesApi,
+  rateMovie,
+  likeMovie,
+  Movie,
+  Rating,
+};

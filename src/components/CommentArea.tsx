@@ -68,7 +68,7 @@ const CommentArea = ({
   return (
     <View>
       <Text className={LocalStyle.getTitleStyle()}>
-        Comments ({movie.ratings?.length})
+        Comments ({movie.ratings?.length ?? "0"})
       </Text>
       {movie.ratings?.map((rating: Rating, index: number) => (
         <CommentCard
