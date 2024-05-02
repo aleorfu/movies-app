@@ -35,12 +35,17 @@ const MovieDetailsScreen = (): React.JSX.Element => {
     movieId: string;
   };
   const [movie, setMovie] = useState<Movie>();
+  const [refresh, setRefresh] = useState<boolean>(true);
 
   useEffect(() => {
     getMovieByIdApi(movieId).then((movie) => {
       setMovie(movie);
     });
-  }, [setMovie, movieId]);
+  }, [refresh, movieId]);
+
+  const refreshData = (): void => {
+    setRefresh(!refresh);
+  };
 
   return (
     <ScrollView className={LocalStyle.getScrollViewStyle()}>
@@ -62,7 +67,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
               `Valoración: ${movie.rating}/5`,
             ]}
           />
-          <CommentArea movie={movie} />
+          <CommentArea movie={movie} refresh={refreshData} />
         </Fragment>
       )}
     </ScrollView>

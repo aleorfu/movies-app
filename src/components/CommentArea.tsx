@@ -9,6 +9,7 @@ import auth from "@react-native-firebase/auth";
 
 type CommentAreaProps = {
   movie: Movie;
+  refresh: () => void;
 };
 
 type TextUseState = [string, React.Dispatch<React.SetStateAction<string>>];
@@ -57,7 +58,10 @@ const sendComment = async (
   }
 };
 
-const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
+const CommentArea = ({
+  movie,
+  refresh,
+}: CommentAreaProps): React.JSX.Element => {
   const [ratingText, setRatingText]: TextUseState = useState<string>("");
   const [contentText, setContentText]: TextUseState = useState<string>("");
 
@@ -82,7 +86,12 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
         buttonClassName={LocalStyle.getButtonStyle()}
         textClassName={LocalStyle.getTextStyle()}
         onPress={() => {
-          sendComment(movie.id, contentText, ratingText);
+          const movieId = movie.id;
+          sendComment(movieId, contentText, ratingText).then(() => {
+            refresh();
+          });
+          setRatingText("");
+          setContentText("");
         }}
       />
     </View>
