@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Text, View, useColorScheme } from "react-native";
+import { Text, View } from "react-native";
 import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { ProfileNavStackNavigation } from "../../navigations/ProfileNav";
@@ -79,7 +79,6 @@ const ProfileScreen = () => {
             textClassName={LocalStyle.getTextStyle()}
             onPress={() => {
               auth().signOut();
-              setUser(auth().currentUser);
             }}
           />
         </Fragment>

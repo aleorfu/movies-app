@@ -1,4 +1,4 @@
-import { View, Image, Text, ScrollView, useColorScheme } from "react-native";
+import { View, Image, Text, ScrollView } from "react-native";
 import {
   Movie,
   Rating,
@@ -11,43 +11,65 @@ import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../../components/Button";
 import { colors } from "../../styles/tailwindColors";
 import auth from "@react-native-firebase/auth";
+import { joinClassNames } from "../../utils/styleExtras";
 
-const ListCard = ({
-  title,
-  content,
-  isLight,
-}: {
-  title: string;
-  content: string[];
-  isLight: Boolean;
-}) => {
+class LocalStyle {
+  public static getCardStyle() {
+    const commonStyle = "m-5 rounded-lg shadow-lg";
+    const lightStyle = "bg-primary_light shadow-black";
+    const darkStyle = "bg-primary_dark shadow-white";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getTextStyle() {
+    const commonStyle = "text-xl font-extrabold text-center m-2.5";
+    const lightStyle = "text-quaternary_light";
+    const darkStyle = "text-quaternary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getContentStyle() {
+    const commonStyle = "m-5 text-xl text-center";
+    const lightStyle = "text-quaternary_light";
+    const darkStyle = "text-quaternary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getCommentStyle() {
+    const commonStyle = "shadow-lg mx-5 mt-5 p-2 rounded-lg";
+    const lightStyle = "bg-primary_light shadow-black";
+    const darkStyle = "bg-primary_dark shadow-white";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getScrollViewStyle() {
+    const commonStyle = "flex-1";
+    const lightStyle = "bg-secondary_light";
+    const darkStyle = "bg-secondary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getTitleStyle() {
+    const commonStyle = "text-3xl font-bold text-center m-2.5";
+    const lightStyle = "text-quaternary_light";
+    const darkStyle = "text-quaternary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+}
+
+const ListCard = ({ title, content }: { title: string; content: string[] }) => {
   return (
-    <View
-      className={
-        isLight
-          ? "bg-primary_light m-5 rounded-lg shadow-lg shadow-black"
-          : "bg-primary_dark m-5 rounded-lg shadow-lg shadow-white"
-      }
-    >
-      <Text
-        className={
-          isLight
-            ? "text-xl font-extrabold text-center m-2.5 text-quaternary_light"
-            : "text-xl font-extrabold text-center m-2.5 text-quaternary_dark"
-        }
-      >
-        {title}
-      </Text>
+    <View className={LocalStyle.getCardStyle()}>
+      <Text className={LocalStyle.getTextStyle()}>{title}</Text>
       <View>
         {content.map((item, index) => (
-          <Text
-            key={index}
-            className={
-              isLight
-                ? "text-quaternary_light m-5 text-xl text-center"
-                : "text-quaternary_dark m-5 text-xl text-center"
-            }
-          >
+          <Text key={index} className={LocalStyle.getContentStyle()}>
             {item}
           </Text>
         ))}
@@ -56,62 +78,18 @@ const ListCard = ({
   );
 };
 
-const TextCard = ({
-  title,
-  content,
-  isLight,
-}: {
-  title: string;
-  content: string;
-  isLight: Boolean;
-}) => {
+const TextCard = ({ title, content }: { title: string; content: string }) => {
   return (
-    <View
-      className={
-        isLight
-          ? "bg-primary_light m-5 rounded-lg shadow-lg shadow-black"
-          : "bg-primary_dark m-5 rounded-lg shadow-lg shadow-whtie"
-      }
-    >
-      <Text
-        className={
-          isLight
-            ? "text-xl font-extrabold text-center m-2.5 text-quaternary_light"
-            : "text-xl font-extrabold text-center m-2.5 text-quaternary_dark"
-        }
-      >
-        {title}
-      </Text>
-      <Text
-        className={
-          isLight
-            ? "text-quaternary_light m-5 text-xl text-center"
-            : "text-quaternary_dark m-5 text-xl text-center"
-        }
-      >
-        {content}
-      </Text>
+    <View className={LocalStyle.getCardStyle()}>
+      <Text className={LocalStyle.getTextStyle()}>{title}</Text>
+      <Text className={LocalStyle.getContentStyle()}>{content}</Text>
     </View>
   );
 };
 
-const Comment = ({
-  content,
-  rating,
-  isLight,
-}: {
-  content: string;
-  rating: number;
-  isLight: Boolean;
-}) => {
+const Comment = ({ content, rating }: { content: string; rating: number }) => {
   return (
-    <View
-      className={
-        isLight
-          ? "bg-primary_light shadow-lg shadow-black mx-5 mt-5 p-2 rounded-lg"
-          : "bg-primary_dark shadow-lg shadow-white mx-5 mt-5 p-2 rounded-lg"
-      }
-    >
+    <View className={LocalStyle.getCommentStyle()}>
       <Text>{rating}/5</Text>
       <Text>{content}</Text>
     </View>
@@ -131,17 +109,13 @@ const MovieDetailsScreen = () => {
   const [movie, setMovie] = useState<Movie>();
   const [ratingText, setRatingText] = useState("");
   const [contentText, setContentText] = useState("");
-  const isLight = useColorScheme() === "light";
+
   useEffect(() => {
     loadMovie(setMovie, movieId);
   }, [loadMovie, setMovie, movieId]);
 
   return (
-    <ScrollView
-      className={
-        isLight ? "flex-1 bg-secondary_light" : "flex-1 bg-secondary_dark"
-      }
-    >
+    <ScrollView className={LocalStyle.getScrollViewStyle()}>
       {movie && (
         <Fragment>
           <Image
@@ -149,37 +123,16 @@ const MovieDetailsScreen = () => {
             className="aspect-square"
             resizeMode="cover"
           />
-          <Text
-            className={
-              isLight
-                ? "text-quaternary_light text-3xl font-bold text-center m-2.5"
-                : "text-quaternary_dark text-3xl font-bold text-center m-2.5"
-            }
-          >
-            {movie.name}
-          </Text>
-          <TextCard
-            title={"Descripción"}
-            content={movie.description}
-            isLight={isLight}
-          />
-          <ListCard
-            title={"Actores"}
-            content={movie.actors}
-            isLight={isLight}
-          />
-          <ListCard
-            title={"Categoría"}
-            content={movie.categories}
-            isLight={isLight}
-          />
+          <Text className={LocalStyle.getTitleStyle()}>{movie.name}</Text>
+          <TextCard title={"Descripción"} content={movie.description} />
+          <ListCard title={"Actores"} content={movie.actors} />
+          <ListCard title={"Categoría"} content={movie.categories} />
           <ListCard
             title={"Otros datos"}
             content={[
               `Duración: ${movie.duration}`,
               `Valoración: ${movie.rating}/5`,
             ]}
-            isLight={isLight}
           />
           <View>
             {movie.ratings?.map((rating, index) => (
@@ -187,7 +140,6 @@ const MovieDetailsScreen = () => {
                 key={index}
                 content={rating.comment}
                 rating={rating.rating}
-                isLight={isLight}
               />
             ))}
             <TextInput

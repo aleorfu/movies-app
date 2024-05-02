@@ -1,8 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MainNav } from "./app/src/navigations/MainNav";
+import { MainNav } from "./src/navigations/MainNav";
 import { PermissionsAndroid } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { joinClassNames } from "./app/src/utils/styleExtras";
+import { joinClassNames } from "./src/utils/styleExtras";
 
 class LocalStyle {
   public static getSafeAreaView(): string {
