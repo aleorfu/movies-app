@@ -2,6 +2,8 @@ import { TextInput, View } from "react-native";
 import { joinClassNames, selectStyle } from "../utils/styleExtras";
 import { colors } from "../styles/tailwindColors";
 
+type TextUseState = [string, React.Dispatch<React.SetStateAction<string>>];
+
 type DoubleTextInputProps = {
   topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
   bottomTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
@@ -39,18 +41,28 @@ class LocalStyle {
   }
 }
 
+const verifyNumber = (text: string): string => {
+  const textAsNumber: number = Number(text);
+  if (textAsNumber >= 0 && textAsNumber <= 5) return text;
+  else if (textAsNumber < 0) return "0";
+  else if (textAsNumber > 5) return "5";
+  else return "";
+};
+
 const DoubleTextInput = ({
   topTextUseState,
   bottomTextUseState,
 }: DoubleTextInputProps) => {
-  const [topText, setTopText] = topTextUseState;
-  const [bottomText, setBottomText] = bottomTextUseState;
+  const [topText, setTopText]: TextUseState = topTextUseState;
+  const [bottomText, setBottomText]: TextUseState = bottomTextUseState;
 
   return (
     <View>
       <TextInput
         className={LocalStyle.getTopTextInputStyle()}
-        onChangeText={setTopText} // TODO could be an error
+        onChangeText={(text: string) => {
+          setTopText(verifyNumber(text));
+        }}
         value={topText}
         keyboardType="number-pad"
         maxLength={1}
@@ -62,7 +74,7 @@ const DoubleTextInput = ({
       />
       <TextInput
         className={LocalStyle.getBottomTextInputStyle()}
-        onChangeText={setBottomText} // TODO could be an error
+        onChangeText={setBottomText}
         value={bottomText}
         placeholder="Comment"
         placeholderTextColor={selectStyle([
