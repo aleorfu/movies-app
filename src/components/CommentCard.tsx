@@ -7,10 +7,18 @@ type CommentCardProps = {
 };
 
 class LocalStyle {
-  public static getCommentStyle() {
+  public static getCommentStyle(): string {
     const commonStyle = "shadow-lg mx-5 mt-5 p-2 rounded-lg";
     const lightStyle = "bg-primary_light shadow-black";
     const darkStyle = "bg-primary_dark shadow-white";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getTextStyle(): string {
+    const commonStyle = "";
+    const lightStyle = "text-quaternary_light";
+    const darkStyle = "text-quaternary_dark";
 
     return joinClassNames(commonStyle, [lightStyle, darkStyle]);
   }
@@ -22,8 +30,8 @@ const CommentCard = ({
 }: CommentCardProps): React.JSX.Element => {
   return (
     <View className={LocalStyle.getCommentStyle()}>
-      <Text>{rating}/5</Text>
-      <Text>{content}</Text>
+      <Text className={LocalStyle.getTextStyle()}>{rating}/5</Text>
+      <Text className={LocalStyle.getTextStyle()}>{content}</Text>
     </View>
   );
 };

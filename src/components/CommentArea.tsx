@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { CommentCard } from "./CommentCard";
 import { DoubleTextInput } from "./DoubleTextInput";
 import { Button } from "./Button";
@@ -13,15 +13,23 @@ type CommentAreaProps = {
 
 class LocalStyle {
   public static getButtonStyle(): string {
-    const commonStyle = "mx-10 mb-5 p-2 rounded-lg";
-    const lightStyle = "bg-primary_light";
-    const darkStyle = "bg-primary_dark";
+    const commonStyle = "mx-10 mb-5 p-2 rounded-lg shadow-lg";
+    const lightStyle = "bg-primary_light shadow-black";
+    const darkStyle = "bg-primary_dark shadow-white";
 
     return joinClassNames(commonStyle, [lightStyle, darkStyle]);
   }
 
   public static getTextStyle(): string {
     const commonStyle = "text-center";
+    const lightStyle = "text-quaternary_light";
+    const darkStyle = "text-quaternary_dark";
+
+    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getTitleStyle() {
+    const commonStyle = "text-3xl font-bold text-center m-2.5";
     const lightStyle = "text-quaternary_light";
     const darkStyle = "text-quaternary_dark";
 
@@ -35,6 +43,9 @@ const CommentArea = ({ movie }: CommentAreaProps) => {
 
   return (
     <View>
+      <Text className={LocalStyle.getTitleStyle()}>
+        Comments ({movie.ratings?.length})
+      </Text>
       {movie.ratings?.map((rating, index) => (
         <CommentCard
           key={index}
@@ -53,7 +64,7 @@ const CommentArea = ({ movie }: CommentAreaProps) => {
         onPress={async () => {
           const user = auth().currentUser;
           if (user === null) {
-            console.log("mami");
+            Alert.alert("Not signed-in", "You must sign-in to comment");
           } else {
             const rating: Rating = {
               userId: user.uid,

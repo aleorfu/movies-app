@@ -12,7 +12,7 @@ class LocalStyle {
     "text-quaternary_light bg-primary_light shadow-black";
   private static textInputDarkStyle: string =
     "text-quaternary_dark bg-primary_dark shadow-white";
-  private static textInputCommonStyle: string = "mx-5 p-2 text-10";
+  private static textInputCommonStyle: string = "mx-5 p-2 text-10 shadow-lg";
 
   public static getTopTextInputStyle(): string {
     const commonStyle: string = [

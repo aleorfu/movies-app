@@ -36,7 +36,7 @@ class LocalStyle {
   }
 
   public static getButtonTextStyle(): string {
-    const commonStyle: string = "text-md font-bold";
+    const commonStyle: string = "text-md font-bold text-center";
     const lightStyle: string = "text-quaternary_light";
     const darkStyle: string = "text-quaternary_dark";
 
@@ -114,12 +114,12 @@ const SignInScreen = () => {
           });
         }}
         buttonClassName={LocalStyle.getButtonStyle()}
-        textClassName={LocalStyle.getButtonStyle()}
+        textClassName={LocalStyle.getButtonTextStyle()}
       />
       <Button
         text="I forgot the password"
         buttonClassName="mx-5 my-3"
-        textClassName={LocalStyle.getButtonStyle()}
+        textClassName={LocalStyle.getButtonTextStyle()}
         onPress={() => {
           recoverPassword(email);
           setEmail("");
