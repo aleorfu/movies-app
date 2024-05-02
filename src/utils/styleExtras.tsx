@@ -12,8 +12,10 @@ type ThemedClassNames = [string, string];
  */
 type ThemedStyles<T extends StyleProp<any> | string> = [T, T];
 
-const isLight = (): boolean => {
-  return useColorScheme() === "light";
+let isLight: boolean = true;
+
+const setIsLight = (state: boolean): void => {
+  isLight = state;
 };
 
 const joinClassNames = (
@@ -22,14 +24,20 @@ const joinClassNames = (
 ): string => {
   return [
     commonStyle,
-    isLight() ? themedClassNames[0] : themedClassNames[1],
+    isLight ? themedClassNames[0] : themedClassNames[1],
   ].join(" ");
 };
 
 const selectStyle = <T extends StyleProp<any> | string>(
   themedStyles: ThemedStyles<T>
 ): T => {
-  return isLight() ? themedStyles[0] : themedStyles[1];
+  return isLight ? themedStyles[0] : themedStyles[1];
 };
 
-export { joinClassNames, selectStyle, ThemedClassNames, ThemedStyles };
+export {
+  setIsLight,
+  joinClassNames,
+  selectStyle,
+  ThemedClassNames,
+  ThemedStyles,
+};

@@ -1,8 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MainNav } from "./src/navigations/MainNav";
-import { PermissionsAndroid } from "react-native";
+import { PermissionsAndroid, useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { joinClassNames } from "./src/utils/styleExtras";
+import { joinClassNames, setIsLight } from "./src/utils/styleExtras";
 
 class LocalStyle {
   public static getSafeAreaView(): string {
@@ -22,6 +22,7 @@ const requestPermissions = async () => {
 
 const App = () => {
   requestPermissions();
+  setIsLight(useColorScheme() === "light");
 
   return (
     <SafeAreaView className={LocalStyle.getSafeAreaView()}>
