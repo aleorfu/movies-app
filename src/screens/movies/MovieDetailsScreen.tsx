@@ -8,20 +8,25 @@ import { TextCard } from "../../components/TextCard";
 import { CommentArea } from "../../components/CommentArea";
 
 class LocalStyle {
-  public static getScrollViewStyle() {
-    const commonStyle = "flex-1";
-    const lightStyle = "bg-secondary_light";
-    const darkStyle = "bg-secondary_dark";
+  public static getScrollViewStyle(): string {
+    const commonStyle: string = "flex-1";
+    const lightStyle: string = "bg-secondary_light";
+    const darkStyle: string = "bg-secondary_dark";
 
     return joinClassNames(commonStyle, [lightStyle, darkStyle]);
   }
 
-  public static getTitleStyle() {
-    const commonStyle = "text-3xl font-bold text-center m-2.5";
-    const lightStyle = "text-quaternary_light";
-    const darkStyle = "text-quaternary_dark";
+  public static getTitleStyle(): string {
+    const commonStyle: string = "text-3xl font-bold text-center m-2.5";
+    const lightStyle: string = "text-quaternary_light";
+    const darkStyle: string = "text-quaternary_dark";
 
     return joinClassNames(commonStyle, [lightStyle, darkStyle]);
+  }
+
+  public static getImageStyle(): string {
+    const commonStyle: string = "aspect-square";
+    return commonStyle;
   }
 }
 
@@ -43,7 +48,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
         <Fragment>
           <Image
             source={{ uri: movie.pictureUrl }}
-            className="aspect-square"
+            className={LocalStyle.getImageStyle()}
             resizeMode="cover"
           />
           <Text className={LocalStyle.getTitleStyle()}>{movie.name}</Text>
