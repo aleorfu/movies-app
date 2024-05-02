@@ -2,8 +2,6 @@ import { TextInput, View } from "react-native";
 import { joinClassNames, selectStyle } from "../utils/styleExtras";
 import { colors } from "../styles/tailwindColors";
 
-type TextUseState = [string, React.Dispatch<React.SetStateAction<string>>];
-
 type DoubleTextInputProps = {
   topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
   bottomTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
@@ -53,8 +51,8 @@ const DoubleTextInput = ({
   topTextUseState,
   bottomTextUseState,
 }: DoubleTextInputProps): React.JSX.Element => {
-  const [topText, setTopText]: TextUseState = topTextUseState;
-  const [bottomText, setBottomText]: TextUseState = bottomTextUseState;
+  const [topText, setTopText] = topTextUseState;
+  const [bottomText, setBottomText] = bottomTextUseState;
 
   return (
     <View>
