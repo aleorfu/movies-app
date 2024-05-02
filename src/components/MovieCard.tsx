@@ -32,8 +32,9 @@ class LocalStyle {
 }
 
 const MovieCard = ({ movie }: MovieCardProps) => {
-  const movieId = movie.id;
-  const navigation = useNavigation() as MoviesNavStackNavigation;
+  const movieId: string = movie.id;
+  const navigation: MoviesNavStackNavigation =
+    useNavigation() as MoviesNavStackNavigation;
 
   return (
     <View className={LocalStyle.getCardStyle()}>
