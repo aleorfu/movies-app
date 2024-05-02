@@ -1,4 +1,3 @@
-import { View } from "react-native";
 import { joinClassNames } from "../../../utils/styleExtras";
 import { Button } from "../../../components/Button";
 import { ProfileNavStackNavigation } from "../../../navigations/ProfileNav";
