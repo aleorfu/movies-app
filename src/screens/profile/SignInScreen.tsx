@@ -1,4 +1,4 @@
-import { Alert, View, useColorScheme } from "react-native";
+import { Alert, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../../components/Button";
 import auth from "@react-native-firebase/auth";
@@ -71,10 +71,11 @@ const recoverPassword = (email: string): void => {
     });
 };
 
-const SignInScreen = () => {
+const SignInScreen = (): React.JSX.Element => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigation = useNavigation() as ProfileNavStackNavigation;
+  const navigation: ProfileNavStackNavigation =
+    useNavigation() as ProfileNavStackNavigation;
 
   return (
     <View className={LocalStyle.getViewStyle()}>
