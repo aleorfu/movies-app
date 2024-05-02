@@ -7,7 +7,6 @@ import { SignUpScreen } from "../screens/profile/SignUpScreen";
 import { ProfileScreen } from "../screens/profile/ProfileScreen";
 import { colors } from "../styles/tailwindColors";
 import { Image, ImageStyle, TextStyle, ViewStyle } from "react-native";
-import { images } from "../constants/images";
 import { NavigationProp } from "@react-navigation/native";
 import { selectStyle } from "../utils/styleExtras";
 
@@ -46,7 +45,7 @@ const getOptions = (title: string): StackNavigationOptions => {
           { tintColor: colors.quaternary_dark },
         ])}
         className="w-6 h-6"
-        source={images.back_icon}
+        source={require("../assets/img/back-icon.png")}
       />
     ),
   };

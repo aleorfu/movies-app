@@ -4,7 +4,6 @@ import {
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from "../screens/HomeScreen";
-import { images } from "../constants/images";
 import { ProfileNav } from "./ProfileNav";
 import { MoviesNav } from "./MoviesNav";
 import { Image, ImageStyle, TextStyle, ViewStyle } from "react-native";
@@ -73,17 +72,25 @@ const MainNav = (): React.JSX.Element => {
         <Tab.Screen
           name="HomeTab"
           component={HomeScreen}
-          options={getOptions("Home", images.home_icon)}
+          options={getOptions("Home", require("../assets/img/home-icon.png"))}
         />
         <Tab.Screen
           name="MoviesTab"
           component={MoviesNav}
-          options={getOptions("Movies", images.list_icon, false)}
+          options={getOptions(
+            "Movies",
+            require("../assets/img/list-icon.png"),
+            false
+          )}
         />
         <Tab.Screen
           name="ProfileTab"
           component={ProfileNav}
-          options={getOptions("Profile", images.profile_icon, false)}
+          options={getOptions(
+            "Profile",
+            require("../assets/img/profile-icon.png"),
+            false
+          )}
         />
       </Tab.Navigator>
     </NavigationContainer>
