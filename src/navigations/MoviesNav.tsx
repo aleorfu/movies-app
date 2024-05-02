@@ -46,7 +46,7 @@ const getOptions = (title: string): StackNavigationOptions => {
   };
 };
 
-const MoviesNav = () => {
+const MoviesNav = (): React.JSX.Element => {
   return (
     <Stack.Navigator>
       <Stack.Screen
