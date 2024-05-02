@@ -42,7 +42,8 @@ class LocalStyle {
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);
-  const navigation = useNavigation() as ProfileNavStackNavigation;
+  const navigation: ProfileNavStackNavigation =
+    useNavigation() as ProfileNavStackNavigation;
   auth().onAuthStateChanged((currentUser) => {
     setUser(currentUser);
   });
