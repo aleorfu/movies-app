@@ -11,6 +11,8 @@ type CommentAreaProps = {
   movie: Movie;
 };
 
+type TextUseState = [string, React.Dispatch<React.SetStateAction<string>>];
+
 class LocalStyle {
   public static getButtonStyle(): string {
     const commonStyle: string = "mx-10 mb-5 p-2 rounded-lg shadow-lg";
@@ -56,8 +58,8 @@ const sendComment = async (
 };
 
 const CommentArea = ({ movie }: CommentAreaProps) => {
-  const [ratingText, setRatingText] = useState<string>("");
-  const [contentText, setContentText] = useState<string>("");
+  const [ratingText, setRatingText]: TextUseState = useState<string>("");
+  const [contentText, setContentText]: TextUseState = useState<string>("");
 
   return (
     <View>
