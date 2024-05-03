@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { Button } from "../components/Button";
 import messaging from "@react-native-firebase/messaging";
 import { getSubscribed, saveSubscribed } from "../localstorage/asyncStorage";
@@ -16,19 +16,38 @@ const styles = {
 const toggleSubscribed = (
   setSubscribed: React.Dispatch<React.SetStateAction<boolean>>
 ): void => {
-  getSubscribed().then((value: boolean) => {
-    const newValue = !value;
-    saveSubscribed(newValue).then(() => {
-      setSubscribed(newValue);
-      if (newValue) {
-        messaging().subscribeToTopic("alten_cantera_2024");
-        console.log('Subscribed to "alten_cantera_2024"');
-      } else {
-        messaging().unsubscribeFromTopic("alten_cantera_2024");
-        console.log('Unsubscribed from "alten_cantera_2024"');
-      }
+  const alertTitle = "Couldn't subscribe or unsubscribe";
+  const alertMessage =
+    "There has been an error while subscribing or unsubscribing, try again later.";
+  getSubscribed()
+    .then((oldValue: boolean) => {
+      const newValue = !oldValue;
+      saveSubscribed(newValue)
+        .then(() => {
+          setSubscribed(newValue);
+          if (newValue) {
+            messaging()
+              .subscribeToTopic("alten_cantera_2024")
+              .catch(() => {
+                setSubscribed(oldValue);
+                Alert.alert(alertTitle, alertMessage);
+              });
+          } else {
+            messaging()
+              .unsubscribeFromTopic("alten_cantera_2024")
+              .catch(() => {
+                setSubscribed(oldValue);
+                Alert.alert(alertTitle, alertMessage);
+              });
+          }
+        })
+        .catch(() => {
+          Alert.alert(alertTitle, alertMessage);
+        });
+    })
+    .catch(() => {
+      Alert.alert(alertTitle, alertMessage);
     });
-  });
 };
 
 const HomeScreen = (): React.JSX.Element => {
