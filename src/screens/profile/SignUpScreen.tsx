@@ -5,43 +5,18 @@ import { useState } from "react";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../styles/tailwindColors";
-import { joinClassNames, selectStyle } from "../../utils/styleExtras";
+import { useColorScheme } from "nativewind";
 
-class LocalStyle {
-  public static getTextInputStyle(): string {
-    const commonStyle: string = "mx-5 my-3 p-3 rounded-md shadow-lg";
-    const lightStyle: string =
-      "text-quaternary_light bg-primary_light shadow-black";
-    const darkStyle: string =
-      "text-quaternary_dark bg-primary_dark shadow-white";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getViewStyle(): string {
-    const commonStyle: string = "flex-1 justify-center";
-    const lightStyle: string = "bg-secondary_light";
-    const darkStyle: string = "bg-secondary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getButtonStyle(): string {
-    const commonStyle: string = "p-3 mx-5 my-3 rounded-md shadow-lg";
-    const lightStyle: string = "bg-primary_light shadow-black";
-    const darkStyle: string = "bg-primary_dark shadow-white";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getButtonTextStyle(): string {
-    const commonStyle: string = "text-md font-bold text-center";
-    const lightStyle: string = "text-quaternary_light";
-    const darkStyle: string = "text-quaternary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-}
+const styles = {
+  textInput:
+    "mx-5 my-3 p-3 rounded-md shadow-lg text-quaternary_light bg-primary_light shadow-black dark:text-quaternary_dark dark:bg-primary_dark dark:shadow-white",
+  view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
+  button: {
+    button:
+      "p-3 mx-5 my-3 rounded-md shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
+    text: "text-md font-bold text-center text-quaternary_light dark:text-quaternary_dark",
+  },
+};
 
 const signUp = (email: string, password: string, navigation: any) => {
   if (email != "" && password != "") {
@@ -69,40 +44,40 @@ const signUp = (email: string, password: string, navigation: any) => {
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
+  const isLight: boolean = colorScheme === "light";
 
   return (
-    <View className={LocalStyle.getViewStyle()}>
+    <View className={styles.view}>
       <TextInput
-        className={LocalStyle.getTextInputStyle()}
+        className={styles.textInput}
         keyboardType="email-address"
         onChangeText={(text) => {
           setEmail(text);
         }}
         value={email}
         placeholder="Email"
-        placeholderTextColor={selectStyle([
-          colors.quaternary_light,
-          colors.quaternary_dark,
-        ])}
+        placeholderTextColor={
+          isLight ? colors.quaternary_light : colors.quaternary_dark
+        }
       />
       <TextInput
-        className={LocalStyle.getTextInputStyle()}
+        className={styles.textInput}
         secureTextEntry={true}
         onChangeText={(text) => {
           setPassword(text);
         }}
         value={password}
         placeholder="Password"
-        placeholderTextColor={selectStyle([
-          colors.quaternary_light,
-          colors.quaternary_dark,
-        ])}
+        placeholderTextColor={
+          isLight ? colors.quaternary_light : colors.quaternary_dark
+        }
       />
       <Button
         text="Sign-Up"
-        buttonClassName={LocalStyle.getButtonStyle()}
-        textClassName={LocalStyle.getButtonTextStyle()}
+        buttonClassName={styles.button.button}
+        textClassName={styles.button.text}
         onPress={() => {
           signUp(email, password, navigation);
           setEmail("");

@@ -1,43 +1,20 @@
 import { TextInput, View } from "react-native";
-import { joinClassNames, selectStyle } from "../utils/styleExtras";
 import { colors } from "../styles/tailwindColors";
+import { useColorScheme } from "nativewind";
 
 type DoubleTextInputProps = {
   topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
   bottomTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
 };
 
-class LocalStyle {
-  private static textInputLightStyle: string =
-    "text-quaternary_light bg-primary_light shadow-black";
-  private static textInputDarkStyle: string =
-    "text-quaternary_dark bg-primary_dark shadow-white";
-  private static textInputCommonStyle: string = "mx-5 p-2 text-10 shadow-lg";
-
-  public static getTopTextInputStyle(): string {
-    const commonStyle: string = [
-      this.textInputCommonStyle,
-      "mt-5 rounded-t-lg",
-    ].join(" ");
-
-    return joinClassNames(commonStyle, [
-      this.textInputLightStyle,
-      this.textInputDarkStyle,
-    ]);
-  }
-
-  public static getBottomTextInputStyle(): string {
-    const commonStyle: string = [
-      this.textInputCommonStyle,
-      "mb-5 rounded-b-lg",
-    ].join(" ");
-
-    return joinClassNames(commonStyle, [
-      this.textInputLightStyle,
-      this.textInputDarkStyle,
-    ]);
-  }
-}
+const style = {
+  textInput: {
+    common:
+      "mx-5 p-2 text-10 shadow-lg text-quaternary_light bg-primary_light shadow-black dark:text-quaternary_dark dark:bg-primary_dark dark:shadow-white",
+    top: "mt-5 rounded-t-lg",
+    bottom: "mb-5 rounded-b-lg",
+  },
+};
 
 const verifyNumber = (text: string): string => {
   const textAsNumber: number = Number(text);
@@ -53,11 +30,12 @@ const DoubleTextInput = ({
 }: DoubleTextInputProps): React.JSX.Element => {
   const [topText, setTopText] = topTextUseState;
   const [bottomText, setBottomText] = bottomTextUseState;
+  const { colorScheme } = useColorScheme();
 
   return (
     <View>
       <TextInput
-        className={LocalStyle.getTopTextInputStyle()}
+        className={[style.textInput.common, style.textInput.top].join(" ")}
         onChangeText={(text: string) => {
           setTopText(verifyNumber(text));
         }}
@@ -65,20 +43,22 @@ const DoubleTextInput = ({
         keyboardType="number-pad"
         maxLength={1}
         placeholder="0"
-        placeholderTextColor={selectStyle([
-          colors.quaternary_light,
-          colors.quaternary_dark,
-        ])}
+        placeholderTextColor={
+          colorScheme === "light"
+            ? colors.quaternary_light
+            : colors.quaternary_dark
+        }
       />
       <TextInput
-        className={LocalStyle.getBottomTextInputStyle()}
+        className={[style.textInput.common, style.textInput.bottom].join(" ")}
         onChangeText={setBottomText}
         value={bottomText}
         placeholder="Comment"
-        placeholderTextColor={selectStyle([
-          colors.quaternary_light,
-          colors.quaternary_dark,
-        ])}
+        placeholderTextColor={
+          colorScheme === "light"
+            ? colors.quaternary_light
+            : colors.quaternary_dark
+        }
       />
     </View>
   );

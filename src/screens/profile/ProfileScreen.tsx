@@ -1,19 +1,12 @@
 import { useState } from "react";
 import { View } from "react-native";
 import auth from "@react-native-firebase/auth";
-import { joinClassNames } from "../../utils/styleExtras";
-import { ProfileSignedIn } from "./main/ProfileSignedIn";
 import { ProfileSignedOut } from "./main/ProfileSignedOut";
+import { ProfileSignedIn } from "./main/ProfileSignedIn";
 
-class LocalStyle {
-  public static getViewStyle(): string {
-    const commonStyle: string = "flex-1 justify-center";
-    const lightStyle: string = "bg-secondary_light";
-    const darkStyle: string = "bg-secondary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-}
+const style = {
+  view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
+};
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);
@@ -22,8 +15,8 @@ const ProfileScreen = () => {
   });
 
   return (
-    <View className={LocalStyle.getViewStyle()}>
-      {!user ? <ProfileSignedIn /> : <ProfileSignedOut />}
+    <View className={style.view}>
+      {!user ? <ProfileSignedOut /> : <ProfileSignedIn />}
     </View>
   );
 };

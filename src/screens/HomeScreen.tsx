@@ -3,33 +3,15 @@ import { Button } from "../components/Button";
 import messaging from "@react-native-firebase/messaging";
 import { getSubscribed, saveSubscribed } from "../localstorage/asyncStorage";
 import { useEffect, useState } from "react";
-import { joinClassNames } from "../utils/styleExtras";
 
-class LocalStyle {
-  public static getViewStyle(): string {
-    const commonStyle: string = "flex-1 justify-center";
-    const lightStyle: string = "bg-secondary_light";
-    const darkStyle: string = "bg-secondary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getButtonStyle(): string {
-    const commonStyle: string = "mx-8 rounded-md p-3 my-2 shadow-lg";
-    const lightStyle: string = "bg-primary_light shadow-black";
-    const darkStyle: string = "bg-primary_dark shadow-white";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getButtonTextStyle(): string {
-    const commonStyle = "text-lg font-bold text-center";
-    const lightStyle = "text-quaternary_light";
-    const darkStyle = "text-quaternary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-}
+const styles = {
+  view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
+  button: {
+    button:
+      "mx-8 rounded-md p-3 my-2 shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
+    text: "text-lg font-bold text-center text-quaternary_light dark:text-quaternary_dark",
+  },
+};
 
 const toggleSubscribed = (
   setSubscribed: React.Dispatch<React.SetStateAction<boolean>>
@@ -59,11 +41,11 @@ const HomeScreen = (): React.JSX.Element => {
   }, [setSubscribed, getSubscribed]);
 
   return (
-    <View className={LocalStyle.getViewStyle()}>
+    <View className={styles.view}>
       <Button
         text={isSubscribed ? "Unsubscribe" : "Subscribe"}
-        buttonClassName={LocalStyle.getButtonStyle()}
-        textClassName={LocalStyle.getButtonTextStyle()}
+        buttonClassName={styles.button.button}
+        textClassName={styles.button.text}
         onPress={() => {
           toggleSubscribed(setSubscribed);
         }}

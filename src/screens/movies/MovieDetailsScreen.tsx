@@ -6,60 +6,24 @@ import {
 } from "../../services/altenHybridApi";
 import { Fragment, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import { joinClassNames } from "../../utils/styleExtras";
 import { ListCard } from "../../components/ListCard";
 import { TextCard } from "../../components/TextCard";
 import { CommentArea } from "../../components/CommentArea";
 import { Button } from "../../components/Button";
 import auth from "@react-native-firebase/auth";
-import { colors } from "../../styles/tailwindColors";
 
-class LocalStyle {
-  public static getScrollViewStyle(): string {
-    const commonStyle: string = "flex-1";
-    const lightStyle: string = "bg-secondary_light";
-    const darkStyle: string = "bg-secondary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getTitleStyle(): string {
-    const commonStyle: string = "text-3xl font-bold text-center m-2.5";
-    const lightStyle: string = "text-quaternary_light";
-    const darkStyle: string = "text-quaternary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getImageStyle(): string {
-    const commonStyle: string = "aspect-square";
-
-    return commonStyle;
-  }
-
-  public static getButtonStyle(): string {
-    const commonStyle: string =
-      "ml-auto mr-5 shadow-lg rounded-lg p-2 flex-row";
-    const lightStyle: string = "bg-primary_light shadow-black";
-    const darkStyle: string = "bg-primary_dark shadow-white";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getButtonImageStyle(): string {
-    const commonStyle: string = "w-5 h-5 mr-2";
-
-    return commonStyle;
-  }
-
-  public static getButtonTextStyle(): string {
-    const commonStyle: string = "";
-    const lightStyle: string = "text-quaternary_light";
-    const darkStyle: string = "text-quaternary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-}
+const style = {
+  scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
+  title:
+    "text-3xl font-bold text-center m-2.5 text-quaternary_light dark:text-quaternary_dark",
+  image: "aspect-square",
+  button: {
+    button:
+      "ml-auto mr-5 shadow-lg rounded-lg p-2 flex-row bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
+    image: "w-5 h-5 mr-2",
+    text: "text-quaternary_light dark:text-quaternary_dark",
+  },
+};
 
 const MovieDetailsScreen = (): React.JSX.Element => {
   const { movieId } = useRoute().params as {
@@ -80,15 +44,15 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   };
 
   return (
-    <ScrollView className={LocalStyle.getScrollViewStyle()}>
+    <ScrollView className={style.scrollView}>
       {movie && (
         <Fragment>
           <Image
             source={{ uri: movie.pictureUrl }}
-            className={LocalStyle.getImageStyle()}
+            className={style.image}
             resizeMode="cover"
           />
-          <Text className={LocalStyle.getTitleStyle()}>{movie.name}</Text>
+          <Text className={style.title}>{movie.name}</Text>
           {user && (
             <Button
               text={movie.userLiked.includes(user.uid) ? "Liked" : "Like"}
@@ -97,9 +61,9 @@ const MovieDetailsScreen = (): React.JSX.Element => {
                   ? require("../../assets/img/like-filled-icon.png")
                   : require("../../assets/img/like-icon.png")
               }
-              buttonClassName={LocalStyle.getButtonStyle()}
-              imageClassName={LocalStyle.getButtonImageStyle()}
-              textClassName={LocalStyle.getButtonTextStyle()}
+              buttonClassName={style.button.button}
+              imageClassName={style.button.image}
+              textClassName={style.button.text}
               onPress={() => {
                 likeMovie(movie.id, user.uid).then(() => {
                   refreshData();

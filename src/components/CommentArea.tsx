@@ -4,7 +4,6 @@ import { DoubleTextInput } from "./DoubleTextInput";
 import { Button } from "./Button";
 import { Movie, Rating, rateMovie } from "../services/altenHybridApi";
 import { useState } from "react";
-import { joinClassNames } from "../utils/styleExtras";
 import auth from "@react-native-firebase/auth";
 
 type CommentAreaProps = {
@@ -14,31 +13,15 @@ type CommentAreaProps = {
 
 type TextUseState = [string, React.Dispatch<React.SetStateAction<string>>];
 
-class LocalStyle {
-  public static getButtonStyle(): string {
-    const commonStyle: string = "mx-10 mb-5 p-2 rounded-lg shadow-lg";
-    const lightStyle: string = "bg-primary_light shadow-black";
-    const darkStyle: string = "bg-primary_dark shadow-white";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getTextStyle(): string {
-    const commonStyle: string = "text-center";
-    const lightStyle: string = "text-quaternary_light";
-    const darkStyle: string = "text-quaternary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-
-  public static getTitleStyle(): string {
-    const commonStyle: string = "text-3xl font-bold text-center m-2.5";
-    const lightStyle: string = "text-quaternary_light";
-    const darkStyle: string = "text-quaternary_dark";
-
-    return joinClassNames(commonStyle, [lightStyle, darkStyle]);
-  }
-}
+const style = {
+  title:
+    "text-3xl font-bold text-center m-2.5 text-quaternary_light dark:text-quaternary_dark",
+  button: {
+    button:
+      "mx-10 mb-5 p-2 rounded-lg shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
+    text: "text-center text-quaternary_light dark:text-quaternary_dark",
+  },
+};
 
 const sendComment = async (
   movieId: string,
@@ -67,7 +50,7 @@ const CommentArea = ({
 
   return (
     <View>
-      <Text className={LocalStyle.getTitleStyle()}>
+      <Text className={style.title}>
         Comments ({movie.ratings?.length ?? "0"})
       </Text>
       {movie.ratings?.map((rating: Rating, index: number) => (
@@ -83,8 +66,8 @@ const CommentArea = ({
       />
       <Button
         text="Send"
-        buttonClassName={LocalStyle.getButtonStyle()}
-        textClassName={LocalStyle.getTextStyle()}
+        buttonClassName={style.button.button}
+        textClassName={style.button.text}
         onPress={() => {
           const movieId = movie.id;
           sendComment(movieId, contentText, ratingText).then(() => {

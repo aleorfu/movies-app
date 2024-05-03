@@ -6,9 +6,8 @@ import { SignInScreen } from "../screens/profile/SignInScreen";
 import { SignUpScreen } from "../screens/profile/SignUpScreen";
 import { ProfileScreen } from "../screens/profile/ProfileScreen";
 import { colors } from "../styles/tailwindColors";
-import { Image, ImageStyle, TextStyle, ViewStyle } from "react-native";
+import { Image, useColorScheme } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
-import { selectStyle } from "../utils/styleExtras";
 
 type ScreenNames = [
   "ProfileProfileStack",
@@ -20,30 +19,32 @@ type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();
 
-const getOptions = (title: string): StackNavigationOptions => {
+const getOptions = (
+  isLight: boolean,
+  title: string
+): StackNavigationOptions => {
   return {
     title: title,
     headerTitleAlign: "center",
-    headerStyle: selectStyle<ViewStyle>([
-      {
-        backgroundColor: colors.primary_light,
-        shadowColor: "black",
-      },
-      {
-        backgroundColor: colors.primary_dark,
-        shadowColor: "white",
-      },
-    ]),
-    headerTitleStyle: selectStyle<TextStyle>([
-      { color: colors.quaternary_light },
-      { color: colors.quaternary_dark },
-    ]),
+    headerStyle: isLight
+      ? {
+          backgroundColor: colors.primary_light,
+          shadowColor: "black",
+        }
+      : {
+          backgroundColor: colors.primary_dark,
+          shadowColor: "white",
+        },
+    headerTitleStyle: isLight
+      ? { color: colors.quaternary_light }
+      : { color: colors.quaternary_dark },
     headerBackImage: () => (
       <Image
-        style={selectStyle<ImageStyle>([
-          { tintColor: colors.quaternary_light },
-          { tintColor: colors.quaternary_dark },
-        ])}
+        style={
+          isLight
+            ? { tintColor: colors.quaternary_light }
+            : { tintColor: colors.quaternary_dark }
+        }
         className="w-6 h-6"
         source={require("../assets/img/back-icon.png")}
       />
@@ -52,22 +53,25 @@ const getOptions = (title: string): StackNavigationOptions => {
 };
 
 const ProfileNav = (): React.JSX.Element => {
+  const colorScheme = useColorScheme();
+  const isLight = colorScheme == "light";
+
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="ProfileProfileStack"
         component={ProfileScreen}
-        options={getOptions("Profile")}
+        options={getOptions(isLight, "Profile")}
       />
       <Stack.Screen
         name="ProfileSign-InStack"
         component={SignInScreen}
-        options={getOptions("Sign-In")}
+        options={getOptions(isLight, "Sign-In")}
       />
       <Stack.Screen
         name="ProfileSign-UpStack"
         component={SignUpScreen}
-        options={getOptions("Sign-Up")}
+        options={getOptions(isLight, "Sign-Up")}
       />
     </Stack.Navigator>
   );
