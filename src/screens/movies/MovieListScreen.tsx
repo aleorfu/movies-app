@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { RefreshControl, View, FlatList } from "react-native";
 import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
 import { MovieCard } from "../../components/MovieCard";
 import { UserContext } from "../../contexts/UserContext";
@@ -35,6 +34,15 @@ const fetchFiveMovies = (
 const MovieListScreen = () => {
   const user = useContext(UserContext);
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    page = 0;
+    setMovies([]);
+    fetchFiveMovies(setMovies);
+    setRefreshing(false);
+  }, []);
 
   useEffect(() => {
     fetchFiveMovies(setMovies);
@@ -48,6 +56,9 @@ const MovieListScreen = () => {
         keyExtractor={(_, index) => index.toString()}
         onEndReached={() => fetchFiveMovies(setMovies)}
         removeClippedSubviews={true}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </View>
   );

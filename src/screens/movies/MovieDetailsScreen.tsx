@@ -1,6 +1,6 @@
-import { Image, Text, ScrollView } from "react-native";
+import { Image, Text, ScrollView, RefreshControl } from "react-native";
 import { Movie, getMovieByIdApi } from "../../services/altenHybridApi";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useCallback, useContext, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { ListCard } from "../../components/ListCard";
 import { TextCard } from "../../components/TextCard";
@@ -27,6 +27,15 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   };
   const user = useContext(UserContext);
   const [movie, setMovie] = useState<Movie>();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getMovieByIdApi(movieId).then((movie) => {
+      setMovie(movie);
+    });
+    setRefreshing(false);
+  }, [movieId]);
 
   useEffect(() => {
     getMovieByIdApi(movieId).then((movie) => {
@@ -35,7 +44,12 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   }, [movieId]);
 
   return (
-    <ScrollView className={style.scrollView}>
+    <ScrollView
+      className={style.scrollView}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       {movie && (
         <Fragment>
           <Image
