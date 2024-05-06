@@ -3,11 +3,10 @@ import { Movie } from "../services/altenHybridApi";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { MoviesNavStackNavigation } from "../navigations/MoviesNav";
-import { useContext } from "react";
-import { UserContext } from "../contexts/UserContext";
 import { LikeButton } from "./LikeButton";
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
-type MovieCardProps = { movie: Movie };
+type MovieCardProps = { movie: Movie; user: FirebaseAuthTypes.User | null };
 
 const style = {
   card: "m-5 flex-col rounded-lg shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
@@ -16,8 +15,7 @@ const style = {
   image: "aspect-square",
 };
 
-const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
-  const user = useContext(UserContext);
+const MovieCard = ({ movie, user }: MovieCardProps): React.JSX.Element => {
   const navigation: MoviesNavStackNavigation =
     useNavigation() as MoviesNavStackNavigation;
 

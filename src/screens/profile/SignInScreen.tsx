@@ -21,35 +21,18 @@ const styles = {
 };
 
 const signIn = async (email: string, password: string): Promise<void> => {
-  if (email != "" && password != "") {
-    await auth()
-      .signInWithEmailAndPassword(email, password)
-      .catch(() => {
-        Alert.alert("Invalid credentials", "Are email and password correct?");
-      });
-  } else {
-    Alert.alert(
-      "One or more textfields are empty",
-      "Every textfield is required"
-    );
-  }
+  await auth().signInWithEmailAndPassword(email, password);
 };
 
-const recoverPassword = (email: string): void => {
-  auth()
-    .sendPasswordResetEmail(email)
-    .then(() => {
-      console.log("Reset password email sent!");
-    })
-    .catch((error) => {
-      console.log("That email address doesn't exists!");
-      console.error(error);
-    });
+const recoverPassword = async (email: string): Promise<void> => {
+  await auth().sendPasswordResetEmail(email);
 };
 
 const SignInScreen = (): React.JSX.Element => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading1, setLoading1] = useState<boolean>(false);
+  const [loading2, setLoading2] = useState<boolean>(false);
   const { colorScheme } = useColorScheme();
   const navigation: ProfileNavStackNavigation =
     useNavigation() as ProfileNavStackNavigation;
@@ -84,24 +67,61 @@ const SignInScreen = (): React.JSX.Element => {
       <Button
         text="Sign-In"
         onPress={() => {
-          signIn(email, password).then(() => {
-            navigation.goBack();
-            setEmail("");
-            setPassword("");
-          });
+          if (email != "" && password != "") {
+            setLoading1(true);
+            signIn(email, password)
+              .then(() => {
+                setEmail("");
+                setPassword("");
+                navigation.goBack();
+              })
+              .catch(() => {
+                Alert.alert(
+                  "There was an error while signing you in.",
+                  "Please, verify your credentials and try again."
+                );
+              })
+              .finally(() => {
+                setLoading1(false);
+              });
+          } else
+            Alert.alert(
+              "One or more fields are empty.",
+              "Please, fill every field and try again."
+            );
         }}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
+        loading={loading1}
       />
       <Button
         text="I forgot the password"
         buttonClassName={styles.button.nobgButton}
         textClassName={styles.button.text}
         onPress={() => {
-          recoverPassword(email);
-          setEmail("");
-          setPassword("");
+          if (email != "") {
+            setLoading2(true);
+            recoverPassword(email)
+              .then(() => {
+                setEmail("");
+                setPassword("");
+              })
+              .catch(() => {
+                Alert.alert(
+                  "There was an error while sending your password recovery email.",
+                  "Please, try again later."
+                );
+              })
+              .finally(() => {
+                setLoading2(false);
+              });
+          } else
+            Alert.alert(
+              "Email field is empty.",
+              "Please, fill it and try again."
+            );
         }}
+        loading={loading2}
       />
     </View>
   );

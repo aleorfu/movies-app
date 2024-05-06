@@ -13,51 +13,31 @@ const styles = {
   },
 };
 
-const toggleSubscribed = (
-  setSubscribed: React.Dispatch<React.SetStateAction<boolean>>
-): void => {
-  const alertTitle = "Couldn't subscribe or unsubscribe";
-  const alertMessage =
-    "There has been an error while subscribing or unsubscribing, try again later.";
-  getSubscribed()
-    .then((oldValue: boolean) => {
-      const newValue = !oldValue;
-      saveSubscribed(newValue)
-        .then(() => {
-          setSubscribed(newValue);
-          if (newValue) {
-            messaging()
-              .subscribeToTopic("alten_cantera_2024")
-              .catch(() => {
-                setSubscribed(oldValue);
-                Alert.alert(alertTitle, alertMessage);
-              });
-          } else {
-            messaging()
-              .unsubscribeFromTopic("alten_cantera_2024")
-              .catch(() => {
-                setSubscribed(oldValue);
-                Alert.alert(alertTitle, alertMessage);
-              });
-          }
-        })
-        .catch(() => {
-          Alert.alert(alertTitle, alertMessage);
-        });
-    })
-    .catch(() => {
-      Alert.alert(alertTitle, alertMessage);
-    });
+const toggleSubscribed = async (subscribed: boolean): Promise<void> => {
+  if (!subscribed) {
+    await messaging()
+      .subscribeToTopic("alten_cantera_2024")
+      .then(async () => {
+        await saveSubscribed(true);
+      });
+  } else {
+    await messaging()
+      .unsubscribeFromTopic("alten_cantera_2024")
+      .then(async () => {
+        await saveSubscribed(false);
+      });
+  }
 };
 
 const HomeScreen = (): React.JSX.Element => {
-  const [isSubscribed, setSubscribed] = useState(false);
+  const [isSubscribed, setSubscribed] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     getSubscribed().then((value: boolean) => {
       setSubscribed(value);
     });
-  }, [setSubscribed, getSubscribed]);
+  }, []);
 
   return (
     <View className={styles.view}>
@@ -66,8 +46,22 @@ const HomeScreen = (): React.JSX.Element => {
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
         onPress={() => {
-          toggleSubscribed(setSubscribed);
+          setLoading(true);
+          toggleSubscribed(isSubscribed)
+            .then(() => {
+              setSubscribed(!isSubscribed);
+            })
+            .catch(() => {
+              Alert.alert(
+                "There has been an error while subscribing or unsubscribing",
+                "Please, try again later."
+              );
+            })
+            .finally(() => {
+              setLoading(false);
+            });
         }}
+        loading={loading}
       />
     </View>
   );

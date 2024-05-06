@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../../components/Button";
 import { useState } from "react";
@@ -18,32 +18,14 @@ const styles = {
   },
 };
 
-const signUp = (email: string, password: string, navigation: any) => {
-  if (email != "" && password != "") {
-    auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        console.log("User account created & signed in!");
-        auth().currentUser?.sendEmailVerification();
-        navigation.goBack();
-      })
-      .catch((error) => {
-        if (error.code === "auth/email-already-in-use") {
-          console.log("That email address is already in use!");
-        }
-
-        if (error.code === "auth/invalid-email") {
-          console.log("That email address is invalid!");
-        }
-
-        console.error(error);
-      });
-  }
+const signUp = async (email: string, password: string) => {
+  await auth().createUserWithEmailAndPassword(email, password);
 };
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
   const isLight: boolean = colorScheme === "light";
@@ -79,10 +61,38 @@ const SignUpScreen = () => {
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
         onPress={() => {
-          signUp(email, password, navigation);
-          setEmail("");
-          setPassword("");
+          if (email != "" && password != "") {
+            setLoading(true);
+            signUp(email, password)
+              .then(() => {
+                setEmail("");
+                setPassword("");
+                auth().currentUser?.sendEmailVerification();
+                navigation.goBack();
+              })
+              .catch((error) => {
+                if (error.code === "auth/email-already-in-use") {
+                  Alert.alert(
+                    "That email is already in use.",
+                    "Please, try again with another one."
+                  );
+                } else if (error.code === "auth/invalid-email") {
+                  Alert.alert(
+                    "That email is invalid.",
+                    "Please, try again with another one."
+                  );
+                }
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          } else
+            Alert.alert(
+              "One or more fields are empty.",
+              "Please, fill every field and try again."
+            );
         }}
+        loading={loading}
       />
     </View>
   );

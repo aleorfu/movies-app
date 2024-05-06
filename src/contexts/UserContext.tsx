@@ -7,8 +7,7 @@ const UserProvider = ({ children }: { children: any }) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(setUser);
-    return subscriber;
+    auth().onAuthStateChanged(setUser);
   }, []);
 
   return <UserContext.Provider value={user}>{children}</UserContext.Provider>;

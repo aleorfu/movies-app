@@ -1,7 +1,8 @@
-import { Fragment } from "react";
+import { Fragment, useContext, useState } from "react";
 import auth from "@react-native-firebase/auth";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import { Button } from "../../../components/Button";
+import { UserContext } from "../../../contexts/UserContext";
 
 const style = {
   email:
@@ -14,16 +15,31 @@ const style = {
 };
 
 const ProfileSignedIn = (): React.JSX.Element => {
+  const user = useContext(UserContext);
+  const [loading, setLoading] = useState<boolean>(false);
+
   return (
     <Fragment>
-      <Text className={style.email}>{auth().currentUser?.email}</Text>
+      <Text className={style.email}>{user?.email}</Text>
       <Button
         text="Sign-Out"
         buttonClassName={style.button.button}
         textClassName={style.button.text}
         onPress={() => {
-          auth().signOut();
+          setLoading(true);
+          auth()
+            .signOut()
+            .catch(() => {
+              Alert.alert(
+                "There was an error while signing you out.",
+                "Please, try again later."
+              );
+            })
+            .finally(() => {
+              setLoading(false);
+            });
         }}
+        loading={loading}
       />
     </Fragment>
   );

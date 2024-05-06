@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { View } from "react-native";
 import { ProfileSignedOut } from "./main/ProfileSignedOut";
 import { ProfileSignedIn } from "./main/ProfileSignedIn";

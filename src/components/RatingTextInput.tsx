@@ -1,7 +1,7 @@
 import { TextInput, View, useColorScheme } from "react-native";
 import { colors } from "../styles/tailwindColors";
 
-type DoubleTextInputProps = {
+type RatingTextInputProps = {
   topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
   bottomTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
   editable?: boolean;
@@ -24,11 +24,11 @@ const verifyNumber = (text: string): string => {
   else return "";
 };
 
-const DoubleTextInput = ({
+const RatingTextInput = ({
   topTextUseState,
   bottomTextUseState,
   editable = true,
-}: DoubleTextInputProps): React.JSX.Element => {
+}: RatingTextInputProps): React.JSX.Element => {
   const [topText, setTopText] = topTextUseState;
   const [bottomText, setBottomText] = bottomTextUseState;
   const colorScheme = useColorScheme();
@@ -64,4 +64,4 @@ const DoubleTextInput = ({
   );
 };
 
-export { DoubleTextInput, DoubleTextInputProps };
+export { RatingTextInput, RatingTextInputProps };

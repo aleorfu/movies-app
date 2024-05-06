@@ -1,8 +1,8 @@
 import { Text, View } from "react-native";
+import { Rating } from "../services/altenHybridApi";
 
 type CommentCardProps = {
-  content: string;
-  rating: number;
+  rating: Rating;
 };
 
 const style = {
@@ -11,14 +11,11 @@ const style = {
   text: "text-quaternary_light dark:text-quaternary_dark",
 };
 
-const CommentCard = ({
-  content,
-  rating,
-}: CommentCardProps): React.JSX.Element => {
+const CommentCard = ({ rating }: CommentCardProps): React.JSX.Element => {
   return (
     <View className={style.comment}>
-      <Text className={style.text}>{rating}/5</Text>
-      <Text className={style.text}>{content}</Text>
+      <Text className={style.text}>{rating.rating}/5</Text>
+      <Text className={style.text}>{rating.comment}</Text>
     </View>
   );
 };
