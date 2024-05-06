@@ -1,11 +1,10 @@
-import { ActivityIndicator, Text, View, useColorScheme } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { CommentCard } from "./CommentCard";
 import { DoubleTextInput } from "./DoubleTextInput";
 import { Button } from "./Button";
 import { Movie, Rating, rateMovie } from "../services/altenHybridApi";
 import { Fragment, useContext, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { colors } from "../styles/tailwindColors";
 
 type CommentAreaProps = {
   movie: Movie;
@@ -27,7 +26,7 @@ const sendRating = async (
   ratingText: string,
   userId: string,
   setMovieRatings: React.Dispatch<React.SetStateAction<Rating[]>>
-) => {
+): Promise<void | never> => {
   const rating: Rating = {
     userId: userId,
     comment: contentText,
@@ -57,20 +56,14 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
   const [movieRatings, setMovieRatings] = useState<Rating[]>(movie.ratings);
   const [sendingRating, setSendingRating] = useState<boolean>(false);
   const user = useContext(UserContext);
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
 
   return (
     <View>
       <Text className={style.title}>
-        Comments ({movie.ratings?.length ?? "0"})
+        Comments ({movieRatings?.length ?? "0"})
       </Text>
       {movieRatings?.map((rating: Rating, index: number) => (
-        <CommentCard
-          key={index}
-          content={rating.comment}
-          rating={rating.rating}
-        />
+        <CommentCard key={index} rating={rating} />
       ))}
       {user && (
         <Fragment>
@@ -95,6 +88,12 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
                 .then(() => {
                   setRatingText("");
                   setContentText("");
+                })
+                .catch(() => {
+                  Alert.alert(
+                    "There was an error while sending your rating.",
+                    "Please try again later."
+                  );
                 })
                 .finally(() => {
                   setSendingRating(false);
