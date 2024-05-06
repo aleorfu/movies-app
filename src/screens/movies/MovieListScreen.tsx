@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
 import { MovieCard } from "../../components/MovieCard";
+import { UserContext } from "../../contexts/UserContext";
 
 let page: number = 1;
 let isLoading: boolean = false;
@@ -32,6 +33,7 @@ const fetchFiveMovies = (
 };
 
 const MovieListScreen = () => {
+  const user = useContext(UserContext);
   const [movies, setMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ const MovieListScreen = () => {
     <View className={style.view}>
       <FlatList
         data={movies}
-        renderItem={({ item }) => <MovieCard movie={item} />}
+        renderItem={({ item }) => <MovieCard movie={item} user={user} />}
         keyExtractor={(_, index) => index.toString()}
         onEndReached={() => fetchFiveMovies(setMovies)}
         removeClippedSubviews={true}

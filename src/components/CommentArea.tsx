@@ -3,11 +3,12 @@ import { CommentCard } from "./CommentCard";
 import { RatingTextInput } from "./RatingTextInput";
 import { Button } from "./Button";
 import { Movie, Rating, rateMovie } from "../services/altenHybridApi";
-import { Fragment, useContext, useState } from "react";
-import { UserContext } from "../contexts/UserContext";
+import { Fragment, useState } from "react";
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 type CommentAreaProps = {
   movie: Movie;
+  user: FirebaseAuthTypes.User | null;
 };
 
 const style = {
@@ -50,12 +51,11 @@ const sendRating = async (
   });
 };
 
-const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
+const CommentArea = ({ movie, user }: CommentAreaProps): React.JSX.Element => {
   const [ratingText, setRatingText] = useState<string>("");
   const [contentText, setContentText] = useState<string>("");
   const [movieRatings, setMovieRatings] = useState<Rating[]>(movie.ratings);
   const [sendingRating, setSendingRating] = useState<boolean>(false);
-  const user = useContext(UserContext);
 
   return (
     <View>

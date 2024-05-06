@@ -56,7 +56,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
               `Likes: ${movie.likes}`,
             ]}
           />
-          <CommentArea movie={movie} />
+          <CommentArea movie={movie} user={user} />
         </Fragment>
       )}
     </ScrollView>
