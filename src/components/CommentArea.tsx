@@ -1,6 +1,6 @@
 import { Alert, Text, View } from "react-native";
 import { CommentCard } from "./CommentCard";
-import { DoubleTextInput } from "./DoubleTextInput";
+import { RatingTextInput } from "./RatingTextInput";
 import { Button } from "./Button";
 import { Movie, Rating, rateMovie } from "../services/altenHybridApi";
 import { Fragment, useContext, useState } from "react";
@@ -67,7 +67,7 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
       ))}
       {user && (
         <Fragment>
-          <DoubleTextInput
+          <RatingTextInput
             topTextUseState={[ratingText, setRatingText]}
             bottomTextUseState={[contentText, setContentText]}
             editable={!sendingRating}
