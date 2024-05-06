@@ -92,7 +92,7 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
                 .catch(() => {
                   Alert.alert(
                     "There was an error while sending your rating.",
-                    "Please try again later."
+                    "Please, try again later."
                   );
                 })
                 .finally(() => {

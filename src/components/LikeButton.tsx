@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import { Movie, likeMovie } from "../services/altenHybridApi";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { Alert } from "react-native";
 
 type LikeButtonProps = {
   movie: Movie;
@@ -41,6 +42,12 @@ const LikeButton = ({ movie, user }: LikeButtonProps): React.JSX.Element => {
         likeMovie(movie.id, user.uid)
           .then(() => {
             setMovieLiked(!movieLiked);
+          })
+          .catch(() => {
+            Alert.alert(
+              "There was an error when sending your like.",
+              "Please, try again later."
+            );
           })
           .finally(() => {
             setSendingLiked(false);
