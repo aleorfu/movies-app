@@ -5,6 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import { MoviesNavStackNavigation } from "../navigations/MoviesNav";
 import auth from "@react-native-firebase/auth";
 import { Button } from "./Button";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 type MovieCardProps = { movie: Movie; refreshData: Function };
 
@@ -28,7 +30,7 @@ const MovieCard = ({
   const movieId: string = movie.id;
   const navigation: MoviesNavStackNavigation =
     useNavigation() as MoviesNavStackNavigation;
-  const user = auth().currentUser;
+  const user = useContext(UserContext);
 
   return (
     <View className={style.card}>

@@ -62,7 +62,7 @@ const getOptions = (
 
 const MainNav = (): React.JSX.Element => {
   const colorScheme = useColorScheme();
-  let isLight = colorScheme === "light";
+  const isLight = colorScheme === "light";
 
   return (
     <NavigationContainer>

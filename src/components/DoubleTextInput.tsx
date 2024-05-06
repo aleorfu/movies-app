@@ -5,6 +5,7 @@ import { useColorScheme } from "nativewind";
 type DoubleTextInputProps = {
   topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
   bottomTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
+  editable?: boolean;
 };
 
 const style = {
@@ -27,6 +28,7 @@ const verifyNumber = (text: string): string => {
 const DoubleTextInput = ({
   topTextUseState,
   bottomTextUseState,
+  editable = true,
 }: DoubleTextInputProps): React.JSX.Element => {
   const [topText, setTopText] = topTextUseState;
   const [bottomText, setBottomText] = bottomTextUseState;
@@ -48,6 +50,7 @@ const DoubleTextInput = ({
             ? colors.quaternary_light
             : colors.quaternary_dark
         }
+        editable={editable}
       />
       <TextInput
         className={[style.textInput.common, style.textInput.bottom].join(" ")}
@@ -59,6 +62,7 @@ const DoubleTextInput = ({
             ? colors.quaternary_light
             : colors.quaternary_dark
         }
+        editable={editable}
       />
     </View>
   );

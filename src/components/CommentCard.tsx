@@ -7,7 +7,7 @@ type CommentCardProps = {
 
 const style = {
   comment:
-    "shadow-lg mx-5 mt-5 p-2 rounded-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
+    "shadow-lg mx-5 my-2.5 p-2 rounded-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
   text: "text-quaternary_light dark:text-quaternary_dark",
 };
 

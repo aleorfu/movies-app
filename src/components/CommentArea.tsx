@@ -1,17 +1,15 @@
-import { Alert, Text, View } from "react-native";
+import { ActivityIndicator, Text, View, useColorScheme } from "react-native";
 import { CommentCard } from "./CommentCard";
 import { DoubleTextInput } from "./DoubleTextInput";
 import { Button } from "./Button";
 import { Movie, Rating, rateMovie } from "../services/altenHybridApi";
-import { useState } from "react";
-import auth from "@react-native-firebase/auth";
+import { Fragment, useContext, useState } from "react";
+import { UserContext } from "../contexts/UserContext";
+import { colors } from "../styles/tailwindColors";
 
 type CommentAreaProps = {
   movie: Movie;
-  refresh: () => void;
 };
-
-type TextUseState = [string, React.Dispatch<React.SetStateAction<string>>];
 
 const style = {
   title:
@@ -23,60 +21,96 @@ const style = {
   },
 };
 
-const sendComment = async (
+const sendRating = async (
   movieId: string,
   contentText: string,
-  ratingText: string
-): Promise<void> => {
-  const user = auth().currentUser;
-  if (user === null) {
-    Alert.alert("Not signed-in", "You must sign-in to comment");
-  } else {
-    const rating: Rating = {
-      userId: user.uid,
-      comment: contentText,
-      rating: Number(ratingText),
-    };
-    await rateMovie(movieId, rating);
-  }
+  ratingText: string,
+  userId: string,
+  setMovieRatings: React.Dispatch<React.SetStateAction<Rating[]>>
+) => {
+  const rating: Rating = {
+    userId: userId,
+    comment: contentText,
+    rating: Number(ratingText),
+  };
+
+  await rateMovie(movieId, rating).then(() => {
+    setMovieRatings((prevMovieRatings) => {
+      const existingRatingIndex = prevMovieRatings.findIndex(
+        (r) => r.userId === userId
+      );
+
+      if (existingRatingIndex !== -1) {
+        const updatedRatings = [...prevMovieRatings];
+        updatedRatings[existingRatingIndex] = rating;
+        return updatedRatings;
+      } else {
+        return [...prevMovieRatings, rating];
+      }
+    });
+  });
 };
 
-const CommentArea = ({
-  movie,
-  refresh,
-}: CommentAreaProps): React.JSX.Element => {
-  const [ratingText, setRatingText]: TextUseState = useState<string>("");
-  const [contentText, setContentText]: TextUseState = useState<string>("");
+const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
+  const [ratingText, setRatingText] = useState<string>("");
+  const [contentText, setContentText] = useState<string>("");
+  const [movieRatings, setMovieRatings] = useState<Rating[]>(movie.ratings);
+  const [sendingRating, setSendingRating] = useState<boolean>(false);
+  const user = useContext(UserContext);
+  const colorScheme = useColorScheme();
+  const isLight = colorScheme === "light";
 
   return (
     <View>
       <Text className={style.title}>
         Comments ({movie.ratings?.length ?? "0"})
       </Text>
-      {movie.ratings?.map((rating: Rating, index: number) => (
+      {movieRatings?.map((rating: Rating, index: number) => (
         <CommentCard
           key={index}
           content={rating.comment}
           rating={rating.rating}
         />
       ))}
-      <DoubleTextInput
-        topTextUseState={[ratingText, setRatingText]}
-        bottomTextUseState={[contentText, setContentText]}
-      />
-      <Button
-        text="Send"
-        buttonClassName={style.button.button}
-        textClassName={style.button.text}
-        onPress={() => {
-          const movieId = movie.id;
-          sendComment(movieId, contentText, ratingText).then(() => {
-            refresh();
-          });
-          setRatingText("");
-          setContentText("");
-        }}
-      />
+      {user && (
+        <Fragment>
+          <DoubleTextInput
+            topTextUseState={[ratingText, setRatingText]}
+            bottomTextUseState={[contentText, setContentText]}
+            editable={sendingRating ? false : true}
+          />
+          <Button
+            text={sendingRating ? undefined : "Send"}
+            component={
+              sendingRating ? (
+                <ActivityIndicator
+                  size="small"
+                  color={
+                    isLight ? colors.quaternary_light : colors.quaternary_dark
+                  }
+                />
+              ) : undefined
+            }
+            buttonClassName={style.button.button}
+            textClassName={style.button.text}
+            onPress={() => {
+              setSendingRating(true);
+              sendRating(
+                movie.id,
+                contentText,
+                ratingText,
+                user.uid,
+                setMovieRatings
+              ).then(() => {
+                setRatingText("");
+                setContentText("");
+                setSendingRating(false);
+              });
+            }}
+            disable={sendingRating ? true : false}
+          />
+        </Fragment>
+      )}
     </View>
   );
 };

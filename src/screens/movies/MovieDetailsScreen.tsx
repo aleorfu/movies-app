@@ -4,13 +4,14 @@ import {
   getMovieByIdApi,
   likeMovie,
 } from "../../services/altenHybridApi";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { ListCard } from "../../components/ListCard";
 import { TextCard } from "../../components/TextCard";
 import { CommentArea } from "../../components/CommentArea";
 import { Button } from "../../components/Button";
 import auth from "@react-native-firebase/auth";
+import { UserContext } from "../../contexts/UserContext";
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -29,19 +30,14 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   const { movieId } = useRoute().params as {
     movieId: string;
   };
-  const user = auth().currentUser;
+  const user = useContext(UserContext);
   const [movie, setMovie] = useState<Movie>();
-  const [refresh, setRefresh] = useState<boolean>(true);
 
   useEffect(() => {
     getMovieByIdApi(movieId).then((movie) => {
       setMovie(movie);
     });
-  }, [refresh, movieId]);
-
-  const refreshData = (): void => {
-    setRefresh(!refresh);
-  };
+  }, [movieId]);
 
   return (
     <ScrollView className={style.scrollView}>
@@ -65,9 +61,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
               imageClassName={style.button.image}
               textClassName={style.button.text}
               onPress={() => {
-                likeMovie(movie.id, user.uid).then(() => {
-                  refreshData();
-                });
+                likeMovie(movie.id, user.uid);
               }}
             />
           )}
@@ -82,7 +76,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
               `Likes: ${movie.likes}`,
             ]}
           />
-          <CommentArea movie={movie} refresh={refreshData} />
+          <CommentArea movie={movie} />
         </Fragment>
       )}
     </ScrollView>

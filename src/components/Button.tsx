@@ -3,24 +3,29 @@ import { GestureResponderEvent, Image, Pressable, Text } from "react-native";
 type ButtonProps = {
   text?: string;
   image?: number;
+  component?: React.JSX.Element;
   buttonClassName?: string;
   textClassName?: string;
   imageClassName?: string;
-  onPress?: ((event: GestureResponderEvent) => void) | null | undefined;
+  disable?: boolean;
+  onPress?: (event: GestureResponderEvent) => void;
 };
 
 const Button = ({
   text,
   image,
+  component,
   buttonClassName,
   textClassName,
   imageClassName,
+  disable = false,
   onPress,
 }: ButtonProps): React.JSX.Element => {
   return (
-    <Pressable className={buttonClassName} onPress={onPress}>
+    <Pressable disabled={disable} className={buttonClassName} onPress={onPress}>
       {image && <Image source={image} className={imageClassName} />}
-      <Text className={textClassName}>{text}</Text>
+      {text && <Text className={textClassName}>{text}</Text>}
+      {component && component}
     </Pressable>
   );
 };

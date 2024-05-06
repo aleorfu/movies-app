@@ -2,6 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MainNav } from "./src/navigations/MainNav";
 import { PermissionsAndroid } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { UserProvider } from "./src/contexts/UserContext";
 
 const style = {
   safeAreaView: "flex-1 bg-primary_light dark:bg-primary_dark",
@@ -18,7 +19,9 @@ const App = () => {
 
   return (
     <SafeAreaView className={style.safeAreaView}>
-      <MainNav />
+      <UserProvider>
+        <MainNav />
+      </UserProvider>
       <StatusBar style="auto" />
     </SafeAreaView>
   );
