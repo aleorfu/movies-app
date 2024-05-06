@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import { Movie, likeMovie } from "../services/altenHybridApi";
-import { ActivityIndicator, useColorScheme } from "react-native";
-import { colors } from "../styles/tailwindColors";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 type LikeButtonProps = {
@@ -22,8 +20,6 @@ const style = {
 const LikeButton = ({ movie, user }: LikeButtonProps): React.JSX.Element => {
   const [movieLiked, setMovieLiked] = useState<boolean>(false);
   const [sendingLiked, setSendingLiked] = useState<boolean>(false);
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
 
   useEffect(() => {
     if (user != null) setMovieLiked(movie.userLiked?.includes(user.uid));
@@ -31,21 +27,11 @@ const LikeButton = ({ movie, user }: LikeButtonProps): React.JSX.Element => {
 
   return (
     <Button
-      text={sendingLiked ? undefined : movieLiked ? "Liked" : "Like"}
+      text={movieLiked ? "Liked" : "Like"}
       image={
-        sendingLiked
-          ? undefined
-          : movieLiked
+        movieLiked
           ? require("../assets/img/like-filled-icon.png")
           : require("../assets/img/like-icon.png")
-      }
-      component={
-        sendingLiked ? (
-          <ActivityIndicator
-            size="small"
-            color={isLight ? colors.quaternary_light : colors.quaternary_dark}
-          />
-        ) : undefined
       }
       buttonClassName={style.button.button}
       imageClassName={style.button.image}
@@ -60,7 +46,7 @@ const LikeButton = ({ movie, user }: LikeButtonProps): React.JSX.Element => {
             setSendingLiked(false);
           });
       }}
-      disable={sendingLiked}
+      loading={sendingLiked}
     />
   );
 };

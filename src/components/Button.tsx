@@ -1,4 +1,13 @@
-import { GestureResponderEvent, Image, Pressable, Text } from "react-native";
+import {
+  ActivityIndicator,
+  GestureResponderEvent,
+  Image,
+  Text,
+  useColorScheme,
+  TouchableOpacity,
+} from "react-native";
+import { colors } from "../styles/tailwindColors";
+import { Fragment } from "react";
 
 type ButtonProps = {
   text?: string;
@@ -8,7 +17,8 @@ type ButtonProps = {
   textClassName?: string;
   imageClassName?: string;
   disable?: boolean;
-  onPress?: (event: GestureResponderEvent) => void;
+  loading?: boolean;
+  onPress?: ((event: GestureResponderEvent) => void) & (() => void);
 };
 
 const Button = ({
@@ -19,14 +29,39 @@ const Button = ({
   textClassName,
   imageClassName,
   disable = false,
+  loading = false,
   onPress,
 }: ButtonProps): React.JSX.Element => {
+  const colorScheme = useColorScheme();
+  const isLight = colorScheme === "light";
+
   return (
-    <Pressable disabled={disable} className={buttonClassName} onPress={onPress}>
-      {image && <Image source={image} className={imageClassName} />}
-      {text && <Text className={textClassName}>{text}</Text>}
-      {component && component}
-    </Pressable>
+    <TouchableOpacity
+      disabled={loading ? true : disable}
+      className={buttonClassName}
+      onPress={onPress}
+    >
+      {loading ? (
+        <ActivityIndicator
+          size="small"
+          color={isLight ? colors.quaternary_light : colors.quaternary_dark}
+        />
+      ) : (
+        <Fragment>
+          {image && (
+            <Image
+              source={image}
+              className={imageClassName}
+              tintColor={
+                isLight ? colors.quaternary_light : colors.quaternary_dark
+              }
+            />
+          )}
+          {text && <Text className={textClassName}>{text}</Text>}
+          {component && component}
+        </Fragment>
+      )}
+    </TouchableOpacity>
   );
 };
 

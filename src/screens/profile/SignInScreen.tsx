@@ -48,8 +48,9 @@ const recoverPassword = (email: string): void => {
 };
 
 const SignInScreen = (): React.JSX.Element => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { colorScheme } = useColorScheme();
   const navigation: ProfileNavStackNavigation =
     useNavigation() as ProfileNavStackNavigation;
@@ -84,14 +85,20 @@ const SignInScreen = (): React.JSX.Element => {
       <Button
         text="Sign-In"
         onPress={() => {
-          signIn(email, password).then(() => {
-            navigation.goBack();
-            setEmail("");
-            setPassword("");
-          });
+          setLoading(true);
+          signIn(email, password)
+            .then(() => {
+              navigation.goBack();
+              setEmail("");
+              setPassword("");
+            })
+            .finally(() => {
+              setLoading(false);
+            });
         }}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
+        loading={loading}
       />
       <Button
         text="I forgot the password"

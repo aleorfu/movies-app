@@ -77,20 +77,10 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
           <DoubleTextInput
             topTextUseState={[ratingText, setRatingText]}
             bottomTextUseState={[contentText, setContentText]}
-            editable={sendingRating ? false : true}
+            editable={!sendingRating}
           />
           <Button
-            text={sendingRating ? undefined : "Send"}
-            component={
-              sendingRating ? (
-                <ActivityIndicator
-                  size="small"
-                  color={
-                    isLight ? colors.quaternary_light : colors.quaternary_dark
-                  }
-                />
-              ) : undefined
-            }
+            text="Send"
             buttonClassName={style.button.button}
             textClassName={style.button.text}
             onPress={() => {
@@ -110,7 +100,7 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
                   setSendingRating(false);
                 });
             }}
-            disable={sendingRating}
+            loading={sendingRating}
           />
         </Fragment>
       )}

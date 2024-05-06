@@ -18,9 +18,9 @@ const styles = {
   },
 };
 
-const signUp = (email: string, password: string, navigation: any) => {
+const signUp = async (email: string, password: string, navigation: any) => {
   if (email != "" && password != "") {
-    auth()
+    await auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
         console.log("User account created & signed in!");
@@ -44,6 +44,7 @@ const signUp = (email: string, password: string, navigation: any) => {
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
   const isLight: boolean = colorScheme === "light";
@@ -79,10 +80,17 @@ const SignUpScreen = () => {
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
         onPress={() => {
-          signUp(email, password, navigation);
-          setEmail("");
-          setPassword("");
+          setLoading(true);
+          signUp(email, password, navigation)
+            .then(() => {
+              setEmail("");
+              setPassword("");
+            })
+            .finally(() => {
+              setLoading(false);
+            });
         }}
+        loading={loading}
       />
     </View>
   );
