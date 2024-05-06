@@ -35,7 +35,6 @@ const HomeScreen = (): React.JSX.Element => {
 
   useEffect(() => {
     getSubscribed().then((value: boolean) => {
-      console.log(value);
       setSubscribed(value);
     });
   }, []);
