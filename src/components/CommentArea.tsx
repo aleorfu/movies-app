@@ -107,4 +107,4 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
   );
 };
 
-export { CommentArea };
+export { CommentArea, CommentAreaProps };
