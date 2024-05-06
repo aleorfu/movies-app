@@ -58,7 +58,7 @@ const Button = ({
             />
           )}
           {text && <Text className={textClassName}>{text}</Text>}
-          {component && component}
+          {component}
         </Fragment>
       )}
     </TouchableOpacity>
