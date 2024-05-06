@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
@@ -33,24 +33,16 @@ const fetchFiveMovies = (
 
 const MovieListScreen = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
-  fetchFiveMovies(setMovies);
 
-  const [refresh, setRefresh] = useState<boolean>(true);
-
-  const refreshData = (): void => {
-    setRefresh(!refresh);
-    setMovies([]);
-    page = 0;
+  useEffect(() => {
     fetchFiveMovies(setMovies);
-  };
+  }, []);
 
   return (
     <View className={style.view}>
       <FlatList
         data={movies}
-        renderItem={({ item }) => (
-          <MovieCard movie={item} refreshData={refreshData} />
-        )}
+        renderItem={({ item }) => <MovieCard movie={item} />}
         keyExtractor={(_, index) => index.toString()}
         onEndReached={() => fetchFiveMovies(setMovies)}
         removeClippedSubviews={true}

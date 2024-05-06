@@ -101,13 +101,16 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
                 ratingText,
                 user.uid,
                 setMovieRatings
-              ).then(() => {
-                setRatingText("");
-                setContentText("");
-                setSendingRating(false);
-              });
+              )
+                .then(() => {
+                  setRatingText("");
+                  setContentText("");
+                })
+                .finally(() => {
+                  setSendingRating(false);
+                });
             }}
-            disable={sendingRating ? true : false}
+            disable={sendingRating}
           />
         </Fragment>
       )}

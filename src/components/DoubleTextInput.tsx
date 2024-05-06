@@ -1,6 +1,5 @@
-import { TextInput, View } from "react-native";
+import { TextInput, View, useColorScheme } from "react-native";
 import { colors } from "../styles/tailwindColors";
-import { useColorScheme } from "nativewind";
 
 type DoubleTextInputProps = {
   topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
@@ -32,7 +31,8 @@ const DoubleTextInput = ({
 }: DoubleTextInputProps): React.JSX.Element => {
   const [topText, setTopText] = topTextUseState;
   const [bottomText, setBottomText] = bottomTextUseState;
-  const { colorScheme } = useColorScheme();
+  const colorScheme = useColorScheme();
+  const isLight = colorScheme === "light";
 
   return (
     <View>
@@ -46,9 +46,7 @@ const DoubleTextInput = ({
         maxLength={1}
         placeholder="0"
         placeholderTextColor={
-          colorScheme === "light"
-            ? colors.quaternary_light
-            : colors.quaternary_dark
+          isLight ? colors.quaternary_light : colors.quaternary_dark
         }
         editable={editable}
       />
@@ -58,9 +56,7 @@ const DoubleTextInput = ({
         value={bottomText}
         placeholder="Comment"
         placeholderTextColor={
-          colorScheme === "light"
-            ? colors.quaternary_light
-            : colors.quaternary_dark
+          isLight ? colors.quaternary_light : colors.quaternary_dark
         }
         editable={editable}
       />

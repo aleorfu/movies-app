@@ -60,7 +60,7 @@ const getMovieByIdApi = async (id: string): Promise<Movie | never> =>
 const getAllMoviesApi = async (): Promise<Movie[] | never> =>
   Object.values(await getPetition("/movies"));
 
-const rateMovie = async (id: string, rating: Rating): Promise<void> => {
+const rateMovie = async (id: string, rating: Rating): Promise<void | never> => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +70,7 @@ const rateMovie = async (id: string, rating: Rating): Promise<void> => {
   await putPetition(`/movies/${id}/rate`, JSON.stringify(rating), config);
 };
 
-const likeMovie = async (id: string, userId: string): Promise<void> => {
+const likeMovie = async (id: string, userId: string): Promise<void | never> => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/json",
