@@ -1,6 +1,6 @@
 import { Fragment, useContext, useState } from "react";
 import auth from "@react-native-firebase/auth";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import { Button } from "../../../components/Button";
 import { UserContext } from "../../../contexts/UserContext";
 
@@ -29,6 +29,12 @@ const ProfileSignedIn = (): React.JSX.Element => {
           setLoading(true);
           auth()
             .signOut()
+            .catch(() => {
+              Alert.alert(
+                "There was an error while signing you out.",
+                "Please, try again later."
+              );
+            })
             .finally(() => {
               setLoading(false);
             });
