@@ -1,32 +1,37 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { RefreshControl, View, FlatList } from "react-native";
+import {
+  RefreshControl,
+  View,
+  FlatList,
+  ActivityIndicator,
+  useColorScheme,
+} from "react-native";
 import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
 import { MovieCard } from "../../components/MovieCard";
 import { UserContext } from "../../contexts/UserContext";
+import { colors } from "../../styles/tailwindColors";
 
 let page: number = 1;
-let isLoading: boolean = false;
 
 const style = {
   view: "flex-1 bg-secondary_light dark:bg-secondary_dark",
 };
 
 const fetchFiveMovies = (
-  setMovies: React.Dispatch<React.SetStateAction<Movie[]>>
+  setMovies: React.Dispatch<React.SetStateAction<Movie[]>>,
+  loadingMovies: boolean,
+  setLoadingMovies: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  if (isLoading) return;
-
-  isLoading = true;
+  setLoadingMovies(true);
   getAllMoviesApi().then((movies: Movie[]) => {
     const newMovies: Movie[] = movies.slice((page - 1) * 5, page * 5);
     if (newMovies.length == 0) {
       page = 1;
-      isLoading = false;
-      fetchFiveMovies(setMovies);
+      fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies);
     } else {
       page++;
       setMovies((prevMovies) => [...prevMovies, ...newMovies]);
-      isLoading = false;
+      setLoadingMovies(false);
     }
   });
 };
@@ -35,17 +40,20 @@ const MovieListScreen = () => {
   const user = useContext(UserContext);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [loadingMovies, setLoadingMovies] = useState<boolean>(false);
+  const colorScheme = useColorScheme();
+  const isLight = colorScheme === "light";
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    page = 0;
+    page = 1;
     setMovies([]);
-    fetchFiveMovies(setMovies);
+    fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies);
     setRefreshing(false);
   }, []);
 
   useEffect(() => {
-    fetchFiveMovies(setMovies);
+    fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies);
   }, []);
 
   return (
@@ -54,12 +62,22 @@ const MovieListScreen = () => {
         data={movies}
         renderItem={({ item }) => <MovieCard movie={item} user={user} />}
         keyExtractor={(_, index) => index.toString()}
-        onEndReached={() => fetchFiveMovies(setMovies)}
+        onEndReached={() =>
+          fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies)
+        }
+        onEndReachedThreshold={0.2}
         removeClippedSubviews={true}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        refreshing={loadingMovies}
       />
+      {loadingMovies && (
+        <ActivityIndicator
+          size="large"
+          color={isLight ? colors.quaternary_light : colors.quaternary_dark}
+        />
+      )}
     </View>
   );
 };
