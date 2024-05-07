@@ -1,35 +1,35 @@
+import { colors } from "@src/styles/tailwindColors";
 import { Fragment } from "react";
 import {
   ActivityIndicator,
+  ColorSchemeName,
   GestureResponderEvent,
   Image,
   Text,
-  useColorScheme,
   TouchableOpacity,
-  ColorSchemeName,
+  useColorScheme,
 } from "react-native";
-import { colors } from "@src/styles/tailwindColors";
 
 /**
  * Prop types for Button component:
  *
- * text? - The content of the button in string format,
+ * text? - The content of the button in string format.
  *
- * image? - The image resource to show in the button in form of a small icon,
+ * image? - The image resource to show in the button in form of a small icon.
  *
- * buttonClassName? - The tailwind class name for the entire button,
+ * buttonClassName? - The tailwind class name for the entire button.
  *
- * textClassName? - The tailwind class name for the text inside the button,
+ * textClassName? - The tailwind class name for the text inside the button.
  *
- * imageClassName? - The tailwind class name for the image inside the button,
+ * imageClassName? - The tailwind class name for the image inside the button.
  *
- * disabled? - Whether the button is disabled or not,
+ * disabled? - Whether the button is disabled or not.
  *
- * loading? - Whether the button is loading or not (this will animate the button and disabling it while loading),
+ * loading? - Whether the button is loading or not (this will animate the button and disabling it while loading).
  *
- * onPress? - Function called when the button is released
+ * onPress? - Function called when the button is released.
  *
- * @see Button - The component using these props
+ * @see Button - The component using these props.
  */
 type ButtonProps = {
   text?: string;
@@ -45,9 +45,9 @@ type ButtonProps = {
 /**
  *  A personalized button component.
  *
- * @param ButtonProps
+ * @param ButtonProps.
  *
- * @see ButtonProps - Props used in this component
+ * @see ButtonProps - Props used in this component.
  *
  * @returns Personalized button component.
  */
