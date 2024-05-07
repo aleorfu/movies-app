@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert, View, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { TextInput } from "react-native-gesture-handler";
 import { useColorScheme } from "nativewind";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@src/components/Button";
