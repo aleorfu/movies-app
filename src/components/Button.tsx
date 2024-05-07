@@ -6,38 +6,67 @@ import {
   Text,
   useColorScheme,
   TouchableOpacity,
+  ColorSchemeName,
 } from "react-native";
 import { colors } from "@src/styles/tailwindColors";
 
+/**
+ * Prop types for Button component:
+ *
+ * text? - The content of the button in string format,
+ *
+ * image? - The image resource to show in the button in form of a small icon,
+ *
+ * buttonClassName? - The tailwind class name for the entire button,
+ *
+ * textClassName? - The tailwind class name for the text inside the button,
+ *
+ * imageClassName? - The tailwind class name for the image inside the button,
+ *
+ * disabled? - Whether the button is disabled or not,
+ *
+ * loading? - Whether the button is loading or not (this will animate the button and disabling it while loading),
+ *
+ * onPress? - Function called when the button is released
+ *
+ * @see Button - The component using these props
+ */
 type ButtonProps = {
   text?: string;
   image?: number;
-  component?: React.JSX.Element;
   buttonClassName?: string;
   textClassName?: string;
   imageClassName?: string;
-  disable?: boolean;
+  disabled?: boolean;
   loading?: boolean;
   onPress?: ((event: GestureResponderEvent) => void) & (() => void);
 };
 
+/**
+ *  A personalized button component.
+ *
+ * @param ButtonProps
+ *
+ * @see ButtonProps - Props used in this component
+ *
+ * @returns Personalized button component.
+ */
 const Button = ({
   text,
   image,
-  component,
   buttonClassName,
   textClassName,
   imageClassName,
-  disable = false,
+  disabled = false,
   loading = false,
   onPress,
 }: ButtonProps): React.JSX.Element => {
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
+  const colorScheme: ColorSchemeName = useColorScheme();
+  const isLight: boolean = colorScheme === "light";
 
   return (
     <TouchableOpacity
-      disabled={loading ? true : disable}
+      disabled={loading ? true : disabled}
       className={buttonClassName}
       onPress={onPress}
     >
@@ -58,7 +87,6 @@ const Button = ({
             />
           )}
           {text && <Text className={textClassName}>{text}</Text>}
-          {component}
         </Fragment>
       )}
     </TouchableOpacity>
