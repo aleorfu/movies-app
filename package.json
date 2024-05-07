@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@babel/preset-env": "7.1.6",
-    "@preact/signals": "^1.2.3",
+    "@preact/signals-react": "^2.0.1",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-firebase/app": "^19.2.2",
     "@react-native-firebase/auth": "^19.2.2",
@@ -26,7 +26,6 @@
     "expo-status-bar": "~1.11.1",
     "expo-system-ui": "~2.9.4",
     "nativewind": "^2.0.11",
-    "preact": "10.x",
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-gesture-handler": "~2.14.0",
