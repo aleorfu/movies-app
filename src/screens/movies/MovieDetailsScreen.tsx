@@ -1,12 +1,12 @@
-import { Image, Text, ScrollView, RefreshControl } from "react-native";
-import { Movie, getMovieByIdApi } from "../../services/altenHybridApi";
 import { Fragment, useCallback, useContext, useEffect, useState } from "react";
+import { Image, Text, ScrollView, RefreshControl } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { ListCard } from "../../components/ListCard";
-import { TextCard } from "../../components/TextCard";
-import { CommentArea } from "../../components/CommentArea";
-import { UserContext } from "../../contexts/UserContext";
-import { LikeButton } from "../../components/LikeButton";
+import { Movie, getMovieByIdApi } from "@src/services/altenHybridApi";
+import { ListCard } from "@src/components/ListCard";
+import { TextCard } from "@src/components/TextCard";
+import { CommentArea } from "@src/components/CommentArea";
+import { UserContext } from "@src/contexts/UserContext";
+import { LikeButton } from "@src/components/LikeButton";
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",

@@ -1,7 +1,7 @@
-import { Button } from "../../../components/Button";
-import { ProfileNavStackNavigation } from "../../../navigations/ProfileNav";
-import { useNavigation } from "@react-navigation/native";
 import { Fragment } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Button } from "@src/components/Button";
+import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
 
 const style = {
   button: {

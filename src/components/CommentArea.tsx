@@ -1,10 +1,10 @@
-import { Alert, Text, View } from "react-native";
-import { CommentCard } from "./CommentCard";
-import { RatingTextInput } from "./RatingTextInput";
-import { Button } from "./Button";
-import { Movie, Rating, rateMovie } from "../services/altenHybridApi";
 import { Fragment, useState } from "react";
+import { Alert, Text, View } from "react-native";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { CommentCard } from "@src/components/CommentCard";
+import { RatingTextInput } from "@src/components/RatingTextInput";
+import { Button } from "@src/components/Button";
+import { Movie, Rating, rateMovie } from "@src/services/altenHybridApi";
 
 type CommentAreaProps = {
   movie: Movie;

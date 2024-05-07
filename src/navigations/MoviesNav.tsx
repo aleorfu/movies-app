@@ -1,12 +1,12 @@
+import { Image, useColorScheme } from "react-native";
+import { NavigationProp } from "@react-navigation/native";
 import {
   StackNavigationOptions,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { MovieListScreen } from "../screens/movies/MovieListScreen";
-import { MovieDetailsScreen } from "../screens/movies/MovieDetailsScreen";
-import { Image, useColorScheme } from "react-native";
-import { colors } from "../styles/tailwindColors";
-import { NavigationProp } from "@react-navigation/native";
+import { MovieListScreen } from "@src/screens/movies/MovieListScreen";
+import { MovieDetailsScreen } from "@src/screens/movies/MovieDetailsScreen";
+import { colors } from "@src/styles/tailwindColors";
 
 type ScreenNames = ["MovieListStack", "MovieDetailsStack"];
 type RootStackParamList = Record<ScreenNames[number], { movieId?: string }>;
@@ -41,7 +41,7 @@ const getOptions = (
             : { tintColor: colors.quaternary_dark }
         }
         className="w-6 h-6"
-        source={require("../assets/img/back-icon.png")}
+        source={require("@src/assets/img/back-icon.png")}
       />
     ),
   };

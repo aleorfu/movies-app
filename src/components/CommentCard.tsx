@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { Rating } from "../services/altenHybridApi";
+import { Rating } from "@src/services/altenHybridApi";
 
 type CommentCardProps = {
   rating: Rating;

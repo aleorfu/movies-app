@@ -1,8 +1,8 @@
-import { Alert, View } from "react-native";
-import { Button } from "../components/Button";
-import messaging from "@react-native-firebase/messaging";
-import { getSubscribed, saveSubscribed } from "../localstorage/asyncStorage";
 import { useEffect, useState } from "react";
+import { Alert, View } from "react-native";
+import messaging from "@react-native-firebase/messaging";
+import { Button } from "@src/components/Button";
+import { getSubscribed, saveSubscribed } from "@src/localstorage/asyncStorage";
 
 const styles = {
   view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",

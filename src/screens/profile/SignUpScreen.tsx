@@ -1,10 +1,10 @@
-import { Alert, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { Button } from "../../components/Button";
 import { useState } from "react";
-import auth from "@react-native-firebase/auth";
+import { Alert, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { colors } from "../../styles/tailwindColors";
+import auth from "@react-native-firebase/auth";
+import { TextInput } from "react-native-gesture-handler";
+import { Button } from "@src/components/Button";
+import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "nativewind";
 
 const styles = {

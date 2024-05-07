@@ -1,10 +1,9 @@
-import { View, Text, Image } from "react-native";
-import { Movie } from "../services/altenHybridApi";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { MoviesNavStackNavigation } from "../navigations/MoviesNav";
-import { LikeButton } from "./LikeButton";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { Movie } from "@src/services/altenHybridApi";
+import { MoviesNavStackNavigation } from "@src/navigations/MoviesNav";
+import { LikeButton } from "@src/components/LikeButton";
 
 type MovieCardProps = { movie: Movie; user: FirebaseAuthTypes.User | null };
 

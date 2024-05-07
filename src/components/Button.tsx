@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   ActivityIndicator,
   GestureResponderEvent,
@@ -6,8 +7,7 @@ import {
   useColorScheme,
   TouchableOpacity,
 } from "react-native";
-import { colors } from "../styles/tailwindColors";
-import { Fragment } from "react";
+import { colors } from "@src/styles/tailwindColors";
 
 type ButtonProps = {
   text?: string;

@@ -1,8 +1,8 @@
 import { Fragment, useContext, useState } from "react";
-import auth from "@react-native-firebase/auth";
 import { Alert, Text } from "react-native";
-import { Button } from "../../../components/Button";
-import { UserContext } from "../../../contexts/UserContext";
+import auth from "@react-native-firebase/auth";
+import { Button } from "@src/components/Button";
+import { UserContext } from "@src/contexts/UserContext";
 
 const style = {
   email:

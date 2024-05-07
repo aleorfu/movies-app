@@ -6,10 +6,10 @@ import {
   ActivityIndicator,
   useColorScheme,
 } from "react-native";
-import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
-import { MovieCard } from "../../components/MovieCard";
-import { UserContext } from "../../contexts/UserContext";
-import { colors } from "../../styles/tailwindColors";
+import { Movie, getAllMoviesApi } from "@src/services/altenHybridApi";
+import { MovieCard } from "@src/components/MovieCard";
+import { UserContext } from "@src/contexts/UserContext";
+import { colors } from "@src/styles/tailwindColors";
 
 let page: number = 1;
 

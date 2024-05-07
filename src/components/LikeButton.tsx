@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button } from "./Button";
-import { Movie, likeMovie } from "../services/altenHybridApi";
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { Alert } from "react-native";
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { Movie, likeMovie } from "@src/services/altenHybridApi";
+import { Button } from "@src/components/Button";
 
 type LikeButtonProps = {
   movie: Movie;

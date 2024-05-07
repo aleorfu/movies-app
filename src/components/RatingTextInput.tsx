@@ -1,5 +1,5 @@
 import { TextInput, View, useColorScheme } from "react-native";
-import { colors } from "../styles/tailwindColors";
+import { colors } from "@src/styles/tailwindColors";
 
 type RatingTextInputProps = {
   topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];

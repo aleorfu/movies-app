@@ -1,13 +1,13 @@
+import { Image, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import { HomeScreen } from "../screens/HomeScreen";
-import { ProfileNav } from "./ProfileNav";
-import { MoviesNav } from "./MoviesNav";
-import { Image, useColorScheme } from "react-native";
-import { colors } from "../styles/tailwindColors";
+import { HomeScreen } from "@src/screens/HomeScreen";
+import { ProfileNav } from "@src/navigations/ProfileNav";
+import { MoviesNav } from "@src/navigations/MoviesNav";
+import { colors } from "@src/styles/tailwindColors";
 
 const Tab = createBottomTabNavigator();
 
@@ -73,7 +73,7 @@ const MainNav = (): React.JSX.Element => {
           options={getOptions(
             isLight,
             "Home",
-            require("../assets/img/home-icon.png")
+            require("@src/assets/img/home-icon.png")
           )}
         />
         <Tab.Screen
@@ -82,7 +82,7 @@ const MainNav = (): React.JSX.Element => {
           options={getOptions(
             isLight,
             "Movies",
-            require("../assets/img/list-icon.png"),
+            require("@src/assets/img/list-icon.png"),
             false
           )}
         />
@@ -92,7 +92,7 @@ const MainNav = (): React.JSX.Element => {
           options={getOptions(
             isLight,
             "Profile",
-            require("../assets/img/profile-icon.png"),
+            require("@src/assets/img/profile-icon.png"),
             false
           )}
         />
