@@ -7,6 +7,7 @@ module.exports = function (api) {
       "@babel/plugin-transform-unicode-property-regex",
       "@babel/plugin-transform-async-generator-functions",
       "nativewind/babel",
+      "module:@preact/signals-react-transform",
     ],
   };
 };
