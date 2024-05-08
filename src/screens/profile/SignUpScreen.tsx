@@ -1,8 +1,8 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
-import database from "@react-native-firebase/database";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
+import { UserDataType, setUserData } from "@src/services/userData";
 import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "nativewind";
 import { Alert, TextInput, View } from "react-native";
@@ -22,13 +22,14 @@ const signUp = async (email: string, password: string) => {
   await auth()
     .createUserWithEmailAndPassword(email, password)
     .then((userCredentials) => {
-      database().ref(`/users/${userCredentials.user.uid}`).set({
+      const userData: UserDataType = {
         displayName: "",
         surname: "",
         phoneNumber: "",
         gender: "",
         dateOfBirth: "",
-      });
+      };
+      setUserData(userCredentials.user.uid, userData);
     });
 };
 
