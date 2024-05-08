@@ -25,8 +25,9 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   const movie: Signal<Movie | null> = useSignal<Movie | null>(null);
   const refreshing: Signal<boolean> = useSignal<boolean>(false);
 
-  const { movieId } = useRoute().params as {
+  const { movieId, movieLiked } = useRoute().params as {
     movieId: string;
+    movieLiked: Signal<boolean>;
   };
 
   const onRefresh = useCallback(() => {
@@ -35,13 +36,13 @@ const MovieDetailsScreen = (): React.JSX.Element => {
       movie.value = fetchedMovie;
     });
     refreshing.value = false;
-  }, [movieId]);
+  }, []);
 
   useEffect(() => {
     getMovieByIdApi(movieId).then((fetchedMovie) => {
       movie.value = fetchedMovie;
     });
-  }, [movieId]);
+  }, []);
 
   return (
     <ScrollView
@@ -58,7 +59,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
             resizeMode="cover"
           />
           <Text className={style.title}>{movie.value.name}</Text>
-          <LikeButton movie={movie.value} />
+          <LikeButton movie={movie.value} movieLiked={movieLiked} />
           <TextCard title={"Description"} content={movie.value.description} />
           <ListCard title={"Actors"} content={movie.value.actors} />
           <ListCard title={"Categories"} content={movie.value.categories} />

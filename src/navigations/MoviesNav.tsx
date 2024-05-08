@@ -1,15 +1,19 @@
-import { Image, useColorScheme } from "react-native";
+import { Signal } from "@preact/signals-react";
 import { NavigationProp } from "@react-navigation/native";
 import {
   StackNavigationOptions,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { MovieListScreen } from "@src/screens/movies/MovieListScreen";
 import { MovieDetailsScreen } from "@src/screens/movies/MovieDetailsScreen";
+import { MovieListScreen } from "@src/screens/movies/MovieListScreen";
 import { colors } from "@src/styles/tailwindColors";
+import { Image, useColorScheme } from "react-native";
 
 type ScreenNames = ["MovieListStack", "MovieDetailsStack"];
-type RootStackParamList = Record<ScreenNames[number], { movieId?: string }>;
+type RootStackParamList = Record<
+  ScreenNames[number],
+  { movieId: string; movieLiked?: Signal<boolean> }
+>;
 type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();

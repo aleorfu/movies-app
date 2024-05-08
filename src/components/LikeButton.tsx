@@ -1,4 +1,4 @@
-import { Signal, useSignal } from "@preact/signals-react";
+import { Signal } from "@preact/signals-react";
 import { Button } from "@src/components/Button";
 import { Movie, likeMovie } from "@src/services/altenHybridApi";
 import { user } from "@src/signals/userSignal";
@@ -7,6 +7,7 @@ import { Alert } from "react-native";
 
 type LikeButtonProps = {
   movie: Movie;
+  movieLiked: Signal<boolean>;
 };
 
 const style = {
@@ -18,15 +19,16 @@ const style = {
   },
 };
 
-const LikeButton = ({ movie }: LikeButtonProps): React.JSX.Element => {
-  const movieLiked: Signal<boolean> = useSignal<boolean>(false);
-
+const LikeButton = ({
+  movie,
+  movieLiked,
+}: LikeButtonProps): React.JSX.Element => {
   const localUser = user.value;
 
   useEffect(() => {
     if (localUser != null)
       movieLiked.value = movie.userLiked?.includes(localUser.uid);
-  }, []); // TODO verify if I should add localUser as required
+  }, [localUser]);
 
   return (
     <Fragment>
