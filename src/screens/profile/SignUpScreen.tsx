@@ -1,9 +1,9 @@
+import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
 import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "nativewind";
-import { useState } from "react";
 import { Alert, TextInput, View } from "react-native";
 
 const styles = {
@@ -22,8 +22,8 @@ const signUp = async (email: string, password: string) => {
 };
 
 const SignUpScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const email: Signal<string> = useSignal<string>("");
+  const password: Signal<string> = useSignal<string>("");
   const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
   const isLight: boolean = colorScheme === "light";
@@ -34,9 +34,9 @@ const SignUpScreen = () => {
         className={styles.textInput}
         keyboardType="email-address"
         onChangeText={(text) => {
-          setEmail(text);
+          email.value = text;
         }}
-        value={email}
+        value={email.value}
         placeholder="Email"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -46,9 +46,9 @@ const SignUpScreen = () => {
         className={styles.textInput}
         secureTextEntry={true}
         onChangeText={(text) => {
-          setPassword(text);
+          password.value = text;
         }}
-        value={password}
+        value={password.value}
         placeholder="Password"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -59,11 +59,11 @@ const SignUpScreen = () => {
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
         onPress={async () => {
-          if (email != "" && password != "") {
-            await signUp(email, password)
+          if (email.value != "" && password.value != "") {
+            await signUp(email.value, password.value)
               .then(() => {
-                setEmail("");
-                setPassword("");
+                email.value = "";
+                password.value = "";
                 auth().currentUser?.sendEmailVerification();
                 navigation.goBack();
               })
