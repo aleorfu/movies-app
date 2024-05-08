@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { Alert, View } from "react-native";
 import messaging from "@react-native-firebase/messaging";
 import { Button } from "@src/components/Button";
 import { getSubscribed, saveSubscribed } from "@src/localstorage/asyncStorage";
+import { useEffect, useState } from "react";
+import { Alert, View } from "react-native";
 
 const styles = {
   view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
@@ -31,7 +31,6 @@ const toggleSubscribed = async (subscribed: boolean): Promise<void> => {
 
 const HomeScreen = (): React.JSX.Element => {
   const [isSubscribed, setSubscribed] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     getSubscribed().then((value: boolean) => {
@@ -45,9 +44,8 @@ const HomeScreen = (): React.JSX.Element => {
         text={isSubscribed ? "Unsubscribe" : "Subscribe"}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        onPress={() => {
-          setLoading(true);
-          toggleSubscribed(isSubscribed)
+        onPress={async () => {
+          await toggleSubscribed(isSubscribed)
             .then(() => {
               setSubscribed(!isSubscribed);
             })
@@ -56,12 +54,8 @@ const HomeScreen = (): React.JSX.Element => {
                 "There has been an error while subscribing or unsubscribing",
                 "Please, try again later."
               );
-            })
-            .finally(() => {
-              setLoading(false);
             });
         }}
-        loading={loading}
       />
     </View>
   );

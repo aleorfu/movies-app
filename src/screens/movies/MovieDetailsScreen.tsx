@@ -1,12 +1,12 @@
-import { Fragment, useCallback, useContext, useEffect, useState } from "react";
-import { Image, Text, ScrollView, RefreshControl } from "react-native";
+import { Signal, useSignal } from "@preact/signals-react";
 import { useRoute } from "@react-navigation/native";
-import { Movie, getMovieByIdApi } from "@src/services/altenHybridApi";
+import { CommentArea } from "@src/components/CommentArea";
+import { LikeButton } from "@src/components/LikeButton";
 import { ListCard } from "@src/components/ListCard";
 import { TextCard } from "@src/components/TextCard";
-import { CommentArea } from "@src/components/CommentArea";
-import { UserContext } from "@src/contexts/UserContext";
-import { LikeButton } from "@src/components/LikeButton";
+import { Movie, getMovieByIdApi } from "@src/services/altenHybridApi";
+import { Fragment, useCallback, useEffect } from "react";
+import { Image, RefreshControl, ScrollView, Text } from "react-native";
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -22,24 +22,24 @@ const style = {
 };
 
 const MovieDetailsScreen = (): React.JSX.Element => {
+  const movie: Signal<Movie | null> = useSignal<Movie | null>(null);
+  const refreshing: Signal<boolean> = useSignal<boolean>(false);
+
   const { movieId } = useRoute().params as {
     movieId: string;
   };
-  const user = useContext(UserContext);
-  const [movie, setMovie] = useState<Movie>();
-  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    getMovieByIdApi(movieId).then((movie) => {
-      setMovie(movie);
+    refreshing.value = true;
+    getMovieByIdApi(movieId).then((fetchedMovie) => {
+      movie.value = fetchedMovie;
     });
-    setRefreshing(false);
+    refreshing.value = false;
   }, [movieId]);
 
   useEffect(() => {
-    getMovieByIdApi(movieId).then((movie) => {
-      setMovie(movie);
+    getMovieByIdApi(movieId).then((fetchedMovie) => {
+      movie.value = fetchedMovie;
     });
   }, [movieId]);
 
@@ -47,30 +47,30 @@ const MovieDetailsScreen = (): React.JSX.Element => {
     <ScrollView
       className={style.scrollView}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl refreshing={refreshing.value} onRefresh={onRefresh} />
       }
     >
-      {movie && (
+      {movie.value && (
         <Fragment>
           <Image
-            source={{ uri: movie.pictureUrl }}
+            source={{ uri: movie.value.pictureUrl }}
             className={style.image}
             resizeMode="cover"
           />
-          <Text className={style.title}>{movie.name}</Text>
-          {user && <LikeButton movie={movie} user={user} />}
-          <TextCard title={"Description"} content={movie.description} />
-          <ListCard title={"Actors"} content={movie.actors} />
-          <ListCard title={"Categories"} content={movie.categories} />
+          <Text className={style.title}>{movie.value.name}</Text>
+          <LikeButton movie={movie.value} />
+          <TextCard title={"Description"} content={movie.value.description} />
+          <ListCard title={"Actors"} content={movie.value.actors} />
+          <ListCard title={"Categories"} content={movie.value.categories} />
           <ListCard
             title={"Other data"}
             content={[
-              `Duration: ${movie.duration}`,
-              `Rate: ${movie.rating}/5`,
-              `Likes: ${movie.likes}`,
+              `Duration: ${movie.value.duration}`,
+              `Rate: ${movie.value.rating}/5`,
+              `Likes: ${movie.value.likes}`,
             ]}
           />
-          <CommentArea movie={movie} user={user} />
+          <CommentArea movie={movie.value} />
         </Fragment>
       )}
     </ScrollView>

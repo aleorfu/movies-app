@@ -1,14 +1,14 @@
-import { Fragment, useState } from "react";
-import { Alert, Text, View } from "react-native";
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { Signal, useSignal } from "@preact/signals-react";
+import { Button } from "@src/components/Button";
 import { CommentCard } from "@src/components/CommentCard";
 import { RatingTextInput } from "@src/components/RatingTextInput";
-import { Button } from "@src/components/Button";
 import { Movie, Rating, rateMovie } from "@src/services/altenHybridApi";
+import { user } from "@src/signals/userSignal";
+import { Fragment } from "react";
+import { Alert, Text, View } from "react-native";
 
 type CommentAreaProps = {
   movie: Movie;
-  user: FirebaseAuthTypes.User | null;
 };
 
 const style = {
@@ -23,83 +23,76 @@ const style = {
 
 const sendRating = async (
   movieId: string,
-  contentText: string,
-  ratingText: string,
   userId: string,
-  setMovieRatings: React.Dispatch<React.SetStateAction<Rating[]>>
+  ratingText: Signal<string>,
+  contentText: Signal<string>,
+  movieRatings: Signal<Rating[]>
 ): Promise<void | never> => {
   const rating: Rating = {
     userId: userId,
-    comment: contentText,
-    rating: Number(ratingText),
+    comment: contentText.value,
+    rating: Number(ratingText.value),
   };
 
   await rateMovie(movieId, rating).then(() => {
-    setMovieRatings((prevMovieRatings) => {
-      const existingRatingIndex = prevMovieRatings.findIndex(
-        (r) => r.userId === userId
-      );
+    const prevMovieRatings = movieRatings.value;
 
-      if (existingRatingIndex !== -1) {
-        const updatedRatings = [...prevMovieRatings];
-        updatedRatings[existingRatingIndex] = rating;
-        return updatedRatings;
-      } else {
-        return [...prevMovieRatings, rating];
-      }
-    });
+    const existingRatingIndex = prevMovieRatings.findIndex(
+      (r) => r.userId === userId
+    );
+
+    if (existingRatingIndex !== -1) {
+      const updatedRatings = [...prevMovieRatings];
+      updatedRatings[existingRatingIndex] = rating;
+
+      movieRatings.value = updatedRatings;
+    } else {
+      movieRatings.value = [...prevMovieRatings, rating];
+    }
   });
 };
 
-const CommentArea = ({ movie, user }: CommentAreaProps): React.JSX.Element => {
-  const [ratingText, setRatingText] = useState<string>("");
-  const [contentText, setContentText] = useState<string>("");
-  const [movieRatings, setMovieRatings] = useState<Rating[]>(movie.ratings);
-  const [sendingRating, setSendingRating] = useState<boolean>(false);
+const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
+  const ratingText: Signal<string> = useSignal<string>("");
+  const contentText: Signal<string> = useSignal<string>("");
+  const movieRatings: Signal<Rating[]> = useSignal<Rating[]>(movie.ratings);
+
+  const localUser = user.value;
 
   return (
     <View>
       <Text className={style.title}>
-        Comments ({movieRatings?.length ?? "0"})
+        Comments ({movieRatings.value?.length ?? "0"})
       </Text>
-      {movieRatings?.map((rating: Rating, index: number) => (
+      {movieRatings.value?.map((rating: Rating, index: number) => (
         <CommentCard key={index} rating={rating} />
       ))}
-      {user && (
+      {localUser && (
         <Fragment>
-          <RatingTextInput
-            topTextUseState={[ratingText, setRatingText]}
-            bottomTextUseState={[contentText, setContentText]}
-            editable={!sendingRating}
-          />
+          <RatingTextInput ratingText={ratingText} contentText={contentText} />
           <Button
             text="Send"
             buttonClassName={style.button.button}
             textClassName={style.button.text}
-            onPress={() => {
-              setSendingRating(true);
-              sendRating(
+            onPress={async () => {
+              await sendRating(
                 movie.id,
-                contentText,
+                localUser.uid,
                 ratingText,
-                user.uid,
-                setMovieRatings
+                contentText,
+                movieRatings
               )
                 .then(() => {
-                  setRatingText("");
-                  setContentText("");
+                  ratingText.value = "";
+                  contentText.value = "";
                 })
                 .catch(() => {
                   Alert.alert(
                     "There was an error while sending your rating.",
                     "Please, try again later."
                   );
-                })
-                .finally(() => {
-                  setSendingRating(false);
                 });
             }}
-            loading={sendingRating}
           />
         </Fragment>
       )}

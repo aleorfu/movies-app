@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Alert, View, TextInput } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
+import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
 import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "nativewind";
+import { useState } from "react";
+import { Alert, TextInput, View } from "react-native";
 
 const styles = {
   textInput:
@@ -24,7 +24,6 @@ const signUp = async (email: string, password: string) => {
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState<boolean>(false);
   const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
   const isLight: boolean = colorScheme === "light";
@@ -59,10 +58,9 @@ const SignUpScreen = () => {
         text="Sign-Up"
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        onPress={() => {
+        onPress={async () => {
           if (email != "" && password != "") {
-            setLoading(true);
-            signUp(email, password)
+            await signUp(email, password)
               .then(() => {
                 setEmail("");
                 setPassword("");
@@ -81,9 +79,6 @@ const SignUpScreen = () => {
                     "Please, try again with another one."
                   );
                 }
-              })
-              .finally(() => {
-                setLoading(false);
               });
           } else
             Alert.alert(
@@ -91,7 +86,6 @@ const SignUpScreen = () => {
               "Please, fill every field and try again."
             );
         }}
-        loading={loading}
       />
     </View>
   );

@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { Movie, likeMovie } from "@src/services/altenHybridApi";
+import { Signal, useSignal } from "@preact/signals-react";
 import { Button } from "@src/components/Button";
+import { Movie, likeMovie } from "@src/services/altenHybridApi";
+import { user } from "@src/signals/userSignal";
+import { Fragment, useEffect } from "react";
+import { Alert } from "react-native";
 
 type LikeButtonProps = {
   movie: Movie;
-  user: FirebaseAuthTypes.User;
 };
 
 const style = {
@@ -18,43 +18,44 @@ const style = {
   },
 };
 
-const LikeButton = ({ movie, user }: LikeButtonProps): React.JSX.Element => {
-  const [movieLiked, setMovieLiked] = useState<boolean>(false);
-  const [sendingLiked, setSendingLiked] = useState<boolean>(false);
+const LikeButton = ({ movie }: LikeButtonProps): React.JSX.Element => {
+  const movieLiked: Signal<boolean> = useSignal<boolean>(false);
+
+  const localUser = user.value;
 
   useEffect(() => {
-    if (user != null) setMovieLiked(movie.userLiked?.includes(user.uid));
-  }, []);
+    if (localUser != null)
+      movieLiked.value = movie.userLiked?.includes(localUser.uid);
+  }, []); // TODO verify if I should add localUser as required
 
   return (
-    <Button
-      text={movieLiked ? "Liked" : "Like"}
-      image={
-        movieLiked
-          ? require("../assets/img/like-filled-icon.png")
-          : require("../assets/img/like-icon.png")
-      }
-      buttonClassName={style.button.button}
-      imageClassName={style.button.image}
-      textClassName={style.button.text}
-      onPress={() => {
-        setSendingLiked(true);
-        likeMovie(movie.id, user.uid)
-          .then(() => {
-            setMovieLiked(!movieLiked);
-          })
-          .catch(() => {
-            Alert.alert(
-              "There was an error when sending your like.",
-              "Please, try again later."
-            );
-          })
-          .finally(() => {
-            setSendingLiked(false);
-          });
-      }}
-      loading={sendingLiked}
-    />
+    <Fragment>
+      {localUser && (
+        <Button
+          text={movieLiked.value ? "Liked" : "Like"}
+          image={
+            movieLiked.value
+              ? require("../assets/img/like-filled-icon.png")
+              : require("../assets/img/like-icon.png")
+          }
+          buttonClassName={style.button.button}
+          imageClassName={style.button.image}
+          textClassName={style.button.text}
+          onPress={async () => {
+            await likeMovie(movie.id, localUser.uid)
+              .then(() => {
+                movieLiked.value = !movieLiked.value;
+              })
+              .catch(() => {
+                Alert.alert(
+                  "There was an error when sending your like.",
+                  "Please, try again later."
+                );
+              });
+          }}
+        />
+      )}
+    </Fragment>
   );
 };
 

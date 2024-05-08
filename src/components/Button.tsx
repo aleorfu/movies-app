@@ -1,9 +1,9 @@
+import { Signal, useSignal } from "@preact/signals-react";
 import { colors } from "@src/styles/tailwindColors";
 import { Fragment } from "react";
 import {
   ActivityIndicator,
   ColorSchemeName,
-  GestureResponderEvent,
   Image,
   Text,
   TouchableOpacity,
@@ -17,8 +17,7 @@ type ButtonProps = {
   textClassName?: string;
   imageClassName?: string;
   disabled?: boolean;
-  loading?: boolean;
-  onPress?: ((event: GestureResponderEvent) => void) & (() => void);
+  onPress?: () => Promise<void>;
 };
 
 const Button = ({
@@ -28,19 +27,26 @@ const Button = ({
   textClassName,
   imageClassName,
   disabled = false,
-  loading = false,
   onPress,
 }: ButtonProps): React.JSX.Element => {
+  const loading: Signal<boolean> = useSignal<boolean>(false);
   const colorScheme: ColorSchemeName = useColorScheme();
   const isLight: boolean = colorScheme === "light";
 
   return (
     <TouchableOpacity
-      disabled={loading ? true : disabled}
+      disabled={loading.value ? true : disabled}
       className={buttonClassName}
-      onPress={onPress}
+      onPress={() => {
+        if (!onPress) return;
+
+        loading.value = true;
+        onPress().then(() => {
+          loading.value = false;
+        });
+      }}
     >
-      {loading ? (
+      {loading.value ? (
         <ActivityIndicator
           size="small"
           color={isLight ? colors.quaternary_light : colors.quaternary_dark}

@@ -1,19 +1,18 @@
-import { useContext } from "react";
-import { View } from "react-native";
-import { ProfileSignedOut } from "@src/screens/profile/main/ProfileSignedOut";
 import { ProfileSignedIn } from "@src/screens/profile/main/ProfileSignedIn";
-import { UserContext } from "@src/contexts/UserContext";
+import { ProfileSignedOut } from "@src/screens/profile/main/ProfileSignedOut";
+import { user } from "@src/signals/userSignal";
+import { View } from "react-native";
 
 const style = {
   view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
 };
 
 const ProfileScreen = () => {
-  const user = useContext(UserContext);
+  const localUser = user.value;
 
   return (
     <View className={style.view}>
-      {!user ? <ProfileSignedOut /> : <ProfileSignedIn />}
+      {!localUser ? <ProfileSignedOut /> : <ProfileSignedIn />}
     </View>
   );
 };

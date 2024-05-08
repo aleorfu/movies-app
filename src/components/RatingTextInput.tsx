@@ -1,9 +1,10 @@
 import { TextInput, View, useColorScheme } from "react-native";
 import { colors } from "@src/styles/tailwindColors";
+import { Signal } from "@preact/signals-react";
 
 type RatingTextInputProps = {
-  topTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
-  bottomTextUseState: [string, React.Dispatch<React.SetStateAction<string>>];
+  ratingText: Signal<string>;
+  contentText: Signal<string>;
   editable?: boolean;
 };
 
@@ -16,21 +17,20 @@ const style = {
   },
 };
 
-const verifyNumber = (text: string): string => {
-  const textAsNumber: number = Number(text);
-  if (textAsNumber >= 0 && textAsNumber <= 5) return text;
-  else if (textAsNumber < 0) return "0";
-  else if (textAsNumber > 5) return "5";
-  else return "";
+const numberIsValid = (text: string): boolean => {
+  try {
+    const number = Number(text);
+    return number >= 0 && number <= 5;
+  } catch {
+    return false;
+  }
 };
 
 const RatingTextInput = ({
-  topTextUseState,
-  bottomTextUseState,
+  ratingText,
+  contentText,
   editable = true,
 }: RatingTextInputProps): React.JSX.Element => {
-  const [topText, setTopText] = topTextUseState;
-  const [bottomText, setBottomText] = bottomTextUseState;
   const colorScheme = useColorScheme();
   const isLight = colorScheme === "light";
 
@@ -39,9 +39,9 @@ const RatingTextInput = ({
       <TextInput
         className={[style.textInput.common, style.textInput.top].join(" ")}
         onChangeText={(text: string) => {
-          setTopText(verifyNumber(text));
+          if (numberIsValid(text)) ratingText.value = text;
         }}
-        value={topText}
+        value={ratingText.value}
         keyboardType="number-pad"
         maxLength={1}
         placeholder="0"
@@ -52,8 +52,10 @@ const RatingTextInput = ({
       />
       <TextInput
         className={[style.textInput.common, style.textInput.bottom].join(" ")}
-        onChangeText={setBottomText}
-        value={bottomText}
+        onChangeText={(text: string) => {
+          contentText.value = text;
+        }}
+        value={contentText.value}
         placeholder="Comment"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
