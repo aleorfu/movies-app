@@ -25,7 +25,7 @@ import {
  *
  * disabled? - Whether the button is disabled or not.
  *
- * loading? - Whether the button is loading or not (this will animate the button and disabling it while loading).
+ * loading? - Whether the button is loading or not (this will animate and disable the button while loading).
  *
  * onPress? - Function called when the button is released.
  *
