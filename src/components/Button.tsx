@@ -10,27 +10,6 @@ import {
   useColorScheme,
 } from "react-native";
 
-/**
- * Prop types for Button component:
- *
- * text? - The content of the button in string format.
- *
- * image? - The image resource to show in the button in form of a small icon.
- *
- * buttonClassName? - The tailwind class name for the entire button.
- *
- * textClassName? - The tailwind class name for the text inside the button.
- *
- * imageClassName? - The tailwind class name for the image inside the button.
- *
- * disabled? - Whether the button is disabled or not.
- *
- * loading? - Whether the button is loading or not (this will animate and disable the button while loading).
- *
- * onPress? - Function called when the button is released.
- *
- * @see Button - The component using these props.
- */
 type ButtonProps = {
   text?: string;
   image?: number;
@@ -42,15 +21,6 @@ type ButtonProps = {
   onPress?: ((event: GestureResponderEvent) => void) & (() => void);
 };
 
-/**
- *  A personalized button component.
- *
- * @param ButtonProps.
- *
- * @see ButtonProps - Props used in this component.
- *
- * @returns Personalized button component.
- */
 const Button = ({
   text,
   image,
