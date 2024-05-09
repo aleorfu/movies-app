@@ -1,8 +1,8 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@src/components/Button";
-import { UserDataType, getUserData, setUserData } from "@src/services/userData";
-import { user } from "@src/signals/userSignal";
+import { getUserData, setUserData, UserDataType } from "@src/services/userData";
+import { getUserSignal } from "@src/signals/userSignal";
 import { Fragment, useEffect } from "react";
 import { Alert, ScrollView, Text, TextInput } from "react-native";
 
@@ -23,7 +23,7 @@ const ProfileSignedIn = (): React.JSX.Element => {
   const phoneNumber: Signal<string> = useSignal<string>("");
   const gender: Signal<string> = useSignal<string>("");
   const dateOfBirth: Signal<string> = useSignal<string>("");
-  const localUser = user.value;
+  const localUser = getUserSignal.value;
 
   useEffect(() => {
     localUser &&
@@ -106,7 +106,7 @@ const ProfileSignedIn = (): React.JSX.Element => {
             .catch(() => {
               Alert.alert(
                 "There was an error while signing you out.",
-                "Please, try again later."
+                "Please, try again later.",
               );
             });
         }}

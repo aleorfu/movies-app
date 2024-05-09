@@ -1,14 +1,14 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import { MovieCard } from "@src/components/MovieCard";
-import { Movie, getAllMoviesApi } from "@src/services/altenHybridApi";
+import { getAllMoviesApi, Movie } from "@src/services/altenHybridApi";
 import { colors } from "@src/styles/tailwindColors";
 import { useCallback, useEffect } from "react";
 import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  View,
   useColorScheme,
+  View,
 } from "react-native";
 
 let page: number = 1;
@@ -19,7 +19,7 @@ const style = {
 
 const fetchFiveMovies = (
   movies: Signal<Movie[]>,
-  loadingMovies: Signal<boolean>
+  loadingMovies: Signal<boolean>,
 ) => {
   loadingMovies.value = true;
   getAllMoviesApi().then((fetchedMovies: Movie[]) => {

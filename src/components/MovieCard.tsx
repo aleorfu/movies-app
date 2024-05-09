@@ -4,6 +4,7 @@ import { LikeButton } from "@src/components/LikeButton";
 import { MoviesNavStackNavigation } from "@src/navigations/MoviesNav";
 import { Movie } from "@src/services/altenHybridApi";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import { getMovieLikedSignalsObject } from "@src/signals/movieLikedSignalsObject";
 
 type MovieCardProps = { movie: Movie };
 
@@ -16,6 +17,7 @@ const style = {
 
 const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
   const movieLiked: Signal<boolean> = useSignal<boolean>(false);
+  getMovieLikedSignalsObject[movie.id] = movieLiked;
   const navigation: MoviesNavStackNavigation =
     useNavigation() as MoviesNavStackNavigation;
 
@@ -24,7 +26,7 @@ const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
       <TouchableOpacity
         onPress={() => {
           const movieId: string = movie.id;
-          navigation.navigate("MovieDetailsStack", { movieId, movieLiked });
+          navigation.navigate("MovieDetailsStack", { movieId });
         }}
       >
         <View>

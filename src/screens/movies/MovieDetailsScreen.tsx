@@ -4,9 +4,10 @@ import { CommentArea } from "@src/components/CommentArea";
 import { LikeButton } from "@src/components/LikeButton";
 import { ListCard } from "@src/components/ListCard";
 import { TextCard } from "@src/components/TextCard";
-import { Movie, getMovieByIdApi } from "@src/services/altenHybridApi";
+import { getMovieByIdApi, Movie } from "@src/services/altenHybridApi";
 import { Fragment, useCallback, useEffect } from "react";
 import { Image, RefreshControl, ScrollView, Text } from "react-native";
+import { getMovieLikedSignalsObject } from "@src/signals/movieLikedSignalsObject";
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -25,10 +26,11 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   const movie: Signal<Movie | null> = useSignal<Movie | null>(null);
   const refreshing: Signal<boolean> = useSignal<boolean>(false);
 
-  const { movieId, movieLiked } = useRoute().params as {
+  const { movieId } = useRoute().params as {
     movieId: string;
-    movieLiked: Signal<boolean>;
   };
+
+  const movieLiked: Signal<boolean> = getMovieLikedSignalsObject[movieId];
 
   const onRefresh = useCallback(() => {
     refreshing.value = true;

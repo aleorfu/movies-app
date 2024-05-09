@@ -1,8 +1,7 @@
-import { Signal } from "@preact/signals-react";
 import { NavigationProp } from "@react-navigation/native";
 import {
-  StackNavigationOptions,
   createStackNavigator,
+  StackNavigationOptions,
 } from "@react-navigation/stack";
 import { MovieDetailsScreen } from "@src/screens/movies/MovieDetailsScreen";
 import { MovieListScreen } from "@src/screens/movies/MovieListScreen";
@@ -10,17 +9,14 @@ import { colors } from "@src/styles/tailwindColors";
 import { Image, useColorScheme } from "react-native";
 
 type ScreenNames = ["MovieListStack", "MovieDetailsStack"];
-type RootStackParamList = Record<
-  ScreenNames[number],
-  { movieId: string; movieLiked?: Signal<boolean> }
->;
+type RootStackParamList = Record<ScreenNames[number], { movieId: string }>;
 type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();
 
 const getOptions = (
   isLight: boolean,
-  title: string
+  title: string,
 ): StackNavigationOptions => {
   return {
     title: title,

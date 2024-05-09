@@ -2,9 +2,9 @@ import { Signal, useSignal } from "@preact/signals-react";
 import { Button } from "@src/components/Button";
 import { CommentCard } from "@src/components/CommentCard";
 import { RatingTextInput } from "@src/components/RatingTextInput";
-import { Movie, Rating, rateMovie } from "@src/services/altenHybridApi";
-import { user } from "@src/signals/userSignal";
-import { Fragment } from "react";
+import { Movie, rateMovie, Rating } from "@src/services/altenHybridApi";
+import { getUserSignal } from "@src/signals/userSignal";
+import React, { Fragment } from "react";
 import { Alert, Text, View } from "react-native";
 
 type CommentAreaProps = {
@@ -26,7 +26,7 @@ const sendRating = async (
   userId: string,
   ratingText: Signal<string>,
   contentText: Signal<string>,
-  movieRatings: Signal<Rating[]>
+  movieRatings: Signal<Rating[]>,
 ): Promise<void | never> => {
   const rating: Rating = {
     userId: userId,
@@ -38,7 +38,7 @@ const sendRating = async (
     const prevMovieRatings = movieRatings.value;
 
     const existingRatingIndex = prevMovieRatings.findIndex(
-      (r) => r.userId === userId
+      (r) => r.userId === userId,
     );
 
     if (existingRatingIndex !== -1) {
@@ -57,7 +57,7 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
   const contentText: Signal<string> = useSignal<string>("");
   const movieRatings: Signal<Rating[]> = useSignal<Rating[]>(movie.ratings);
 
-  const localUser = user.value;
+  const localUser = getUserSignal.value;
 
   return (
     <View>
@@ -80,7 +80,7 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
                 localUser.uid,
                 ratingText,
                 contentText,
-                movieRatings
+                movieRatings,
               )
                 .then(() => {
                   ratingText.value = "";
@@ -89,7 +89,7 @@ const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
                 .catch(() => {
                   Alert.alert(
                     "There was an error while sending your rating.",
-                    "Please, try again later."
+                    "Please, try again later.",
                   );
                 });
             }}

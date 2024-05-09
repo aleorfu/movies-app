@@ -1,7 +1,7 @@
 import { Signal } from "@preact/signals-react";
 import { Button } from "@src/components/Button";
-import { Movie, likeMovie } from "@src/services/altenHybridApi";
-import { user } from "@src/signals/userSignal";
+import { likeMovie, Movie } from "@src/services/altenHybridApi";
+import { getUserSignal } from "@src/signals/userSignal";
 import { Fragment, useEffect } from "react";
 import { Alert } from "react-native";
 
@@ -23,7 +23,7 @@ const LikeButton = ({
   movie,
   movieLiked,
 }: LikeButtonProps): React.JSX.Element => {
-  const localUser = user.value;
+  const localUser = getUserSignal.value;
 
   useEffect(() => {
     if (localUser != null)
@@ -51,7 +51,7 @@ const LikeButton = ({
               .catch(() => {
                 Alert.alert(
                   "There was an error when sending your like.",
-                  "Please, try again later."
+                  "Please, try again later.",
                 );
               });
           }}
