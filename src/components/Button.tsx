@@ -1,9 +1,8 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import { colors } from "@src/styles/tailwindColors";
-import { Fragment } from "react";
+import React, { Fragment, useCallback } from "react";
 import {
   ActivityIndicator,
-  ColorSchemeName,
   Image,
   Text,
   TouchableOpacity,
@@ -30,21 +29,22 @@ const Button = ({
   onPress,
 }: ButtonProps): React.JSX.Element => {
   const loading: Signal<boolean> = useSignal<boolean>(false);
-  const colorScheme: ColorSchemeName = useColorScheme();
-  const isLight: boolean = colorScheme === "light";
+  const isLight: boolean = useColorScheme() === "light";
+
+  const buttonOnPress = useCallback((): void => {
+    if (!onPress) return;
+
+    loading.value = true;
+    onPress().then(() => {
+      loading.value = false;
+    });
+  }, [onPress]);
 
   return (
     <TouchableOpacity
       disabled={loading.value ? true : disabled}
       className={buttonClassName}
-      onPress={() => {
-        if (!onPress) return;
-
-        loading.value = true;
-        onPress().then(() => {
-          loading.value = false;
-        });
-      }}
+      onPress={buttonOnPress}
     >
       {loading.value ? (
         <ActivityIndicator
