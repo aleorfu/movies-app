@@ -1,6 +1,7 @@
-import { TextInput, View, useColorScheme } from "react-native";
+import { TextInput, useColorScheme, View } from "react-native";
 import { colors } from "@src/styles/tailwindColors";
 import { Signal } from "@preact/signals-react";
+import React from "react";
 
 type RatingTextInputProps = {
   ratingText: Signal<string>;
@@ -19,7 +20,7 @@ const style = {
 
 const numberIsValid = (text: string): boolean => {
   try {
-    const number = Number(text);
+    const number: number = Number(text);
     return number >= 0 && number <= 5;
   } catch {
     return false;
@@ -31,14 +32,13 @@ const RatingTextInput = ({
   contentText,
   editable = true,
 }: RatingTextInputProps): React.JSX.Element => {
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
+  const isLight: boolean = useColorScheme() === "light";
 
   return (
     <View>
       <TextInput
         className={[style.textInput.common, style.textInput.top].join(" ")}
-        onChangeText={(text: string) => {
+        onChangeText={(text: string): void => {
           if (numberIsValid(text)) ratingText.value = text;
         }}
         value={ratingText.value}
@@ -52,7 +52,7 @@ const RatingTextInput = ({
       />
       <TextInput
         className={[style.textInput.common, style.textInput.bottom].join(" ")}
-        onChangeText={(text: string) => {
+        onChangeText={(text: string): void => {
           contentText.value = text;
         }}
         value={contentText.value}

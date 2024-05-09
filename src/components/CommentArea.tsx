@@ -2,13 +2,14 @@ import { Signal, useSignal } from "@preact/signals-react";
 import { Button } from "@src/components/Button";
 import { CommentCard } from "@src/components/CommentCard";
 import { RatingTextInput } from "@src/components/RatingTextInput";
-import { Movie, rateMovie, Rating } from "@src/services/altenHybridApi";
-import { getUserSignal } from "@src/signals/userSignal";
-import React, { Fragment } from "react";
+import { rateMovie, Rating } from "@src/services/altenHybridApi";
+import { getUserSignal, UserType } from "@src/signals/userSignal";
+import React, { Fragment, useCallback } from "react";
 import { Alert, Text, View } from "react-native";
 
 type CommentAreaProps = {
-  movie: Movie;
+  movieId: string;
+  movieRatings: Rating[];
 };
 
 const style = {
@@ -21,78 +22,100 @@ const style = {
   },
 };
 
-const sendRating = async (
-  movieId: string,
-  userId: string,
-  ratingText: Signal<string>,
-  contentText: Signal<string>,
-  movieRatings: Signal<Rating[]>,
-): Promise<void | never> => {
-  const rating: Rating = {
-    userId: userId,
-    comment: contentText.value,
-    rating: Number(ratingText.value),
-  };
+const CommentArea = ({
+  movieId,
+  movieRatings: initialMovieRatings,
+}: CommentAreaProps): React.JSX.Element => {
+  const loadingSendingSignal: Signal<boolean> = useSignal<boolean>(false);
+  const ratingTextSignal: Signal<string> = useSignal<string>("");
+  const contentTextSignal: Signal<string> = useSignal<string>("");
+  const movieRatingsSignal: Signal<Rating[]> =
+    useSignal<Rating[]>(initialMovieRatings);
 
-  await rateMovie(movieId, rating).then(() => {
-    const prevMovieRatings = movieRatings.value;
+  const localUser: UserType = getUserSignal.value;
 
-    const existingRatingIndex = prevMovieRatings.findIndex(
-      (r) => r.userId === userId,
-    );
+  const handleSending = useCallback(
+    (
+      userId: string,
+      ratingText: string,
+      contentText: string,
+      movieRatings: Rating[],
+    ): void => {
+      loadingSendingSignal.value = true;
+      if (isNaN(Number(ratingText))) {
+        Alert.alert(
+          "Invalid rating value.",
+          "Please, insert a number in rating field and try again.",
+        );
+        loadingSendingSignal.value = false;
+        return;
+      }
 
-    if (existingRatingIndex !== -1) {
-      const updatedRatings = [...prevMovieRatings];
-      updatedRatings[existingRatingIndex] = rating;
+      const rating: Rating = {
+        userId: userId,
+        comment: contentText,
+        rating: Number(ratingText),
+      };
 
-      movieRatings.value = updatedRatings;
-    } else {
-      movieRatings.value = [...prevMovieRatings, rating];
-    }
-  });
-};
+      rateMovie(movieId, rating)
+        .then((): void => {
+          const prevMovieRatings: Rating[] = movieRatings;
 
-const CommentArea = ({ movie }: CommentAreaProps): React.JSX.Element => {
-  const ratingText: Signal<string> = useSignal<string>("");
-  const contentText: Signal<string> = useSignal<string>("");
-  const movieRatings: Signal<Rating[]> = useSignal<Rating[]>(movie.ratings);
+          const existingRatingIndex: number = prevMovieRatings.findIndex(
+            (r: Rating): boolean => r.userId === userId,
+          );
 
-  const localUser = getUserSignal.value;
+          if (existingRatingIndex !== -1) {
+            const updatedRatings: Rating[] = [...prevMovieRatings];
+            updatedRatings[existingRatingIndex] = rating;
+
+            movieRatingsSignal.value = updatedRatings;
+          } else {
+            movieRatingsSignal.value = [...prevMovieRatings, rating];
+          }
+          ratingTextSignal.value = "";
+          contentTextSignal.value = "";
+        })
+        .catch((): void => {
+          Alert.alert(
+            "There was an error while sending your rating.",
+            "Please, try again later.",
+          );
+        })
+        .finally(() => {
+          loadingSendingSignal.value = false;
+        });
+    },
+    [movieId],
+  );
 
   return (
     <View>
       <Text className={style.title}>
-        Comments ({movieRatings.value?.length ?? "0"})
+        Comments ({movieRatingsSignal.value?.length ?? "0"})
       </Text>
-      {movieRatings.value?.map((rating: Rating, index: number) => (
+      {movieRatingsSignal.value?.map((rating: Rating, index: number) => (
         <CommentCard key={index} rating={rating} />
       ))}
       {localUser && (
         <Fragment>
-          <RatingTextInput ratingText={ratingText} contentText={contentText} />
+          <RatingTextInput
+            ratingText={ratingTextSignal}
+            contentText={contentTextSignal}
+          />
           <Button
             text="Send"
             buttonClassName={style.button.button}
             textClassName={style.button.text}
-            onPress={async () => {
-              await sendRating(
-                movie.id,
+            loading={loadingSendingSignal.value}
+            onPress={() =>
+              handleSending(
                 localUser.uid,
-                ratingText,
-                contentText,
-                movieRatings,
+                ratingTextSignal.value,
+                contentTextSignal.value,
+                movieRatingsSignal.value,
               )
-                .then(() => {
-                  ratingText.value = "";
-                  contentText.value = "";
-                })
-                .catch(() => {
-                  Alert.alert(
-                    "There was an error while sending your rating.",
-                    "Please, try again later.",
-                  );
-                });
-            }}
+            }
           />
         </Fragment>
       )}

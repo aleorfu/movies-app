@@ -1,10 +1,10 @@
-import { Signal, useSignal } from "@preact/signals-react";
 import { useNavigation } from "@react-navigation/native";
 import { LikeButton } from "@src/components/LikeButton";
 import { MoviesNavStackNavigation } from "@src/navigations/MoviesNav";
 import { Movie } from "@src/services/altenHybridApi";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { getMovieLikedSignalsObject } from "@src/signals/movieLikedSignalsObject";
+import React from "react";
+import { getUserSignal, UserType } from "@src/signals/userSignal";
 
 type MovieCardProps = { movie: Movie };
 
@@ -16,15 +16,15 @@ const style = {
 };
 
 const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
-  const movieLiked: Signal<boolean> = useSignal<boolean>(false);
-  getMovieLikedSignalsObject[movie.id] = movieLiked;
   const navigation: MoviesNavStackNavigation =
     useNavigation() as MoviesNavStackNavigation;
+
+  const localUser: UserType = getUserSignal.value;
 
   return (
     <View className={style.card}>
       <TouchableOpacity
-        onPress={() => {
+        onPress={(): void => {
           const movieId: string = movie.id;
           navigation.navigate("MovieDetailsStack", { movieId });
         }}
@@ -38,7 +38,13 @@ const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
           />
         </View>
       </TouchableOpacity>
-      <LikeButton movie={movie} movieLiked={movieLiked} />
+      {localUser && (
+        <LikeButton
+          movieId={movie.id}
+          movieUserLiked={movie.userLiked ?? []}
+          userId={localUser.uid}
+        />
+      )}
     </View>
   );
 };

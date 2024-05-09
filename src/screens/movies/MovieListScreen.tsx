@@ -42,7 +42,7 @@ const MovieListScreen = () => {
   const colorScheme = useColorScheme();
   const isLight = colorScheme === "light";
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback((): void => {
     refreshing.value = true;
     page = 1;
     movies.value = [];

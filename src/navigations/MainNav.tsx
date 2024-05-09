@@ -1,4 +1,4 @@
-import { Image, useColorScheme } from "react-native";
+import { ColorSchemeName, Image, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   BottomTabNavigationOptions,
@@ -8,6 +8,7 @@ import { HomeScreen } from "@src/screens/HomeScreen";
 import { ProfileNav } from "@src/navigations/ProfileNav";
 import { MoviesNav } from "@src/navigations/MoviesNav";
 import { colors } from "@src/styles/tailwindColors";
+import React from "react";
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +16,7 @@ const getOptions = (
   isLight: boolean,
   title: string,
   icon: number,
-  headerShown: boolean = true
+  headerShown: boolean = true,
 ): BottomTabNavigationOptions => {
   return {
     title: title,
@@ -61,8 +62,8 @@ const getOptions = (
 };
 
 const MainNav = (): React.JSX.Element => {
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
+  const colorScheme: ColorSchemeName = useColorScheme();
+  const isLight: boolean = colorScheme === "light";
 
   return (
     <NavigationContainer>
@@ -73,7 +74,7 @@ const MainNav = (): React.JSX.Element => {
           options={getOptions(
             isLight,
             "Home",
-            require("@src/assets/img/home-icon.png")
+            require("@src/assets/img/home-icon.png"),
           )}
         />
         <Tab.Screen
@@ -83,7 +84,7 @@ const MainNav = (): React.JSX.Element => {
             isLight,
             "Movies",
             require("@src/assets/img/list-icon.png"),
-            false
+            false,
           )}
         />
         <Tab.Screen
@@ -93,7 +94,7 @@ const MainNav = (): React.JSX.Element => {
             isLight,
             "Profile",
             require("@src/assets/img/profile-icon.png"),
-            false
+            false,
           )}
         />
       </Tab.Navigator>

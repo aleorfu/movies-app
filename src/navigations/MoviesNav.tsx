@@ -7,6 +7,7 @@ import { MovieDetailsScreen } from "@src/screens/movies/MovieDetailsScreen";
 import { MovieListScreen } from "@src/screens/movies/MovieListScreen";
 import { colors } from "@src/styles/tailwindColors";
 import { Image, useColorScheme } from "react-native";
+import React from "react";
 
 type ScreenNames = ["MovieListStack", "MovieDetailsStack"];
 type RootStackParamList = Record<ScreenNames[number], { movieId: string }>;
@@ -48,8 +49,7 @@ const getOptions = (
 };
 
 const MoviesNav = (): React.JSX.Element => {
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
+  const isLight: boolean = useColorScheme() === "light";
 
   return (
     <Stack.Navigator>

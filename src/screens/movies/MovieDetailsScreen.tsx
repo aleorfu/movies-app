@@ -5,9 +5,9 @@ import { LikeButton } from "@src/components/LikeButton";
 import { ListCard } from "@src/components/ListCard";
 import { TextCard } from "@src/components/TextCard";
 import { getMovieByIdApi, Movie } from "@src/services/altenHybridApi";
-import { Fragment, useCallback, useEffect } from "react";
+import React, { Fragment, useCallback, useEffect } from "react";
 import { Image, RefreshControl, ScrollView, Text } from "react-native";
-import { getMovieLikedSignalsObject } from "@src/signals/movieLikedSignalsObject";
+import { getUserSignal, UserType } from "@src/signals/userSignal";
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -30,7 +30,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
     movieId: string;
   };
 
-  const movieLiked: Signal<boolean> = getMovieLikedSignalsObject[movieId];
+  const localUser: UserType = getUserSignal.value;
 
   const onRefresh = useCallback(() => {
     refreshing.value = true;
@@ -61,7 +61,13 @@ const MovieDetailsScreen = (): React.JSX.Element => {
             resizeMode="cover"
           />
           <Text className={style.title}>{movie.value.name}</Text>
-          <LikeButton movie={movie.value} movieLiked={movieLiked} />
+          {localUser && (
+            <LikeButton
+              movieId={movie.value?.id}
+              movieUserLiked={movie.value?.userLiked ?? []}
+              userId={localUser.uid}
+            />
+          )}
           <TextCard title={"Description"} content={movie.value.description} />
           <ListCard title={"Actors"} content={movie.value.actors} />
           <ListCard title={"Categories"} content={movie.value.categories} />
@@ -73,7 +79,10 @@ const MovieDetailsScreen = (): React.JSX.Element => {
               `Likes: ${movie.value.likes}`,
             ]}
           />
-          <CommentArea movie={movie.value} />
+          <CommentArea
+            movieId={movie.value?.id}
+            movieRatings={movie.value?.ratings}
+          />
         </Fragment>
       )}
     </ScrollView>

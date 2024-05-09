@@ -17,7 +17,7 @@ type ColorDictionary = {
   [k in ColorKeys]: string;
 };
 
-export const colors: ColorDictionary = {
+const colors: ColorDictionary = {
   primary_light: "#fafafa",
   secondary_light: "#e4e5f1",
   tertiary_light: "#9394a5",
@@ -27,3 +27,5 @@ export const colors: ColorDictionary = {
   tertiary_dark: "#aaaaaa",
   quaternary_dark: "#ffffff",
 };
+
+export { colors };

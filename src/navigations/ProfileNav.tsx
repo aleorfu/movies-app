@@ -1,18 +1,19 @@
 import { Image, useColorScheme } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
 import {
-  StackNavigationOptions,
   createStackNavigator,
+  StackNavigationOptions,
 } from "@react-navigation/stack";
 import { SignInScreen } from "@src/screens/profile/SignInScreen";
 import { SignUpScreen } from "@src/screens/profile/SignUpScreen";
 import { ProfileScreen } from "@src/screens/profile/ProfileScreen";
 import { colors } from "@src/styles/tailwindColors";
+import React from "react";
 
 type ScreenNames = [
   "ProfileProfileStack",
   "ProfileSign-InStack",
-  "ProfileSign-UpStack"
+  "ProfileSign-UpStack",
 ];
 type RootStackParamList = Record<ScreenNames[number], {}>;
 type StackNavigation = NavigationProp<RootStackParamList>;
@@ -21,7 +22,7 @@ const Stack = createStackNavigator();
 
 const getOptions = (
   isLight: boolean,
-  title: string
+  title: string,
 ): StackNavigationOptions => {
   return {
     title: title,
@@ -53,8 +54,7 @@ const getOptions = (
 };
 
 const ProfileNav = (): React.JSX.Element => {
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme == "light";
+  const isLight: boolean = useColorScheme() == "light";
 
   return (
     <Stack.Navigator>

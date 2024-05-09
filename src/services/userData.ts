@@ -1,4 +1,6 @@
-import database from "@react-native-firebase/database";
+import database, {
+  FirebaseDatabaseTypes,
+} from "@react-native-firebase/database";
 
 type UserDataType = {
   displayName: string;
@@ -10,8 +12,8 @@ type UserDataType = {
 
 const setUserData = async (
   uid: string,
-  userData: UserDataType
-): Promise<void> => {
+  userData: UserDataType,
+): Promise<void | never> => {
   await database().ref(`users/${uid}`).set({
     displayName: userData.displayName,
     surname: userData.surname,
@@ -20,8 +22,10 @@ const setUserData = async (
     dateOfBirth: userData.dateOfBirth,
   });
 };
-const getUserData = async (uid: string): Promise<UserDataType> => {
-  const userData = await database().ref(`users/${uid}`).once("value");
+const getUserData = async (uid: string): Promise<UserDataType | never> => {
+  const userData: FirebaseDatabaseTypes.DataSnapshot = await database()
+    .ref(`users/${uid}`)
+    .once("value");
   return userData.val() as UserDataType;
 };
 
