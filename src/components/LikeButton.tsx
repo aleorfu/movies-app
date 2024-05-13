@@ -45,7 +45,7 @@ const LikeButton = ({
           "Please, try again later.",
         );
       })
-      .finally(() => {
+      .finally((): void => {
         loadingLikeSignal.value = false;
       });
   }, [movieId, userId]);

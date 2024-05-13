@@ -1,5 +1,3 @@
-// noinspection JSUnusedGlobalSymbols
-
 import { MainNav } from "@src/navigations/MainNav";
 import { StatusBar } from "expo-status-bar";
 import { PermissionsAndroid } from "react-native";
@@ -10,6 +8,7 @@ const style = {
 };
 
 const requestPermissions = (): void => {
+  // noinspection JSIgnoredPromiseFromCall
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 };
 
@@ -24,4 +23,5 @@ const App = () => {
   );
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default App;

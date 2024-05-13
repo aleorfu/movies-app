@@ -1,6 +1,6 @@
 import { ProfileSignedIn } from "@src/screens/profile/main/ProfileSignedIn";
 import { ProfileSignedOut } from "@src/screens/profile/main/ProfileSignedOut";
-import { getUserSignal } from "@src/signals/userSignal";
+import { getUserSignal, UserType } from "@src/signals/userSignal";
 import { View } from "react-native";
 
 const style = {
@@ -8,7 +8,7 @@ const style = {
 };
 
 const ProfileScreen = () => {
-  const localUser = getUserSignal.value;
+  const localUser: UserType = getUserSignal.value;
 
   return (
     <View className={style.view}>

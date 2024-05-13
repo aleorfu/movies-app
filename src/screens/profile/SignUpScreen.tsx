@@ -1,11 +1,10 @@
 import { Signal, useSignal } from "@preact/signals-react";
-import auth from "@react-native-firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
 import { setUserData, UserDataType } from "@src/services/firebase";
 import { colors } from "@src/styles/tailwindColors";
-import { useColorScheme } from "nativewind";
-import { Alert, TextInput, View } from "react-native";
+import { Alert, TextInput, useColorScheme, View } from "react-native";
 
 const styles = {
   textInput:
@@ -18,10 +17,10 @@ const styles = {
   },
 };
 
-const signUp = async (email: string, password: string) => {
+const signUp = async (email: string, password: string): Promise<void> => {
   await auth()
     .createUserWithEmailAndPassword(email, password)
-    .then((userCredentials) => {
+    .then((userCredentials: FirebaseAuthTypes.UserCredential): void => {
       const userData: UserDataType = {
         displayName: "",
         surname: "",
@@ -34,21 +33,22 @@ const signUp = async (email: string, password: string) => {
 };
 
 const SignUpScreen = () => {
-  const email: Signal<string> = useSignal<string>("");
-  const password: Signal<string> = useSignal<string>("");
-  const { colorScheme } = useColorScheme();
+  const emailSignal: Signal<string> = useSignal<string>("");
+  const passwordSignal: Signal<string> = useSignal<string>("");
+  const loadingSignal: Signal<boolean> = useSignal<boolean>(false);
+
   const navigation = useNavigation();
-  const isLight: boolean = colorScheme === "light";
+  const isLight: boolean = useColorScheme() === "light";
 
   return (
     <View className={styles.view}>
       <TextInput
         className={styles.textInput}
         keyboardType="email-address"
-        onChangeText={(text) => {
-          email.value = text;
+        onChangeText={(text: string): void => {
+          emailSignal.value = text;
         }}
-        value={email.value}
+        value={emailSignal.value}
         placeholder="Email"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -57,10 +57,10 @@ const SignUpScreen = () => {
       <TextInput
         className={styles.textInput}
         secureTextEntry={true}
-        onChangeText={(text) => {
-          password.value = text;
+        onChangeText={(text: string): void => {
+          passwordSignal.value = text;
         }}
-        value={password.value}
+        value={passwordSignal.value}
         placeholder="Password"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -70,16 +70,17 @@ const SignUpScreen = () => {
         text="Sign-Up"
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        onPress={async () => {
-          if (email.value != "" && password.value != "") {
-            await signUp(email.value, password.value)
-              .then(() => {
-                email.value = "";
-                password.value = "";
+        onPress={async (): Promise<void> => {
+          if (emailSignal.value != "" && passwordSignal.value != "") {
+            loadingSignal.value = true;
+            await signUp(emailSignal.value, passwordSignal.value)
+              .then((): void => {
+                emailSignal.value = "";
+                passwordSignal.value = "";
                 auth().currentUser?.sendEmailVerification();
                 navigation.goBack();
               })
-              .catch((error) => {
+              .catch((error): void => {
                 if (error.code === "auth/email-already-in-use") {
                   Alert.alert(
                     "That email is already in use.",
@@ -91,6 +92,9 @@ const SignUpScreen = () => {
                     "Please, try again with another one.",
                   );
                 }
+              })
+              .finally((): void => {
+                loadingSignal.value = false;
               });
           } else
             Alert.alert(
@@ -98,6 +102,7 @@ const SignUpScreen = () => {
               "Please, fill every field and try again.",
             );
         }}
+        loading={loadingSignal.value}
       />
     </View>
   );

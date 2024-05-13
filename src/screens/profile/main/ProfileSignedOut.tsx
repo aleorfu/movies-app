@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
 import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 
 const style = {
   button: {
@@ -21,16 +21,16 @@ const ProfileSignedOut = (): React.JSX.Element => {
         text="Sign-In"
         buttonClassName={style.button.button}
         textClassName={style.button.text}
-        onPress={async () => {
-          await navigation.navigate("ProfileSign-InStack", {});
+        onPress={(): void => {
+          navigation.navigate("ProfileSign-InStack", {});
         }}
       />
       <Button
         text="Sign-Up"
         buttonClassName={style.button.button}
         textClassName={style.button.text}
-        onPress={async () => {
-          await navigation.navigate("ProfileSign-UpStack", {});
+        onPress={(): void => {
+          navigation.navigate("ProfileSign-UpStack", {});
         }}
       />
     </Fragment>

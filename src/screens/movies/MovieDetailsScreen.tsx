@@ -8,6 +8,7 @@ import { getMovieByIdApi, Movie } from "@src/services/altenHybridApi";
 import React, { Fragment, useCallback, useEffect } from "react";
 import { Image, RefreshControl, ScrollView, Text } from "react-native";
 import { getUserSignal, UserType } from "@src/signals/userSignal";
+import { MoviesNavProps } from "@src/navigations/MoviesNav";
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -26,22 +27,20 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   const movie: Signal<Movie | null> = useSignal<Movie | null>(null);
   const refreshing: Signal<boolean> = useSignal<boolean>(false);
 
-  const { movieId } = useRoute().params as {
-    movieId: string;
-  };
+  const { movieId }: MoviesNavProps = useRoute().params as MoviesNavProps;
 
   const localUser: UserType = getUserSignal.value;
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback((): void => {
     refreshing.value = true;
-    getMovieByIdApi(movieId).then((fetchedMovie) => {
+    getMovieByIdApi(movieId).then((fetchedMovie: Movie): void => {
       movie.value = fetchedMovie;
     });
     refreshing.value = false;
   }, []);
 
-  useEffect(() => {
-    getMovieByIdApi(movieId).then((fetchedMovie) => {
+  useEffect((): void => {
+    getMovieByIdApi(movieId).then((fetchedMovie: Movie): void => {
       movie.value = fetchedMovie;
     });
   }, []);
