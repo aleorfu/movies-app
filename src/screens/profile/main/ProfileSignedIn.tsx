@@ -1,8 +1,15 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@src/components/Button";
-import { getUserData, setUserData, UserDataType } from "@src/services/userData";
+import {
+  getProfilePicture,
+  getUserData,
+  setProfilePicture,
+  setUserData,
+  UserDataType,
+} from "@src/services/firebase";
 import { getUserSignal, UserType } from "@src/signals/userSignal";
+import { colors } from "@src/styles/tailwindColors";
 import React, { Fragment, useEffect } from "react";
 import {
   ActivityIndicator,
@@ -11,9 +18,12 @@ import {
   ScrollView,
   Text,
   TextInput,
+  TouchableOpacity,
   useColorScheme,
 } from "react-native";
-import { colors } from "@src/styles/tailwindColors";
+import * as ImagePicker from "expo-image-picker";
+import { ImagePickerResult, MediaTypeOptions } from "expo-image-picker";
+import parsePhoneNumber, { PhoneNumber } from "libphonenumber-js";
 
 const style = {
   image:
@@ -36,20 +46,42 @@ const ProfileSignedIn = (): React.JSX.Element => {
   const phoneNumber: Signal<string> = useSignal<string>("");
   const gender: Signal<string> = useSignal<string>("");
   const dateOfBirth: Signal<string> = useSignal<string>("");
+  const profilePicture: Signal<string | undefined> = useSignal<
+    string | undefined
+  >(undefined);
 
   const isLight: boolean = useColorScheme() === "light";
   const localUser: UserType = getUserSignal.value;
+
+  const selectPicture = (): void => {
+    const options: ImagePicker.ImagePickerOptions = {
+      mediaTypes: MediaTypeOptions.Images,
+      selectionLimit: 1,
+    };
+
+    ImagePicker.launchImageLibraryAsync(options).then(
+      (result: ImagePickerResult): void => {
+        if (result.canceled) return;
+        if (result.assets[0].fileName?.split(".").pop() != "jpg") return;
+        profilePicture.value = result.assets[0].uri;
+        setProfilePicture(localUser!!.uid, result.assets[0]);
+      },
+    );
+  };
 
   useEffect((): void => {
     if (localUser === null) return;
     loadingSignal.value = true;
     getUserData(localUser.uid)
-      .then((fetchedUserData: UserDataType) => {
+      .then(async (fetchedUserData: UserDataType) => {
         displayName.value = fetchedUserData.displayName;
         surname.value = fetchedUserData.surname;
         phoneNumber.value = fetchedUserData.phoneNumber;
         gender.value = fetchedUserData.gender;
         dateOfBirth.value = fetchedUserData.dateOfBirth;
+        await getProfilePicture(localUser.uid).then((url: string) => {
+          profilePicture.value = url;
+        });
       })
       .finally(() => {
         loadingSignal.value = false;
@@ -60,7 +92,14 @@ const ProfileSignedIn = (): React.JSX.Element => {
     <ScrollView>
       {localUser && !loadingSignal.value ? (
         <Fragment>
-          <Image className={style.image} />
+          <TouchableOpacity onPress={selectPicture}>
+            <Image
+              source={
+                profilePicture.value ? { uri: profilePicture.value } : undefined
+              }
+              className={style.image}
+            />
+          </TouchableOpacity>
           <Text className={style.title}>Display name</Text>
           <TextInput
             className={style.field}
@@ -105,11 +144,19 @@ const ProfileSignedIn = (): React.JSX.Element => {
             text="Save"
             buttonClassName={style.button.button}
             textClassName={style.button.text}
-            onPress={async () => {
+            onPress={async (): Promise<void> => {
+              const parsedPhoneNumber: PhoneNumber | undefined =
+                parsePhoneNumber(phoneNumber.value, "ES");
+              if (
+                !parsedPhoneNumber?.isValid() ||
+                !parsedPhoneNumber?.isPossible()
+              )
+                return;
+
               await setUserData(localUser.uid, {
                 displayName: displayName.value,
                 surname: surname.value,
-                phoneNumber: phoneNumber.value,
+                phoneNumber: parsedPhoneNumber?.number,
                 gender: gender.value,
                 dateOfBirth: dateOfBirth.value,
               });

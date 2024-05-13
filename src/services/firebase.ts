@@ -1,6 +1,8 @@
 import database, {
   FirebaseDatabaseTypes,
 } from "@react-native-firebase/database";
+import storage from "@react-native-firebase/storage";
+import { ImagePickerAsset } from "expo-image-picker";
 
 type UserDataType = {
   displayName: string;
@@ -22,6 +24,7 @@ const setUserData = async (
     dateOfBirth: userData.dateOfBirth,
   });
 };
+
 const getUserData = async (uid: string): Promise<UserDataType | never> => {
   const userData: FirebaseDatabaseTypes.DataSnapshot = await database()
     .ref(`users/${uid}`)
@@ -29,4 +32,24 @@ const getUserData = async (uid: string): Promise<UserDataType | never> => {
   return userData.val() as UserDataType;
 };
 
-export { UserDataType, getUserData, setUserData };
+const setProfilePicture = async (
+  uid: string,
+  asset: ImagePickerAsset,
+): Promise<void | never> => {
+  const response: Response = await fetch(asset.uri);
+  const blob: Blob = await response.blob();
+
+  await storage().ref(`ProfilePictures/${uid}.jpg`).put(blob);
+};
+
+const getProfilePicture = async (uid: string): Promise<string> => {
+  return await storage().ref(`ProfilePictures/${uid}.jpg`).getDownloadURL();
+};
+
+export {
+  UserDataType,
+  getUserData,
+  setUserData,
+  setProfilePicture,
+  getProfilePicture,
+};

@@ -2,7 +2,7 @@ import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
-import { UserDataType, setUserData } from "@src/services/userData";
+import { setUserData, UserDataType } from "@src/services/firebase";
 import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "nativewind";
 import { Alert, TextInput, View } from "react-native";
@@ -83,19 +83,19 @@ const SignUpScreen = () => {
                 if (error.code === "auth/email-already-in-use") {
                   Alert.alert(
                     "That email is already in use.",
-                    "Please, try again with another one."
+                    "Please, try again with another one.",
                   );
                 } else if (error.code === "auth/invalid-email") {
                   Alert.alert(
                     "That email is invalid.",
-                    "Please, try again with another one."
+                    "Please, try again with another one.",
                   );
                 }
               });
           } else
             Alert.alert(
               "One or more fields are empty.",
-              "Please, fill every field and try again."
+              "Please, fill every field and try again.",
             );
         }}
       />
