@@ -2,7 +2,10 @@ import { Signal, useSignal } from "@preact/signals-react";
 import { Button } from "@src/components/Button";
 import { likeMovie } from "@src/services/altenHybridApi";
 import React, { useCallback, useEffect } from "react";
-import { Alert } from "react-native";
+import { Alert, useColorScheme } from "react-native";
+import FilledLikeIcon from "../assets/img/like-filled-icon.svg";
+import LikeIcon from "../assets/img/like-icon.svg";
+import { colors } from "@src/styles/tailwindColors";
 
 type LikeButtonProps = {
   movieId: string;
@@ -14,8 +17,7 @@ const style = {
   button: {
     button:
       "ml-auto my-5 mr-5 shadow-lg rounded-lg p-2 flex-row bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
-    image: "w-5 h-5 mr-2",
-    text: "text-quaternary_light dark:text-quaternary_dark",
+    text: "ml-2 text-quaternary_light dark:text-quaternary_dark",
   },
 };
 
@@ -28,6 +30,8 @@ const LikeButton = ({
   const movieLikedSignal: Signal<boolean> = useSignal<boolean>(
     movieUserLiked.includes(userId),
   );
+
+  const isLight: boolean = useColorScheme() === "light";
 
   useEffect((): void => {
     movieLikedSignal.value = movieUserLiked.includes(userId);
@@ -54,12 +58,21 @@ const LikeButton = ({
     <Button
       text={movieLikedSignal.value ? "Liked" : "Like"}
       image={
-        movieLikedSignal.value
-          ? require("../assets/img/like-filled-icon.png")
-          : require("../assets/img/like-icon.png")
+        movieLikedSignal.value ? (
+          <FilledLikeIcon
+            width={20}
+            height={20}
+            color={isLight ? colors.quaternary_light : colors.quaternary_dark}
+          />
+        ) : (
+          <LikeIcon
+            width={20}
+            height={20}
+            color={isLight ? colors.quaternary_light : colors.quaternary_dark}
+          />
+        )
       }
       buttonClassName={style.button.button}
-      imageClassName={style.button.image}
       textClassName={style.button.text}
       loading={loadingLikeSignal.value}
       onPress={handleLikeButton}
