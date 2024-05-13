@@ -2,11 +2,22 @@ import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@src/components/Button";
 import { getUserData, setUserData, UserDataType } from "@src/services/userData";
-import { getUserSignal } from "@src/signals/userSignal";
-import { Fragment, useEffect } from "react";
-import { Alert, ScrollView, Text, TextInput } from "react-native";
+import { getUserSignal, UserType } from "@src/signals/userSignal";
+import React, { Fragment, useEffect } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  useColorScheme,
+} from "react-native";
+import { colors } from "@src/styles/tailwindColors";
 
 const style = {
+  image:
+    "bg-quaternary_light dark:bg-quaternary_dark w-20 h-20 mx-auto mt-5 rounded-full",
   title:
     "text-lg my-3 text-center font-bold text-quaternary_light dark:text-quaternary_dark",
   field:
@@ -18,28 +29,38 @@ const style = {
   },
 };
 const ProfileSignedIn = (): React.JSX.Element => {
+  const loadingSignal: Signal<boolean> = useSignal<boolean>(false);
+
   const displayName: Signal<string> = useSignal<string>("");
   const surname: Signal<string> = useSignal<string>("");
   const phoneNumber: Signal<string> = useSignal<string>("");
   const gender: Signal<string> = useSignal<string>("");
   const dateOfBirth: Signal<string> = useSignal<string>("");
-  const localUser = getUserSignal.value;
 
-  useEffect(() => {
-    localUser &&
-      getUserData(localUser.uid).then((fetchedUserData: UserDataType) => {
+  const isLight: boolean = useColorScheme() === "light";
+  const localUser: UserType = getUserSignal.value;
+
+  useEffect((): void => {
+    if (localUser === null) return;
+    loadingSignal.value = true;
+    getUserData(localUser.uid)
+      .then((fetchedUserData: UserDataType) => {
         displayName.value = fetchedUserData.displayName;
         surname.value = fetchedUserData.surname;
         phoneNumber.value = fetchedUserData.phoneNumber;
         gender.value = fetchedUserData.gender;
         dateOfBirth.value = fetchedUserData.dateOfBirth;
+      })
+      .finally(() => {
+        loadingSignal.value = false;
       });
-  }, []);
+  }, [localUser]);
 
   return (
     <ScrollView>
-      {localUser && (
+      {localUser && !loadingSignal.value ? (
         <Fragment>
+          <Image className={style.image} />
           <Text className={style.title}>Display name</Text>
           <TextInput
             className={style.field}
@@ -95,13 +116,18 @@ const ProfileSignedIn = (): React.JSX.Element => {
             }}
           />
         </Fragment>
+      ) : (
+        <ActivityIndicator
+          size="large"
+          color={isLight ? colors.quaternary_light : colors.quaternary_dark}
+        />
       )}
       <Button
         text="Sign-Out"
         buttonClassName={style.button.button}
         textClassName={style.button.text}
-        onPress={async () => {
-          await auth()
+        onPress={() => {
+          auth()
             .signOut()
             .catch(() => {
               Alert.alert(
