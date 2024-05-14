@@ -1,4 +1,4 @@
-import { ColorSchemeName, useColorScheme } from "react-native";
+import { useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   BottomTabNavigationOptions,
@@ -12,13 +12,14 @@ import React from "react";
 import Home from "@src/assets/img/home-icon.svg";
 import List from "@src/assets/img/list-icon.svg";
 import Profile from "@src/assets/img/profile-icon.svg";
+import Element = React.JSX.Element;
 
 const Tab = createBottomTabNavigator();
 
 const getOptions = (
   isLight: boolean,
   title: string,
-  icon: React.JSX.Element,
+  icon: Element,
   headerShown: boolean = true,
 ): BottomTabNavigationOptions => {
   return {
@@ -54,9 +55,13 @@ const getOptions = (
   };
 };
 
-const MainNav = (): React.JSX.Element => {
-  const colorScheme: ColorSchemeName = useColorScheme();
-  const isLight: boolean = colorScheme === "light";
+const MainNav = (): Element => {
+  const isLight = useColorScheme() === "light";
+  const iconColor = isLight ? colors.quaternary_light : colors.quaternary_dark;
+
+  const HomeIcon = <Home width={30} height={30} color={iconColor} />;
+  const ListIcon = <List width={30} height={30} color={iconColor} />;
+  const ProfileIcon = <Profile width={20} height={20} color={iconColor} />;
 
   return (
     <NavigationContainer>
@@ -64,43 +69,17 @@ const MainNav = (): React.JSX.Element => {
         <Tab.Screen
           name="HomeTab"
           component={HomeScreen}
-          options={getOptions(
-            isLight,
-            "Home",
-            <Home
-              width={30}
-              height={30}
-              color={isLight ? colors.quaternary_light : colors.quaternary_dark}
-            />,
-          )}
+          options={getOptions(isLight, "Home", HomeIcon)}
         />
         <Tab.Screen
           name="MoviesTab"
           component={MoviesNav}
-          options={getOptions(
-            isLight,
-            "Movies",
-            <List
-              width={30}
-              height={30}
-              color={isLight ? colors.quaternary_light : colors.quaternary_dark}
-            />,
-            false,
-          )}
+          options={getOptions(isLight, "Movies", ListIcon, false)}
         />
         <Tab.Screen
           name="ProfileTab"
           component={ProfileNav}
-          options={getOptions(
-            isLight,
-            "Profile",
-            <Profile
-              width={20}
-              height={20}
-              color={isLight ? colors.quaternary_light : colors.quaternary_dark}
-            />,
-            false,
-          )}
+          options={getOptions(isLight, "Profile", ProfileIcon, false)}
         />
       </Tab.Navigator>
     </NavigationContainer>

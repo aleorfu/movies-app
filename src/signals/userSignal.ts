@@ -1,11 +1,11 @@
-import { Signal, signal } from "@preact/signals-react";
+import { signal } from "@preact/signals-react";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 type UserType = FirebaseAuthTypes.User | null;
 
-const getUserSignal: Signal<UserType> = signal<UserType>(null);
+const getUserSignal = signal<UserType>(null);
 
-auth().onAuthStateChanged((newUser: UserType): void => {
+auth().onAuthStateChanged((newUser: UserType) => {
   getUserSignal.value = newUser;
 });
 

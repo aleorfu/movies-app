@@ -1,78 +1,105 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import { MovieCard } from "@src/components/MovieCard";
-import { getAllMoviesApi, Movie } from "@src/services/altenHybridApi";
-import { colors } from "@src/styles/tailwindColors";
-import { useCallback, useEffect } from "react";
+import { getAllMovies, Movie } from "@src/services/altenHybridApi";
+import { useEffect } from "react";
 import {
-  ActivityIndicator,
+  Alert,
   FlatList,
   RefreshControl,
   useColorScheme,
   View,
 } from "react-native";
-
-let page: number = 1;
+import Element = React.JSX.Element;
 
 const style = {
   view: "flex-1 bg-secondary_light dark:bg-secondary_dark",
 };
 
 const fetchFiveMovies = (
-  movies: Signal<Movie[]>,
-  loadingMovies: Signal<boolean>,
+  moviesSignal: Signal<Movie[]>,
+  loadingMoviesSignal: Signal<boolean>,
+  pageSignal: Signal<number>,
 ): void => {
-  loadingMovies.value = true;
-  getAllMoviesApi().then((fetchedMovies: Movie[]): void => {
-    const newMovies: Movie[] = fetchedMovies.slice((page - 1) * 5, page * 5);
-    if (newMovies.length == 0) {
-      page = 1;
-      fetchFiveMovies(movies, loadingMovies);
+  loadingMoviesSignal.value = true;
+
+  const handleGetAllMoviesSuccess = (fetchedMovies: Movie[]): void => {
+    const nextMovies = fetchedMovies.slice(
+      (pageSignal.value - 1) * 5,
+      pageSignal.value * 5,
+    );
+
+    if (nextMovies.length == 0) {
+      pageSignal.value = 1;
+      fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
     } else {
-      page++;
-      movies.value = [...movies.value, ...newMovies];
-      loadingMovies.value = false;
+      pageSignal.value++;
+      moviesSignal.value.concat(nextMovies);
     }
-  });
+  };
+
+  const handleGetAllMoviesFailure = (): void => {
+    Alert.alert(
+      "There was an error while fetching movies.",
+      "Please, try again later.",
+    );
+  };
+
+  const handleGetAllMoviesFinally = (): void => {
+    loadingMoviesSignal.value = false;
+  };
+
+  getAllMovies()
+    .then(handleGetAllMoviesSuccess)
+    .catch(handleGetAllMoviesFailure)
+    .finally(handleGetAllMoviesFinally);
 };
 
-const MovieListScreen = () => {
-  const movies: Signal<Movie[]> = useSignal<Movie[]>([]);
-  const refreshing: Signal<boolean> = useSignal<boolean>(false);
-  const loadingMovies: Signal<boolean> = useSignal<boolean>(false);
-  const isLight: boolean = useColorScheme() === "light";
+const MovieListScreen = (): Element => {
+  const moviesSignal = useSignal<Movie[]>([]);
+  const refreshingSignal = useSignal(false);
+  const loadingMoviesSignal = useSignal(false);
+  const pageSignal = useSignal(1);
+  const isLight = useColorScheme() === "light";
 
-  const onRefresh = useCallback((): void => {
-    refreshing.value = true;
-    page = 1;
-    movies.value = [];
-    fetchFiveMovies(movies, loadingMovies);
-    refreshing.value = false;
-  }, []);
+  const handleOnRefresh = (): void => {
+    refreshingSignal.value = true;
+    pageSignal.value = 1;
+    moviesSignal.value = [];
+    fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+    refreshingSignal.value = false;
+  };
 
-  useEffect((): void => {
-    fetchFiveMovies(movies, loadingMovies);
+  const handleOnEndReached = (): void => {
+    fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+  };
+
+  useEffect(() => {
+    fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
   }, []);
 
   return (
     <View className={style.view}>
       <FlatList
-        data={movies.value}
-        renderItem={({ item }: { item: Movie }) => <MovieCard movie={item} />}
-        keyExtractor={(_: Movie, index: number) => index.toString()}
-        onEndReached={() => fetchFiveMovies(movies, loadingMovies)}
+        data={moviesSignal.value}
+        renderItem={({ item }) => <MovieCard movie={item} />}
+        keyExtractor={(movie) => movie.id}
+        onEndReached={handleOnEndReached}
         onEndReachedThreshold={0.2}
         removeClippedSubviews={true}
         refreshControl={
-          <RefreshControl refreshing={refreshing.value} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshingSignal.value}
+            onRefresh={handleOnRefresh}
+          />
         }
-        refreshing={loadingMovies.value}
+        refreshing={loadingMoviesSignal.value}
       />
-      {loadingMovies.value && (
-        <ActivityIndicator
-          size="large"
-          color={isLight ? colors.quaternary_light : colors.quaternary_dark}
-        />
-      )}
+      {/*{loadingMoviesSignal.value && (*/}
+      {/*  <ActivityIndicator*/}
+      {/*    size="large"*/}
+      {/*    color={isLight ? colors.quaternary_light : colors.quaternary_dark}*/}
+      {/*  />*/}
+      {/*)}*/}
     </View>
   );
 };

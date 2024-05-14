@@ -1,6 +1,4 @@
-import database, {
-  FirebaseDatabaseTypes,
-} from "@react-native-firebase/database";
+import database from "@react-native-firebase/database";
 import storage from "@react-native-firebase/storage";
 import { ImagePickerAsset } from "expo-image-picker";
 
@@ -16,34 +14,65 @@ const setUserData = async (
   uid: string,
   userData: UserDataType,
 ): Promise<void | never> => {
-  await database().ref(`users/${uid}`).set({
-    displayName: userData.displayName,
-    surname: userData.surname,
-    phoneNumber: userData.phoneNumber,
-    gender: userData.gender,
-    dateOfBirth: userData.dateOfBirth,
-  });
+  const url = `/users/${uid}`;
+
+  try {
+    await database().ref(url).set(userData);
+  } catch (error) {
+    console.error("There was an error while setting your user data: %s", error);
+
+    throw error;
+  }
 };
 
 const getUserData = async (uid: string): Promise<UserDataType | never> => {
-  const userData: FirebaseDatabaseTypes.DataSnapshot = await database()
-    .ref(`users/${uid}`)
-    .once("value");
-  return userData.val() as UserDataType;
+  const url = `/users/${uid}`;
+
+  try {
+    const data = await database().ref(url).once("value");
+
+    return data.val() as UserDataType;
+  } catch (error) {
+    console.error("There was an error while getting your user data: %s", error);
+
+    throw error;
+  }
 };
 
 const setProfilePicture = async (
   uid: string,
   asset: ImagePickerAsset,
 ): Promise<void | never> => {
-  const response: Response = await fetch(asset.uri);
-  const blob: Blob = await response.blob();
+  const url = `ProfilePictures/${uid}.jpg`;
 
-  await storage().ref(`ProfilePictures/${uid}.jpg`).put(blob);
+  try {
+    const response = await fetch(asset.uri);
+    const blob = await response.blob();
+
+    await storage().ref(url).put(blob);
+  } catch (error) {
+    console.error(
+      "There was an error while setting your profile picture: %s",
+      error,
+    );
+
+    throw error;
+  }
 };
 
 const getProfilePicture = async (uid: string): Promise<string> => {
-  return await storage().ref(`ProfilePictures/${uid}.jpg`).getDownloadURL();
+  const url = `ProfilePictures/${uid}.jpg`;
+
+  try {
+    return await storage().ref(url).getDownloadURL();
+  } catch (error) {
+    console.error(
+      "There was an error while getting your profile picture: %s",
+      error,
+    );
+
+    throw error;
+  }
 };
 
 export {

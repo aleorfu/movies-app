@@ -4,7 +4,8 @@ import { MoviesNavStackNavigation } from "@src/navigations/MoviesNav";
 import { Movie } from "@src/services/altenHybridApi";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { getUserSignal, UserType } from "@src/signals/userSignal";
+import { getUserSignal } from "@src/signals/userSignal";
+import Element = React.JSX.Element;
 
 type MovieCardProps = { movie: Movie };
 
@@ -15,20 +16,24 @@ const style = {
   image: "aspect-square",
 };
 
-const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
-  const navigation: MoviesNavStackNavigation =
-    useNavigation() as MoviesNavStackNavigation;
+const navigateToMovieDetails = (
+  movieId: string,
+  navigation: MoviesNavStackNavigation,
+): void => {
+  navigation.navigate("MovieDetailsStack", { movieId: movieId });
+};
 
-  const localUser: UserType = getUserSignal.value;
+const MovieCard = ({ movie }: MovieCardProps): Element => {
+  const navigation = useNavigation() as MoviesNavStackNavigation;
+  const localUser = getUserSignal.value;
+
+  const handleOnPress = (): void => {
+    navigateToMovieDetails(movie.id, navigation);
+  };
 
   return (
     <View className={style.card}>
-      <TouchableOpacity
-        onPress={(): void => {
-          const movieId: string = movie.id;
-          navigation.navigate("MovieDetailsStack", { movieId });
-        }}
-      >
+      <TouchableOpacity onPress={handleOnPress}>
         <View>
           <Text className={style.title}>{movie.name}</Text>
           <Image

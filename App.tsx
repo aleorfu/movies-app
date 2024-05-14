@@ -7,7 +7,7 @@ const style = {
   safeAreaView: "flex-1 bg-primary_light dark:bg-primary_dark",
 };
 
-const requestPermissions = (): void => {
+const requestPermissions = () => {
   // noinspection JSIgnoredPromiseFromCall
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 };

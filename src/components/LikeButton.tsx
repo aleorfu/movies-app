@@ -1,11 +1,12 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import { Button } from "@src/components/Button";
-import { likeMovie } from "@src/services/altenHybridApi";
-import React, { useCallback, useEffect } from "react";
+import { likeMovie, Movie } from "@src/services/altenHybridApi";
+import React, { useEffect } from "react";
 import { Alert, useColorScheme } from "react-native";
 import FilledLikeIcon from "../assets/img/like-filled-icon.svg";
 import LikeIcon from "../assets/img/like-icon.svg";
 import { colors } from "@src/styles/tailwindColors";
+import Element = React.JSX.Element;
 
 type LikeButtonProps = {
   movieId: string;
@@ -21,38 +22,52 @@ const style = {
   },
 };
 
+const sendLike = (
+  movieId: string,
+  userId: string,
+  movieLikedSignal: Signal<boolean>,
+  loadingLikeSignal: Signal<boolean>,
+): void => {
+  loadingLikeSignal.value = true;
+
+  const handleLikeMovieSuccess = (movie: Movie): void => {
+    movieLikedSignal.value = movie.userLiked?.includes(userId) ?? false;
+  };
+
+  const handleLikeMovieFailure = (): void => {
+    Alert.alert(
+      "There was an error when sending your like.",
+      "Please, try again later.",
+    );
+  };
+
+  const handleLikeMovieFinally = (): void => {
+    loadingLikeSignal.value = true;
+  };
+
+  likeMovie(movieId, userId)
+    .then(handleLikeMovieSuccess)
+    .catch(handleLikeMovieFailure)
+    .finally(handleLikeMovieFinally);
+};
+
 const LikeButton = ({
   movieId,
   movieUserLiked,
   userId,
-}: LikeButtonProps): React.JSX.Element => {
-  const loadingLikeSignal: Signal<boolean> = useSignal<boolean>(false);
-  const movieLikedSignal: Signal<boolean> = useSignal<boolean>(
-    movieUserLiked.includes(userId),
-  );
+}: LikeButtonProps): Element => {
+  const loadingLikeSignal = useSignal(false);
+  const movieLikedSignal = useSignal(false);
 
-  const isLight: boolean = useColorScheme() === "light";
+  const isLight = useColorScheme() === "light";
 
-  useEffect((): void => {
+  useEffect(() => {
     movieLikedSignal.value = movieUserLiked.includes(userId);
   }, [movieUserLiked, userId]);
 
-  const handleLikeButton = useCallback((): void => {
-    loadingLikeSignal.value = true;
-    likeMovie(movieId, userId)
-      .then((liked: boolean): void => {
-        movieLikedSignal.value = liked;
-      })
-      .catch((): void => {
-        Alert.alert(
-          "There was an error when sending your like.",
-          "Please, try again later.",
-        );
-      })
-      .finally((): void => {
-        loadingLikeSignal.value = false;
-      });
-  }, [movieId, userId]);
+  const handleLikeButton = (): void => {
+    sendLike(movieId, userId, movieLikedSignal, loadingLikeSignal);
+  };
 
   return (
     <Button

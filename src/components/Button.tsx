@@ -2,10 +2,12 @@ import { colors } from "@src/styles/tailwindColors";
 import React, { Fragment } from "react";
 import {
   ActivityIndicator,
+  GestureResponderEvent,
   Text,
   TouchableOpacity,
   useColorScheme,
 } from "react-native";
+import Element = React.JSX.Element;
 
 type ButtonProps = {
   text?: string;
@@ -14,7 +16,7 @@ type ButtonProps = {
   textClassName?: string;
   disabled?: boolean;
   loading?: boolean;
-  onPress?: () => void;
+  onPress?: (event: GestureResponderEvent) => void;
 };
 
 const Button = ({
@@ -25,8 +27,8 @@ const Button = ({
   disabled = false,
   loading = false,
   onPress,
-}: ButtonProps): React.JSX.Element => {
-  const isLight: boolean = useColorScheme() === "light";
+}: ButtonProps): Element => {
+  const isLight = useColorScheme() === "light";
 
   return (
     <TouchableOpacity
