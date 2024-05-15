@@ -159,7 +159,17 @@ const ProfileSignedIn = (): Element => {
     auth().signOut().catch(handleSingoutFailure);
   };
 
-  const handleOnSaveButtonPress = (): void => {};
+  const handleOnSaveButtonPress = (): void => {
+    saveData(
+      localUser!!.uid,
+      displayNameSignal,
+      surnameSignal,
+      phoneNumberSignal,
+      genderSignal,
+      dateOfBirthSignal,
+      loadingSaveSignal,
+    );
+  };
 
   useEffect(() => {
     if (localUser === null) return;
@@ -188,7 +198,7 @@ const ProfileSignedIn = (): Element => {
         .catch(handleGetProfilePictureFailure);
     };
 
-    const handleGetUserDataFinally = () => {
+    const handleGetUserDataFinally = (): void => {
       loadingSignal.value = false;
     };
 

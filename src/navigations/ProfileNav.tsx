@@ -7,12 +7,11 @@ import React from "react";
 import { getOptions } from "@src/utils/StackNavigationUtils";
 import Element = React.JSX.Element;
 
-type ScreenNames = [
-  "ProfileProfileStack",
-  "ProfileSign-InStack",
-  "ProfileSign-UpStack",
-];
-type RootStackParamList = Record<ScreenNames[number], {}>;
+type ScreenNames =
+  | "ProfileProfileStack"
+  | "ProfileSign-InStack"
+  | "ProfileSign-UpStack";
+type RootStackParamList = Record<ScreenNames, {}>;
 type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();
@@ -39,4 +38,8 @@ const ProfileNav = (): Element => {
   );
 };
 
-export { ProfileNav, StackNavigation as ProfileNavStackNavigation };
+export {
+  ProfileNav,
+  StackNavigation as ProfileNavStackNavigation,
+  ScreenNames,
+};

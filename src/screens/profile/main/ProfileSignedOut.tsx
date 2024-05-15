@@ -1,7 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
-import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
+import {
+  ProfileNavStackNavigation,
+  ScreenNames,
+} from "@src/navigations/ProfileNav";
 import React, { Fragment } from "react";
+import Element = React.JSX.Element;
 
 const style = {
   button: {
@@ -11,9 +15,23 @@ const style = {
   },
 };
 
-const ProfileSignedOut = (): React.JSX.Element => {
-  const navigation: ProfileNavStackNavigation =
-    useNavigation() as ProfileNavStackNavigation;
+const navigateToPage = (
+  page: ScreenNames,
+  navigation: ProfileNavStackNavigation,
+): void => {
+  navigation.navigate(page, {});
+};
+
+const ProfileSignedOut = (): Element => {
+  const navigation = useNavigation() as ProfileNavStackNavigation;
+
+  const handleSignInButtonOnPress = (): void => {
+    navigateToPage("ProfileSign-InStack", navigation);
+  };
+
+  const handleSignOutButtonOnPress = (): void => {
+    navigateToPage("ProfileSign-UpStack", navigation);
+  };
 
   return (
     <Fragment>
@@ -21,17 +39,13 @@ const ProfileSignedOut = (): React.JSX.Element => {
         text="Sign-In"
         buttonClassName={style.button.button}
         textClassName={style.button.text}
-        onPress={(): void => {
-          navigation.navigate("ProfileSign-InStack", {});
-        }}
+        onPress={handleSignInButtonOnPress}
       />
       <Button
         text="Sign-Up"
         buttonClassName={style.button.button}
         textClassName={style.button.text}
-        onPress={(): void => {
-          navigation.navigate("ProfileSign-UpStack", {});
-        }}
+        onPress={handleSignOutButtonOnPress}
       />
     </Fragment>
   );

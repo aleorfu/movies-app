@@ -4,6 +4,7 @@ import { getSubscribed, saveSubscribed } from "@src/localstorage/asyncStorage";
 import React, { useEffect } from "react";
 import { Alert, View } from "react-native";
 import { Signal, useSignal } from "@preact/signals-react";
+import Element = React.JSX.Element;
 
 const styles = {
   view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
@@ -14,30 +15,83 @@ const styles = {
   },
 };
 
-const toggleSubscribed = async (subscribed: boolean): Promise<void> => {
-  if (!subscribed) {
-    await messaging()
-      .subscribeToTopic("alten_cantera_2024")
-      .then(async (): Promise<void> => {
-        await saveSubscribed(true);
-      });
-  } else {
-    await messaging()
-      .unsubscribeFromTopic("alten_cantera_2024")
-      .then(async (): Promise<void> => {
-        await saveSubscribed(false);
-      });
-  }
+const toggleSubscribed = (
+  isSubscribedSignal: Signal<boolean>,
+  loadingSignal: Signal<boolean>,
+): void => {
+  const topic = "alten_cantera_2024";
+  const action = isSubscribedSignal.value
+    ? messaging().unsubscribeFromTopic(topic)
+    : messaging().subscribeToTopic(topic);
+
+  loadingSignal.value = true;
+
+  const handleActionSuccess = (): void => {
+    const newValue = !isSubscribedSignal.value;
+
+    const handleSavingSuccess = (): void => {
+      isSubscribedSignal.value = newValue;
+    };
+
+    const handleSavingFailure = (): void => {
+      Alert.alert(
+        "There was an error while saving your subscription state.",
+        "Please, try again later",
+      );
+    };
+
+    saveSubscribed(newValue)
+      .then(handleSavingSuccess)
+      .catch(handleSavingFailure);
+  };
+
+  const handleActionFailure = (): void => {
+    Alert.alert(
+      "There was an error while sending your subscription state.",
+      "Please, try again later.",
+    );
+  };
+
+  const handleActionFinally = (): void => {
+    loadingSignal.value = false;
+  };
+
+  action
+    .then(handleActionSuccess)
+    .catch(handleActionFailure)
+    .finally(handleActionFinally);
 };
 
-const HomeScreen = (): React.JSX.Element => {
-  const isSubscribedSignal: Signal<boolean> = useSignal<boolean>(false);
-  const loadingSignal: Signal<boolean> = useSignal<boolean>(false);
+const HomeScreen = (): Element => {
+  const isSubscribedSignal = useSignal(false);
+  const loadingSignal = useSignal(false);
 
-  useEffect((): void => {
-    getSubscribed().then((value: boolean): void => {
-      isSubscribedSignal.value = value;
-    });
+  const handleOnPress = (): void => {
+    toggleSubscribed(isSubscribedSignal, loadingSignal);
+  };
+
+  useEffect(() => {
+    loadingSignal.value = true;
+
+    const handleGetSubscribedSuccess = (newValue: boolean): void => {
+      isSubscribedSignal.value = newValue;
+    };
+
+    const handleGetSubscribedFailure = (): void => {
+      Alert.alert(
+        "There was an error while getting your subscription state.",
+        "Please, try again later.",
+      );
+    };
+
+    const handleGetSubscribedFinally = (): void => {
+      loadingSignal.value = false;
+    };
+
+    getSubscribed()
+      .then(handleGetSubscribedSuccess)
+      .catch(handleGetSubscribedFailure)
+      .finally(handleGetSubscribedFinally);
   }, []);
 
   return (
@@ -46,22 +100,7 @@ const HomeScreen = (): React.JSX.Element => {
         text={isSubscribedSignal.value ? "Unsubscribe" : "Subscribe"}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        onPress={(): void => {
-          loadingSignal.value = true;
-          toggleSubscribed(isSubscribedSignal.value)
-            .then((): void => {
-              isSubscribedSignal.value = !isSubscribedSignal.value;
-            })
-            .catch((): void => {
-              Alert.alert(
-                "There has been an error while subscribing or unsubscribing",
-                "Please, try again later.",
-              );
-            })
-            .finally((): void => {
-              loadingSignal.value = false;
-            });
-        }}
+        onPress={handleOnPress}
         loading={loadingSignal.value}
       />
     </View>

@@ -2,9 +2,10 @@ import { Signal, useSignal } from "@preact/signals-react";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
-import { setUserData, UserDataType } from "@src/services/firebase";
 import { colors } from "@src/styles/tailwindColors";
 import { Alert, TextInput, useColorScheme, View } from "react-native";
+import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
+import NativeFirebaseAuthError = FirebaseAuthTypes.NativeFirebaseAuthError;
 
 const styles = {
   textInput:
@@ -17,37 +18,98 @@ const styles = {
   },
 };
 
-const signUp = async (email: string, password: string): Promise<void> => {
-  await auth()
-    .createUserWithEmailAndPassword(email, password)
-    .then((userCredentials: FirebaseAuthTypes.UserCredential): void => {
-      const userData: UserDataType = {
-        displayName: "",
-        surname: "",
-        phoneNumber: "",
-        gender: "",
-        dateOfBirth: "",
-      };
-      setUserData(userCredentials.user.uid, userData);
-    });
+const signUp = (
+  navigation: ProfileNavStackNavigation,
+  emailSignal: Signal<string>,
+  passwordSignal: Signal<string>,
+  loadingSignal: Signal<boolean>,
+): void => {
+  if (emailSignal.value.trim() == "" || passwordSignal.value.trim() == "") {
+    Alert.alert(
+      "Email or password fields are empty.",
+      "Please, fill them and try again later.",
+    );
+    return;
+  }
+
+  const handleSignUpSuccess = (): void => {
+    const handleEmailVerificationSendSuccess = (): void => {
+      Alert.prompt("A verification email has been sent to you.");
+    };
+
+    const handleEmailVerificationSendFailure = (): void => {
+      Alert.alert(
+        "There was an error while sending your verification email.",
+        "Please, try again later.",
+      );
+    };
+
+    const handleEmailVerificationSendFinally = (): void => {
+      emailSignal.value = "";
+      passwordSignal.value = "";
+      navigation.goBack();
+    };
+
+    auth()
+      .currentUser?.sendEmailVerification()
+      .then(handleEmailVerificationSendSuccess)
+      .catch(handleEmailVerificationSendFailure)
+      .finally(handleEmailVerificationSendFinally);
+  };
+
+  const handleSignUpFailure = (error: NativeFirebaseAuthError): void => {
+    let errorTitle: string;
+
+    if (error.code === "auth/email-already-in-use") {
+      errorTitle = "That email is already in use.";
+    } else if (error.code === "auth/invalid-email") {
+      errorTitle = "That email is invalid.";
+    } else {
+      errorTitle = "There was an error while signing-up.";
+    }
+
+    Alert.alert(errorTitle, "Please, try again later");
+  };
+
+  const handleSignUpFinally = (): void => {
+    loadingSignal.value = false;
+  };
+
+  loadingSignal.value = true;
+
+  auth()
+    .createUserWithEmailAndPassword(emailSignal.value, passwordSignal.value)
+    .then(handleSignUpSuccess)
+    .catch(handleSignUpFailure)
+    .finally(handleSignUpFinally);
 };
 
 const SignUpScreen = () => {
-  const emailSignal: Signal<string> = useSignal<string>("");
-  const passwordSignal: Signal<string> = useSignal<string>("");
-  const loadingSignal: Signal<boolean> = useSignal<boolean>(false);
+  const emailSignal = useSignal("");
+  const passwordSignal = useSignal("");
+  const loadingSignal = useSignal(false);
 
-  const navigation = useNavigation();
-  const isLight: boolean = useColorScheme() === "light";
+  const navigation = useNavigation() as ProfileNavStackNavigation;
+  const isLight = useColorScheme() === "light";
+
+  const handleOnChangeEmailText = (text: string): void => {
+    emailSignal.value = text;
+  };
+
+  const handleOnChangePasswordText = (text: string): void => {
+    passwordSignal.value = text;
+  };
+
+  const handleOnPress = (): void => {
+    signUp(navigation, emailSignal, passwordSignal, loadingSignal);
+  };
 
   return (
     <View className={styles.view}>
       <TextInput
         className={styles.textInput}
         keyboardType="email-address"
-        onChangeText={(text: string): void => {
-          emailSignal.value = text;
-        }}
+        onChangeText={handleOnChangeEmailText}
         value={emailSignal.value}
         placeholder="Email"
         placeholderTextColor={
@@ -57,9 +119,7 @@ const SignUpScreen = () => {
       <TextInput
         className={styles.textInput}
         secureTextEntry={true}
-        onChangeText={(text: string): void => {
-          passwordSignal.value = text;
-        }}
+        onChangeText={handleOnChangePasswordText}
         value={passwordSignal.value}
         placeholder="Password"
         placeholderTextColor={
@@ -70,38 +130,7 @@ const SignUpScreen = () => {
         text="Sign-Up"
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        onPress={async (): Promise<void> => {
-          if (emailSignal.value != "" && passwordSignal.value != "") {
-            loadingSignal.value = true;
-            await signUp(emailSignal.value, passwordSignal.value)
-              .then((): void => {
-                emailSignal.value = "";
-                passwordSignal.value = "";
-                auth().currentUser?.sendEmailVerification();
-                navigation.goBack();
-              })
-              .catch((error): void => {
-                if (error.code === "auth/email-already-in-use") {
-                  Alert.alert(
-                    "That email is already in use.",
-                    "Please, try again with another one.",
-                  );
-                } else if (error.code === "auth/invalid-email") {
-                  Alert.alert(
-                    "That email is invalid.",
-                    "Please, try again with another one.",
-                  );
-                }
-              })
-              .finally((): void => {
-                loadingSignal.value = false;
-              });
-          } else
-            Alert.alert(
-              "One or more fields are empty.",
-              "Please, fill every field and try again.",
-            );
-        }}
+        onPress={handleOnPress}
         loading={loadingSignal.value}
       />
     </View>
