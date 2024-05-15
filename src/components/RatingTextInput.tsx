@@ -2,7 +2,6 @@ import { TextInput, useColorScheme, View } from "react-native";
 import { colors } from "@src/styles/tailwindColors";
 import { Signal } from "@preact/signals-react";
 import React from "react";
-import Element = React.JSX.Element;
 
 type RatingTextInputProps = {
   ratingText: Signal<string>;
@@ -32,7 +31,7 @@ const RatingTextInput = ({
   ratingText,
   contentText,
   editable = true,
-}: RatingTextInputProps): Element => {
+}: RatingTextInputProps): React.JSX.Element => {
   const isLight = useColorScheme() === "light";
   const placeholderTextColor = isLight
     ? colors.quaternary_light

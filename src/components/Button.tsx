@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from "react-native";
-import Element = React.JSX.Element;
 
 type ButtonProps = {
   text?: string;
@@ -27,7 +26,7 @@ const Button = ({
   disabled = false,
   loading = false,
   onPress,
-}: ButtonProps): Element => {
+}: ButtonProps): React.JSX.Element => {
   const isLight = useColorScheme() === "light";
 
   return (

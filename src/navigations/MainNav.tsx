@@ -12,14 +12,13 @@ import React from "react";
 import Home from "@src/assets/img/home-icon.svg";
 import List from "@src/assets/img/list-icon.svg";
 import Profile from "@src/assets/img/profile-icon.svg";
-import Element = React.JSX.Element;
 
 const Tab = createBottomTabNavigator();
 
 const getOptions = (
   isLight: boolean,
   title: string,
-  icon: Element,
+  icon: React.JSX.Element,
   headerShown: boolean = true,
 ): BottomTabNavigationOptions => {
   return {
@@ -55,7 +54,7 @@ const getOptions = (
   };
 };
 
-const MainNav = (): Element => {
+const MainNav = (): React.JSX.Element => {
   const isLight = useColorScheme() === "light";
   const iconColor = isLight ? colors.quaternary_light : colors.quaternary_dark;
 

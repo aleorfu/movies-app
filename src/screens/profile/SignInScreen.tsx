@@ -6,7 +6,6 @@ import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
 import { colors } from "@src/styles/tailwindColors";
 import { Alert, TextInput, useColorScheme, View } from "react-native";
 import React from "react";
-import Element = React.JSX.Element;
 
 const styles = {
   textInput:
@@ -88,7 +87,7 @@ const recoverPassword = (
     .catch(handlePasswordResetFailure);
 };
 
-const SignInScreen = (): Element => {
+const SignInScreen = (): React.JSX.Element => {
   const emailSignal = useSignal("");
   const passwordSignal = useSignal("");
   const loadingSignal = useSignal(false);

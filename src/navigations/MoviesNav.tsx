@@ -4,7 +4,6 @@ import { MovieDetailsScreen } from "@src/screens/movies/MovieDetailsScreen";
 import { MovieListScreen } from "@src/screens/movies/MovieListScreen";
 import React from "react";
 import { getOptions } from "@src/utils/StackNavigationUtils";
-import Element = React.JSX.Element;
 
 type ScreenNames = ["MovieListStack", "MovieDetailsStack"];
 type MoviesNavProps = { movieId: string };
@@ -13,7 +12,7 @@ type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();
 
-const MoviesNav = (): Element => {
+const MoviesNav = (): React.JSX.Element => {
   return (
     <Stack.Navigator>
       <Stack.Screen

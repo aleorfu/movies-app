@@ -4,7 +4,6 @@ import { getSubscribed, saveSubscribed } from "@src/localstorage/asyncStorage";
 import React, { useEffect } from "react";
 import { Alert, View } from "react-native";
 import { Signal, useSignal } from "@preact/signals-react";
-import Element = React.JSX.Element;
 
 const styles = {
   view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
@@ -62,7 +61,7 @@ const toggleSubscribed = (
     .finally(handleActionFinally);
 };
 
-const HomeScreen = (): Element => {
+const HomeScreen = (): React.JSX.Element => {
   const isSubscribedSignal = useSignal(false);
   const loadingSignal = useSignal(false);
 

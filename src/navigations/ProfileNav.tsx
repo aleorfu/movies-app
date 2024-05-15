@@ -5,7 +5,6 @@ import { SignUpScreen } from "@src/screens/profile/SignUpScreen";
 import { ProfileScreen } from "@src/screens/profile/ProfileScreen";
 import React from "react";
 import { getOptions } from "@src/utils/StackNavigationUtils";
-import Element = React.JSX.Element;
 
 type ScreenNames =
   | "ProfileProfileStack"
@@ -16,7 +15,7 @@ type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();
 
-const ProfileNav = (): Element => {
+const ProfileNav = (): React.JSX.Element => {
   return (
     <Stack.Navigator>
       <Stack.Screen

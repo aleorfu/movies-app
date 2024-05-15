@@ -6,7 +6,6 @@ import { Alert, useColorScheme } from "react-native";
 import FilledLikeIcon from "../assets/img/like-filled-icon.svg";
 import LikeIcon from "../assets/img/like-icon.svg";
 import { colors } from "@src/styles/tailwindColors";
-import Element = React.JSX.Element;
 
 type LikeButtonProps = {
   movieId: string;
@@ -55,7 +54,7 @@ const LikeButton = ({
   movieId,
   movieUserLiked,
   userId,
-}: LikeButtonProps): Element => {
+}: LikeButtonProps): React.JSX.Element => {
   const loadingLikeSignal = useSignal(false);
   const movieLikedSignal = useSignal(false);
 

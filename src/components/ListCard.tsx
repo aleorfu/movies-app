@@ -1,6 +1,5 @@
 import { Text, View } from "react-native";
 import React from "react";
-import Element = React.JSX.Element;
 
 type ListCardProps = {
   title: string;
@@ -14,7 +13,7 @@ const style = {
     "m-5 text-xl text-center text-quaternary_light dark:text-quaternary_dark",
 };
 
-const ListCard = ({ title, content }: ListCardProps): Element => {
+const ListCard = ({ title, content }: ListCardProps): React.JSX.Element => {
   return (
     <View className={style.card}>
       <Text className={style.text}>{title}</Text>

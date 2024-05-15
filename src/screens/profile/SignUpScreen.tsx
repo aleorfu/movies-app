@@ -5,7 +5,6 @@ import { Button } from "@src/components/Button";
 import { colors } from "@src/styles/tailwindColors";
 import { Alert, TextInput, useColorScheme, View } from "react-native";
 import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
-import NativeFirebaseAuthError = FirebaseAuthTypes.NativeFirebaseAuthError;
 
 const styles = {
   textInput:
@@ -57,7 +56,9 @@ const signUp = (
       .finally(handleEmailVerificationSendFinally);
   };
 
-  const handleSignUpFailure = (error: NativeFirebaseAuthError): void => {
+  const handleSignUpFailure = (
+    error: FirebaseAuthTypes.NativeFirebaseAuthError,
+  ): void => {
     let errorTitle: string;
 
     if (error.code === "auth/email-already-in-use") {
@@ -84,7 +85,7 @@ const signUp = (
     .finally(handleSignUpFinally);
 };
 
-const SignUpScreen = () => {
+const SignUpScreen = (): React.JSX.Element => {
   const emailSignal = useSignal("");
   const passwordSignal = useSignal("");
   const loadingSignal = useSignal(false);

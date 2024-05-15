@@ -9,7 +9,6 @@ import React, { Fragment, useEffect } from "react";
 import { Alert, Image, RefreshControl, ScrollView, Text } from "react-native";
 import { getUserSignal } from "@src/signals/userSignal";
 import { MoviesNavProps } from "@src/navigations/MoviesNav";
-import Element = React.JSX.Element;
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -52,7 +51,7 @@ const fetchMovieInfo = (
     .finally(handleGetMovieByIdFinally);
 };
 
-const MovieDetailsScreen = (): Element => {
+const MovieDetailsScreen = (): React.JSX.Element => {
   const movieSignal = useSignal<Movie | null>(null);
   const refreshingSignal = useSignal(false);
 

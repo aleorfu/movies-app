@@ -5,7 +5,6 @@ import { Movie } from "@src/services/altenHybridApi";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { getUserSignal } from "@src/signals/userSignal";
-import Element = React.JSX.Element;
 
 type MovieCardProps = { movie: Movie };
 
@@ -23,7 +22,7 @@ const navigateToMovieDetails = (
   navigation.navigate("MovieDetailsStack", { movieId: movieId });
 };
 
-const MovieCard = ({ movie }: MovieCardProps): Element => {
+const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
   const navigation = useNavigation() as MoviesNavStackNavigation;
   const localUser = getUserSignal.value;
 

@@ -24,7 +24,6 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerResult, MediaTypeOptions } from "expo-image-picker";
 import parsePhoneNumber from "libphonenumber-js";
-import Element = React.JSX.Element;
 
 const style = {
   image:
@@ -110,7 +109,7 @@ const saveData = (
     .finally(handleSetUserDataFinally);
 };
 
-const ProfileSignedIn = (): Element => {
+const ProfileSignedIn = (): React.JSX.Element => {
   const loadingSignal = useSignal(false);
   const loadingSaveSignal = useSignal(false);
 

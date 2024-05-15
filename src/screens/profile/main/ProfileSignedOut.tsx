@@ -5,7 +5,6 @@ import {
   ScreenNames,
 } from "@src/navigations/ProfileNav";
 import React, { Fragment } from "react";
-import Element = React.JSX.Element;
 
 const style = {
   button: {
@@ -22,7 +21,7 @@ const navigateToPage = (
   navigation.navigate(page, {});
 };
 
-const ProfileSignedOut = (): Element => {
+const ProfileSignedOut = (): React.JSX.Element => {
   const navigation = useNavigation() as ProfileNavStackNavigation;
 
   const handleSignInButtonOnPress = (): void => {

@@ -9,7 +9,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import Element = React.JSX.Element;
 
 const style = {
   view: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -54,7 +53,7 @@ const fetchFiveMovies = (
     .finally(handleGetAllMoviesFinally);
 };
 
-const MovieListScreen = (): Element => {
+const MovieListScreen = (): React.JSX.Element => {
   const moviesSignal = useSignal<Movie[]>([]);
   const refreshingSignal = useSignal(false);
   const loadingMoviesSignal = useSignal(false);

@@ -6,7 +6,6 @@ import { rateMovie, Rating } from "@src/services/altenHybridApi";
 import { getUserSignal } from "@src/signals/userSignal";
 import React, { Fragment } from "react";
 import { Alert, Text, View } from "react-native";
-import Element = React.JSX.Element;
 
 type CommentAreaProps = {
   movieId: string;
@@ -77,7 +76,7 @@ const sendRating = (
 const CommentArea = ({
   movieId,
   movieRatings: initialMovieRatings,
-}: CommentAreaProps): Element => {
+}: CommentAreaProps): React.JSX.Element => {
   const loadingSendingSignal = useSignal(false);
   const ratingTextSignal = useSignal("");
   const contentTextSignal = useSignal("");
