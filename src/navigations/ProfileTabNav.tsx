@@ -65,24 +65,25 @@ const ProfileTabNav = (): React.JSX.Element => {
   const profilePictureSignal = useSignal<string | undefined>(undefined);
 
   const isLight = useColorScheme() === "light";
-  const localUser = getUserSignal.value;
 
   const handleOnImagePress = (): void => {
-    selectPicture(localUser!!.uid, profilePictureSignal);
+    selectPicture(getUserSignal.value!!.uid, profilePictureSignal);
   };
 
   useEffect(() => {
-    if (localUser === null) return;
+    if (getUserSignal.value === null) return;
     const handleGetProfilePictureSuccess = (url: string): void => {
       profilePictureSignal.value = url;
     };
 
-    getProfilePicture(localUser.uid).then(handleGetProfilePictureSuccess);
+    getProfilePicture(getUserSignal.value.uid).then(
+      handleGetProfilePictureSuccess,
+    );
   }, []);
 
   return (
     <Fragment>
-      {localUser?.emailVerified && (
+      {getUserSignal.value?.emailVerified && (
         <View className={style.view}>
           <TouchableOpacity onPress={handleOnImagePress}>
             <Image

@@ -24,7 +24,6 @@ const navigateToMovieDetails = (
 
 const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
   const navigation = useNavigation() as MoviesNavStackNavigation;
-  const localUser = getUserSignal.value;
 
   const handleOnPress = (): void => {
     navigateToMovieDetails(movie.id, navigation);
@@ -42,11 +41,11 @@ const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
           />
         </View>
       </TouchableOpacity>
-      {localUser?.emailVerified && (
+      {getUserSignal.value?.emailVerified && (
         <LikeButton
           movieId={movie.id}
           movieUserLiked={movie.userLiked ?? []}
-          userId={localUser.uid}
+          userId={getUserSignal.value.uid}
         />
       )}
     </View>

@@ -3,7 +3,7 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 type UserType = FirebaseAuthTypes.User | null;
 
-const getUserSignal = signal<UserType>(auth().currentUser);
+const getUserSignal = signal<UserType>(null);
 
 auth().onUserChanged((newUser) => {
   getUserSignal.value = newUser;

@@ -82,11 +82,9 @@ const CommentArea = ({
   const contentTextSignal = useSignal("");
   const movieRatingsSignal = useSignal(initialMovieRatings);
 
-  const localUser = getUserSignal.value;
-
   const handleSendOnPress = (): void => {
     sendRating(
-      localUser!!.uid,
+      getUserSignal.value!!.uid,
       movieId,
       contentTextSignal,
       ratingTextSignal,
@@ -103,7 +101,7 @@ const CommentArea = ({
       {movieRatingsSignal.value?.map((rating) => (
         <CommentCard key={rating.userId} rating={rating} />
       ))}
-      {localUser && (
+      {getUserSignal.value && (
         <Fragment>
           <RatingTextInput
             ratingText={ratingTextSignal}

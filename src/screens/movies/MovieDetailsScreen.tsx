@@ -57,8 +57,6 @@ const MovieDetailsScreen = (): React.JSX.Element => {
 
   const { movieId } = useRoute().params as MoviesNavProps;
 
-  const localUser = getUserSignal.value;
-
   const handleOnRefresh = () => {
     fetchMovieInfo(movieId, refreshingSignal, movieSignal);
   };
@@ -85,11 +83,11 @@ const MovieDetailsScreen = (): React.JSX.Element => {
             resizeMode="cover"
           />
           <Text className={style.title}>{movieSignal.value.name}</Text>
-          {localUser?.emailVerified && (
+          {getUserSignal.value?.emailVerified && (
             <LikeButton
               movieId={movieSignal.value.id}
               movieUserLiked={movieSignal.value.userLiked ?? []}
-              userId={localUser.uid}
+              userId={getUserSignal.value.uid}
             />
           )}
           <TextCard

@@ -93,7 +93,6 @@ const ProfileSignedIn = (): React.JSX.Element => {
   const dateOfBirthSignal = useSignal("");
 
   const isLight = useColorScheme() === "light";
-  const localUser = getUserSignal.value;
 
   const handleOnDisplayNameTextChanged = (text: string): void => {
     displayNameSignal.value = text;
@@ -128,7 +127,7 @@ const ProfileSignedIn = (): React.JSX.Element => {
 
   const handleOnSaveButtonPress = (): void => {
     saveData(
-      localUser!!.uid,
+      getUserSignal.value!!.uid,
       displayNameSignal,
       surnameSignal,
       phoneNumberSignal,
@@ -143,7 +142,7 @@ const ProfileSignedIn = (): React.JSX.Element => {
   };
 
   useEffect(() => {
-    if (localUser === null) return;
+    if (!getUserSignal.value) return;
     loadingSignal.value = true;
 
     const handleGetUserDataSuccess = (fetchedUserData: UserDataType): void => {
@@ -158,15 +157,15 @@ const ProfileSignedIn = (): React.JSX.Element => {
       loadingSignal.value = false;
     };
 
-    getUserData(localUser.uid)
+    getUserData(getUserSignal.value.uid)
       .then(handleGetUserDataSuccess)
       .finally(handleGetUserDataFinally);
-  }, [localUser]);
+  }, [getUserSignal.value]);
 
   return (
     <ScrollView>
-      {localUser && !loadingSignal.value ? (
-        localUser?.emailVerified ? (
+      {getUserSignal.value && !loadingSignal.value ? (
+        getUserSignal.value?.emailVerified ? (
           <Fragment>
             <Text className={style.title}>Display name</Text>
             <TextInput
