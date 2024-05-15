@@ -42,7 +42,7 @@ const MovieCard = ({ movie }: MovieCardProps): React.JSX.Element => {
           />
         </View>
       </TouchableOpacity>
-      {localUser && (
+      {localUser?.emailVerified && (
         <LikeButton
           movieId={movie.id}
           movieUserLiked={movie.userLiked ?? []}

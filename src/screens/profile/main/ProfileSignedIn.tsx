@@ -24,6 +24,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { ImagePickerResult, MediaTypeOptions } from "expo-image-picker";
 import parsePhoneNumber from "libphonenumber-js";
+import { PhoneNumber } from "libphonenumber-js/types";
 
 const style = {
   image:
@@ -67,14 +68,17 @@ const saveData = (
   dateOfBirthSignal: Signal<string>,
   loadingSaveSignal: Signal<boolean>,
 ): void => {
-  const parsedPhoneNumber = parsePhoneNumber(phoneNumberSignal.value, "ES");
+  let parsedPhoneNumber: PhoneNumber | undefined;
 
-  if (!parsedPhoneNumber?.isValid() || !parsedPhoneNumber?.isPossible()) {
-    Alert.alert(
-      "Invalid phone number.",
-      "Check if phone number is correct and try again.",
-    );
-    return;
+  if (phoneNumberSignal.value != "") {
+    parsedPhoneNumber = parsePhoneNumber(phoneNumberSignal.value, "ES");
+    if (!parsedPhoneNumber?.isValid() || !parsedPhoneNumber?.isPossible()) {
+      Alert.alert(
+        "Invalid phone number.",
+        "Check if phone number is correct and try again.",
+      );
+      return;
+    }
   }
 
   loadingSaveSignal.value = true;
@@ -82,7 +86,7 @@ const saveData = (
   const data: UserDataType = {
     displayName: displayNameSignal.value,
     surname: surnameSignal.value,
-    phoneNumber: parsedPhoneNumber?.number,
+    phoneNumber: parsedPhoneNumber?.number ?? "",
     gender: genderSignal.value,
     dateOfBirth: dateOfBirthSignal.value,
   };
@@ -99,7 +103,7 @@ const saveData = (
   };
 
   const handleSetUserDataFinally = (): void => {
-    phoneNumberSignal.value = parsedPhoneNumber.number;
+    phoneNumberSignal.value = parsedPhoneNumber?.number ?? "";
     loadingSaveSignal.value = false;
   };
 
@@ -170,6 +174,10 @@ const ProfileSignedIn = (): React.JSX.Element => {
     );
   };
 
+  const handleCheckEmailOnPress = (): void => {
+    getUserSignal.value!!.reload();
+  };
+
   useEffect(() => {
     if (localUser === null) return;
     loadingSignal.value = true;
@@ -179,22 +187,13 @@ const ProfileSignedIn = (): React.JSX.Element => {
         profilePictureSignal.value = url;
       };
 
-      const handleGetProfilePictureFailure = (): void => {
-        Alert.alert(
-          "There was an error while fetching profile picture.",
-          "Please, try again later.",
-        );
-      };
-
       displayNameSignal.value = fetchedUserData.displayName;
       surnameSignal.value = fetchedUserData.surname;
       phoneNumberSignal.value = fetchedUserData.phoneNumber;
       genderSignal.value = fetchedUserData.gender;
       dateOfBirthSignal.value = fetchedUserData.dateOfBirth;
 
-      getProfilePicture(localUser.uid)
-        .then(handleGetProfilePictureSuccess)
-        .catch(handleGetProfilePictureFailure);
+      getProfilePicture(localUser.uid).then(handleGetProfilePictureSuccess);
     };
 
     const handleGetUserDataFinally = (): void => {
@@ -209,56 +208,70 @@ const ProfileSignedIn = (): React.JSX.Element => {
   return (
     <ScrollView>
       {localUser && !loadingSignal.value ? (
-        <Fragment>
-          <TouchableOpacity onPress={handleOnImagePress}>
-            <Image
-              source={{ uri: profilePictureSignal.value }}
-              className={style.image}
+        localUser?.emailVerified ? (
+          <Fragment>
+            <TouchableOpacity onPress={handleOnImagePress}>
+              <Image
+                source={{ uri: profilePictureSignal.value }}
+                className={style.image}
+              />
+            </TouchableOpacity>
+            <Text className={style.title}>Display name</Text>
+            <TextInput
+              className={style.field}
+              value={displayNameSignal.value}
+              onChangeText={handleOnDisplayNameTextChanged}
+              textContentType="name"
             />
-          </TouchableOpacity>
-          <Text className={style.title}>Display name</Text>
-          <TextInput
-            className={style.field}
-            value={displayNameSignal.value}
-            onChangeText={handleOnDisplayNameTextChanged}
-            textContentType="name"
-          />
-          <Text className={style.title}>Surname</Text>
-          <TextInput
-            className={style.field}
-            value={surnameSignal.value}
-            onChangeText={handleOnSurnameTextChanged}
-            textContentType="name"
-          />
-          <Text className={style.title}>Phone number</Text>
-          <TextInput
-            className={style.field}
-            value={phoneNumberSignal.value}
-            onChangeText={handleOnPhoneNumberTextChanged}
-            textContentType="telephoneNumber"
-            keyboardType="phone-pad"
-          />
-          <Text className={style.title}>Gender</Text>
-          <TextInput
-            className={style.field}
-            value={genderSignal.value}
-            onChangeText={handleOnGenderTextChanged}
-          />
-          <Text className={style.title}>Date of birth</Text>
-          <TextInput
-            className={style.field}
-            value={dateOfBirthSignal.value}
-            onChangeText={handleOnDateOfBirthTextChanged}
-            textContentType="birthdate"
-          />
-          <Button
-            text="Save"
-            buttonClassName={style.button.button}
-            textClassName={style.button.text}
-            onPress={handleOnSaveButtonPress}
-            loading={loadingSaveSignal.value}
-          />
-        </Fragment>
+            <Text className={style.title}>Surname</Text>
+            <TextInput
+              className={style.field}
+              value={surnameSignal.value}
+              onChangeText={handleOnSurnameTextChanged}
+              textContentType="name"
+            />
+            <Text className={style.title}>Phone number</Text>
+            <TextInput
+              className={style.field}
+              value={phoneNumberSignal.value}
+              onChangeText={handleOnPhoneNumberTextChanged}
+              textContentType="telephoneNumber"
+              keyboardType="phone-pad"
+            />
+            <Text className={style.title}>Gender</Text>
+            <TextInput
+              className={style.field}
+              value={genderSignal.value}
+              onChangeText={handleOnGenderTextChanged}
+            />
+            <Text className={style.title}>Date of birth</Text>
+            <TextInput
+              className={style.field}
+              value={dateOfBirthSignal.value}
+              onChangeText={handleOnDateOfBirthTextChanged}
+              textContentType="birthdate"
+            />
+            <Button
+              text="Save"
+              buttonClassName={style.button.button}
+              textClassName={style.button.text}
+              onPress={handleOnSaveButtonPress}
+              loading={loadingSaveSignal.value}
+            />
+          </Fragment>
+        ) : (
+          <Fragment>
+            <Text className={style.title}>
+              You must verify your email to start using the app
+            </Text>
+            <Button
+              text="Check email verified"
+              buttonClassName={style.button.button}
+              textClassName={style.button.text}
+              onPress={handleCheckEmailOnPress}
+            />
+          </Fragment>
+        )
       ) : (
         <ActivityIndicator
           size="large"

@@ -85,7 +85,7 @@ const MovieDetailsScreen = (): React.JSX.Element => {
             resizeMode="cover"
           />
           <Text className={style.title}>{movieSignal.value.name}</Text>
-          {localUser && (
+          {localUser?.emailVerified && (
             <LikeButton
               movieId={movieSignal.value.id}
               movieUserLiked={movieSignal.value.userLiked ?? []}
