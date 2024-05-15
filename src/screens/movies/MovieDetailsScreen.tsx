@@ -4,10 +4,10 @@ import { CommentArea } from "@src/components/CommentArea";
 import { LikeButton } from "@src/components/LikeButton";
 import { ListCard } from "@src/components/ListCard";
 import { TextCard } from "@src/components/TextCard";
-import { getMovieByIdApi, Movie } from "@src/services/altenHybridApi";
-import React, { Fragment, useCallback, useEffect } from "react";
-import { Image, RefreshControl, ScrollView, Text } from "react-native";
-import { getUserSignal, UserType } from "@src/signals/userSignal";
+import { getMovieById, Movie } from "@src/services/altenHybridApi";
+import React, { Fragment, useEffect } from "react";
+import { Alert, Image, RefreshControl, ScrollView, Text } from "react-native";
+import { getUserSignal } from "@src/signals/userSignal";
 import { MoviesNavProps } from "@src/navigations/MoviesNav";
 
 const style = {
@@ -23,64 +23,95 @@ const style = {
   },
 };
 
+const fetchMovieInfo = (
+  movieId: string,
+  refreshingSignal: Signal<boolean>,
+  movieSignal: Signal<Movie | null>,
+): void => {
+  refreshingSignal.value = true;
+
+  const handleGetMovieByIdSuccess = (fetchedMovie: Movie): void => {
+    movieSignal.value = fetchedMovie;
+  };
+
+  const handleGetMovieByIdFailure = (): void => {
+    Alert.alert(
+      "There was an error while fetching movie info.",
+      "Please, try again later.",
+    );
+  };
+
+  const handleGetMovieByIdFinally = (): void => {
+    refreshingSignal.value = false;
+  };
+
+  getMovieById(movieId)
+    .then(handleGetMovieByIdSuccess)
+    .catch(handleGetMovieByIdFailure)
+    .finally(handleGetMovieByIdFinally);
+};
+
 const MovieDetailsScreen = (): React.JSX.Element => {
-  const movie: Signal<Movie | null> = useSignal<Movie | null>(null);
-  const refreshing: Signal<boolean> = useSignal<boolean>(false);
+  const movieSignal = useSignal<Movie | null>(null);
+  const refreshingSignal = useSignal(false);
 
-  const { movieId }: MoviesNavProps = useRoute().params as MoviesNavProps;
+  const { movieId } = useRoute().params as MoviesNavProps;
 
-  const localUser: UserType = getUserSignal.value;
+  const localUser = getUserSignal.value;
 
-  const onRefresh = useCallback((): void => {
-    refreshing.value = true;
-    getMovieByIdApi(movieId).then((fetchedMovie: Movie): void => {
-      movie.value = fetchedMovie;
-    });
-    refreshing.value = false;
-  }, []);
+  const handleOnRefresh = () => {
+    fetchMovieInfo(movieId, refreshingSignal, movieSignal);
+  };
 
-  useEffect((): void => {
-    getMovieByIdApi(movieId).then((fetchedMovie: Movie): void => {
-      movie.value = fetchedMovie;
-    });
-  }, []);
+  useEffect(() => {
+    fetchMovieInfo(movieId, refreshingSignal, movieSignal);
+  }, [movieId]);
 
   return (
     <ScrollView
       className={style.scrollView}
       refreshControl={
-        <RefreshControl refreshing={refreshing.value} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshingSignal.value}
+          onRefresh={handleOnRefresh}
+        />
       }
     >
-      {movie.value && (
+      {movieSignal.value && (
         <Fragment>
           <Image
-            source={{ uri: movie.value.pictureUrl }}
+            source={{ uri: movieSignal.value.pictureUrl }}
             className={style.image}
             resizeMode="cover"
           />
-          <Text className={style.title}>{movie.value.name}</Text>
-          {localUser && (
+          <Text className={style.title}>{movieSignal.value.name}</Text>
+          {localUser?.emailVerified && (
             <LikeButton
-              movieId={movie.value?.id}
-              movieUserLiked={movie.value?.userLiked ?? []}
+              movieId={movieSignal.value.id}
+              movieUserLiked={movieSignal.value.userLiked ?? []}
               userId={localUser.uid}
             />
           )}
-          <TextCard title={"Description"} content={movie.value.description} />
-          <ListCard title={"Actors"} content={movie.value.actors} />
-          <ListCard title={"Categories"} content={movie.value.categories} />
+          <TextCard
+            title={"Description"}
+            content={movieSignal.value.description}
+          />
+          <ListCard title={"Actors"} content={movieSignal.value.actors} />
+          <ListCard
+            title={"Categories"}
+            content={movieSignal.value.categories}
+          />
           <ListCard
             title={"Other data"}
             content={[
-              `Duration: ${movie.value.duration}`,
-              `Rate: ${movie.value.rating}/5`,
-              `Likes: ${movie.value.likes}`,
+              `Duration: ${movieSignal.value.duration}`,
+              `Rate: ${movieSignal.value.rating}/5`,
+              `Likes: ${movieSignal.value.likes}`,
             ]}
           />
           <CommentArea
-            movieId={movie.value?.id}
-            movieRatings={movie.value?.ratings}
+            movieId={movieSignal.value.id}
+            movieRatings={movieSignal.value.ratings ?? []}
           />
         </Fragment>
       )}

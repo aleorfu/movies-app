@@ -20,7 +20,7 @@ const style = {
 
 const numberIsValid = (text: string): boolean => {
   try {
-    const number: number = Number(text);
+    const number = Number(text);
     return number >= 0 && number <= 5;
   } catch {
     return false;
@@ -32,38 +32,40 @@ const RatingTextInput = ({
   contentText,
   editable = true,
 }: RatingTextInputProps): React.JSX.Element => {
-  const isLight: boolean = useColorScheme() === "light";
+  const isLight = useColorScheme() === "light";
+  const placeholderTextColor = isLight
+    ? colors.quaternary_light
+    : colors.quaternary_dark;
+
+  const handleOnChangeRatingText = (text: string): void => {
+    if (numberIsValid(text)) ratingText.value = text;
+  };
+
+  const handleOnChangeContentText = (text: string): void => {
+    contentText.value = text;
+  };
 
   return (
     <View>
-      <TextInput
+      <TextInput // Rating text
         className={[style.textInput.common, style.textInput.top].join(" ")}
-        onChangeText={(text: string): void => {
-          if (numberIsValid(text)) ratingText.value = text;
-        }}
+        onChangeText={handleOnChangeRatingText}
         value={ratingText.value}
         keyboardType="number-pad"
         maxLength={1}
         placeholder="0"
-        placeholderTextColor={
-          isLight ? colors.quaternary_light : colors.quaternary_dark
-        }
+        placeholderTextColor={placeholderTextColor}
         editable={editable}
       />
-      <TextInput
+      <TextInput // Content text
         className={[style.textInput.common, style.textInput.bottom].join(" ")}
-        onChangeText={(text: string): void => {
-          contentText.value = text;
-        }}
+        onChangeText={handleOnChangeContentText}
         value={contentText.value}
         placeholder="Comment"
-        placeholderTextColor={
-          isLight ? colors.quaternary_light : colors.quaternary_dark
-        }
+        placeholderTextColor={placeholderTextColor}
         editable={editable}
       />
     </View>
   );
 };
-
 export { RatingTextInput, RatingTextInputProps };

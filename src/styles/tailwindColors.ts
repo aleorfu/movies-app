@@ -1,6 +1,6 @@
 /*
 If you want to add a color into the dictionary you must add it first to "ColorKeys".
-This is because I want colors to return strings, which is the data type for colors not being got from tailwind.
+This is because I want colors to return strings, which is the data type for colors not being gotten from tailwind.
 */
 
 type ColorKeys =

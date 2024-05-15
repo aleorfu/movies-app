@@ -19,28 +19,104 @@ const styles = {
   },
 };
 
-const signIn = async (email: string, password: string): Promise<void> => {
-  await auth().signInWithEmailAndPassword(email, password);
+const signIn = (
+  navigation: ProfileNavStackNavigation,
+  emailSignal: Signal<string>,
+  passwordSignal: Signal<string>,
+  loadingSignal: Signal<boolean>,
+): void => {
+  if (emailSignal.value.trim() == "" || passwordSignal.value.trim() == "") {
+    Alert.alert(
+      "Email or password fields are empty.",
+      "Please, try again later.",
+    );
+    return;
+  }
+
+  const handleSignInSuccess = (): void => {
+    emailSignal.value = "";
+    passwordSignal.value = "";
+    navigation.goBack();
+  };
+
+  const handleSignInFailure = (): void => {
+    Alert.alert(
+      "There was an error while signing you in.",
+      "Please, verify your credentials and try again.",
+    );
+  };
+
+  const handleSignInFinally = (): void => {
+    loadingSignal.value = false;
+  };
+
+  loadingSignal.value = true;
+
+  auth()
+    .signInWithEmailAndPassword(emailSignal.value, passwordSignal.value)
+    .then(handleSignInSuccess)
+    .catch(handleSignInFailure)
+    .finally(handleSignInFinally);
 };
 
-const recoverPassword = async (email: string): Promise<void> => {
-  await auth().sendPasswordResetEmail(email);
+const recoverPassword = (
+  emailSignal: Signal<string>,
+  passwordSignal: Signal<string>,
+): void => {
+  if (emailSignal.value.trim() === "") {
+    Alert.alert("Email field is empty.", "Please, fill it and try again.");
+    return;
+  }
+
+  const handlePasswordResetSuccess = (): void => {
+    emailSignal.value = "";
+    passwordSignal.value = "";
+    Alert.prompt("An email has been sent to you.");
+  };
+
+  const handlePasswordResetFailure = (): void => {
+    Alert.alert(
+      "There was an error while sending your password recovery email.",
+      "Please, try again later.",
+    );
+  };
+
+  auth()
+    .sendPasswordResetEmail(emailSignal.value)
+    .then(handlePasswordResetSuccess)
+    .catch(handlePasswordResetFailure);
 };
 
 const SignInScreen = (): React.JSX.Element => {
-  const emailSignal: Signal<string> = useSignal<string>("");
-  const passwordSignal: Signal<string> = useSignal<string>("");
-  const navigation: ProfileNavStackNavigation =
-    useNavigation() as ProfileNavStackNavigation;
-  const isLight: boolean = useColorScheme() === "light";
-  const loadingSignal: Signal<boolean> = useSignal<boolean>(false);
+  const emailSignal = useSignal("");
+  const passwordSignal = useSignal("");
+  const loadingSignal = useSignal(false);
+  const navigation = useNavigation() as ProfileNavStackNavigation;
+  const isLight = useColorScheme() === "light";
+
+  const handleOnChangeEmailText = (text: string): void => {
+    emailSignal.value = text;
+  };
+
+  const handleOnChangePasswordText = (text: string): void => {
+    passwordSignal.value = text;
+  };
+
+  const handleSignInButtonOnPress = (): void => {
+    signIn(navigation, emailSignal, passwordSignal, loadingSignal);
+  };
+
+  const handleRecoverPasswordOnPress = (): void => {
+    recoverPassword(emailSignal, passwordSignal);
+  };
 
   return (
     <View className={styles.view}>
       <TextInput
         className={styles.textInput}
         keyboardType="email-address"
-        onChangeText={(text: string) => (emailSignal.value = text)}
+        textContentType="emailAddress"
+        onChangeText={handleOnChangeEmailText}
         value={emailSignal.value}
         placeholder="Email"
         placeholderTextColor={
@@ -50,7 +126,7 @@ const SignInScreen = (): React.JSX.Element => {
       <TextInput
         className={styles.textInput}
         secureTextEntry={true}
-        onChangeText={(text) => (passwordSignal.value = text)}
+        onChangeText={handleOnChangePasswordText}
         value={passwordSignal.value}
         placeholder="Password"
         placeholderTextColor={
@@ -59,30 +135,7 @@ const SignInScreen = (): React.JSX.Element => {
       />
       <Button
         text="Sign-In"
-        onPress={async (): Promise<void> => {
-          if (emailSignal.value != "" && passwordSignal.value != "") {
-            loadingSignal.value = true;
-            await signIn(emailSignal.value, passwordSignal.value)
-              .then(() => {
-                emailSignal.value = "";
-                passwordSignal.value = "";
-                navigation.goBack();
-              })
-              .catch(() => {
-                Alert.alert(
-                  "There was an error while signing you in.",
-                  "Please, verify your credentials and try again.",
-                );
-              })
-              .finally((): void => {
-                loadingSignal.value = false;
-              });
-          } else
-            Alert.alert(
-              "One or more fields are empty.",
-              "Please, fill every field and try again.",
-            );
-        }}
+        onPress={handleSignInButtonOnPress}
         loading={loadingSignal.value}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
@@ -91,25 +144,7 @@ const SignInScreen = (): React.JSX.Element => {
         text="I forgot the password"
         buttonClassName={styles.button.noBgButton}
         textClassName={styles.button.text}
-        onPress={async () => {
-          if (emailSignal.value != "") {
-            await recoverPassword(emailSignal.value)
-              .then(() => {
-                emailSignal.value = "";
-                passwordSignal.value = "";
-              })
-              .catch(() => {
-                Alert.alert(
-                  "There was an error while sending your password recovery email.",
-                  "Please, try again later.",
-                );
-              });
-          } else
-            Alert.alert(
-              "Email field is empty.",
-              "Please, fill it and try again.",
-            );
-        }}
+        onPress={handleRecoverPasswordOnPress}
       />
     </View>
   );

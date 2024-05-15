@@ -15,7 +15,7 @@ type Movie = {
   description: string;
   categories: string[];
   actors: string[];
-  ratings: Rating[];
+  ratings?: Rating[];
   likes: number;
   userLiked?: string[];
 };
@@ -26,43 +26,73 @@ const instance: AxiosInstance = axios.create({
 instance.defaults.headers["Accept"] = "application/json";
 instance.defaults.headers.put["Content-Type"] = "application/json";
 
-const getPetition = async (url: string): Promise<Movie | Movie[] | never> =>
-  (await instance.get(url)).data;
+const getMovieById = async (id: string): Promise<Movie | never> => {
+  const url = `/movies/${id}`;
 
-const putPetition = async (url: string, data: string): Promise<Movie | never> =>
-  (await instance.put(url, data)).data;
+  try {
+    const response = await instance.get(url);
 
-const getMovieByIdApi = async (id: string): Promise<Movie | never> =>
-  (await getPetition(`/movies/${id}`)) as Movie;
+    return response.data as Movie;
+  } catch (error) {
+    console.error('There was an error while getting movie with id "%s": %s', [
+      id,
+      error,
+    ]);
 
-const getAllMoviesApi = async (): Promise<Movie[] | never> =>
-  Object.values(await getPetition("/movies")) as Movie[];
+    throw error;
+  }
+};
 
-const rateMovie = async (id: string, rating: Rating): Promise<void | never> => {
-  await putPetition(`/movies/${id}/rate`, JSON.stringify(rating));
+const getAllMovies = async (): Promise<Movie[] | never> => {
+  const url = "/movies";
+
+  try {
+    const response = await instance.get(url);
+
+    return Object.values(response.data) as Movie[];
+  } catch (error) {
+    console.error("There was an error while getting all movies: %s", error);
+
+    throw error;
+  }
+};
+
+const rateMovie = async (
+  movieId: string,
+  rating: Rating,
+): Promise<Movie | never> => {
+  const url = `/movies/${movieId}/rate`;
+
+  try {
+    const data = JSON.stringify(rating);
+    const response = await instance.put(url, data);
+
+    return response.data as Movie;
+  } catch (error) {
+    console.error("There was an error while sending your rating: %s", error);
+
+    throw error;
+  }
 };
 
 const likeMovie = async (
-  id: string,
+  movieId: string,
   userId: string,
-): Promise<boolean | never> => {
-  const data: { userId: string } = {
-    userId: userId,
-  };
+): Promise<Movie | never> => {
+  const url = `/movies/${movieId}/like`;
 
-  const response: Movie = (await putPetition(
-    `/movies/${id}/like`,
-    JSON.stringify(data),
-  )) as Movie;
+  try {
+    const data = JSON.stringify({
+      userId: userId,
+    });
+    const response = await instance.put(url, data);
 
-  return response?.userLiked?.includes(userId) ?? false;
+    return response.data as Movie;
+  } catch (error) {
+    console.error("There was an error while sending your like: %s", error);
+
+    throw error;
+  }
 };
 
-export {
-  getMovieByIdApi,
-  getAllMoviesApi,
-  rateMovie,
-  likeMovie,
-  Movie,
-  Rating,
-};
+export { getMovieById, getAllMovies, rateMovie, likeMovie, Movie, Rating };
