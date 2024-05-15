@@ -5,13 +5,13 @@ import {
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from "@src/screens/HomeScreen";
-import { ProfileStackNav } from "@src/navigations/ProfileStackNav";
 import { MoviesNav } from "@src/navigations/MoviesNav";
 import { colors } from "@src/styles/tailwindColors";
 import React from "react";
 import Home from "@src/assets/img/home-icon.svg";
 import List from "@src/assets/img/list-icon.svg";
 import Profile from "@src/assets/img/profile-icon.svg";
+import { ProfileTabNav } from "@src/navigations/ProfileTabNav";
 
 const Tab = createBottomTabNavigator();
 
@@ -77,7 +77,7 @@ const MainNav = (): React.JSX.Element => {
         />
         <Tab.Screen
           name="ProfileTab"
-          component={ProfileStackNav}
+          component={ProfileTabNav}
           options={getOptions(isLight, "Profile", ProfileIcon, false)}
         />
       </Tab.Navigator>
