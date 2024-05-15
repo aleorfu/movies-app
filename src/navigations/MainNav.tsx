@@ -5,7 +5,7 @@ import {
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from "@src/screens/HomeScreen";
-import { ProfileNav } from "@src/navigations/ProfileNav";
+import { ProfileStackNav } from "@src/navigations/ProfileStackNav";
 import { MoviesNav } from "@src/navigations/MoviesNav";
 import { colors } from "@src/styles/tailwindColors";
 import React from "react";
@@ -77,7 +77,7 @@ const MainNav = (): React.JSX.Element => {
         />
         <Tab.Screen
           name="ProfileTab"
-          component={ProfileNav}
+          component={ProfileStackNav}
           options={getOptions(isLight, "Profile", ProfileIcon, false)}
         />
       </Tab.Navigator>

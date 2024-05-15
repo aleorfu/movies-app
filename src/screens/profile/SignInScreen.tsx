@@ -2,7 +2,7 @@ import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
-import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
+import { ProfileNavStackNavigation } from "@src/navigations/ProfileStackNav";
 import { colors } from "@src/styles/tailwindColors";
 import { Alert, TextInput, useColorScheme, View } from "react-native";
 import React from "react";

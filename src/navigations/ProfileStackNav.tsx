@@ -15,7 +15,7 @@ type StackNavigation = NavigationProp<RootStackParamList>;
 
 const Stack = createStackNavigator();
 
-const ProfileNav = (): React.JSX.Element => {
+const ProfileStackNav = (): React.JSX.Element => {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -38,7 +38,7 @@ const ProfileNav = (): React.JSX.Element => {
 };
 
 export {
-  ProfileNav,
+  ProfileStackNav,
   StackNavigation as ProfileNavStackNavigation,
   ScreenNames,
 };

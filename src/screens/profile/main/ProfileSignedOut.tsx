@@ -3,7 +3,7 @@ import { Button } from "@src/components/Button";
 import {
   ProfileNavStackNavigation,
   ScreenNames,
-} from "@src/navigations/ProfileNav";
+} from "@src/navigations/ProfileStackNav";
 import React, { Fragment } from "react";
 
 const style = {
