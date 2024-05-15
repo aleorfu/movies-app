@@ -3,10 +3,10 @@ import {
   MaterialTopTabNavigationOptions,
 } from "@react-navigation/material-top-tabs";
 import React from "react";
-import { ProfileStackNav } from "@src/navigations/ProfileStackNav";
 import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "react-native";
 import { DocumentsScreen } from "@src/screens/profile/DocumentsScreen";
+import { ProfileStackNav } from "@src/navigations/ProfileStackNav";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -16,12 +16,18 @@ const getOptions = (
 ): MaterialTopTabNavigationOptions => {
   return {
     title: title,
-    tabBarActiveTintColor: isLight
-      ? colors.quaternary_light
-      : colors.quaternary_dark,
-    tabBarInactiveTintColor: isLight
-      ? colors.quaternary_light
-      : colors.quaternary_dark,
+    tabBarStyle: isLight
+      ? {
+          backgroundColor: colors.primary_light,
+          shadowColor: "black",
+        }
+      : {
+          backgroundColor: colors.primary_dark,
+          shadowColor: "white",
+        },
+    tabBarLabelStyle: isLight
+      ? { color: colors.quaternary_light, fontWeight: "bold" }
+      : { color: colors.quaternary_dark, fontWeight: "bold" },
   };
 };
 

@@ -4,7 +4,10 @@ import React from "react";
 import Back from "@src/assets/img/back-icon.svg";
 import { useColorScheme } from "react-native";
 
-const getOptions = (title: string): StackNavigationOptions => {
+const getOptions = (
+  title: string,
+  headerShown: boolean = true,
+): StackNavigationOptions => {
   const isLight = useColorScheme() === "light";
 
   const BackIcon = (
@@ -31,6 +34,7 @@ const getOptions = (title: string): StackNavigationOptions => {
       ? { color: colors.quaternary_light }
       : { color: colors.quaternary_dark },
     headerBackImage: () => BackIcon,
+    headerShown: headerShown,
   };
 };
 
