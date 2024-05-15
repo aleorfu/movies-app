@@ -1,14 +1,16 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import { MovieCard } from "@src/components/MovieCard";
 import { getAllMovies, Movie } from "@src/services/altenHybridApi";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   RefreshControl,
   useColorScheme,
   View,
 } from "react-native";
+import { colors } from "@src/styles/tailwindColors";
 
 const style = {
   view: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -27,12 +29,12 @@ const fetchFiveMovies = (
       pageSignal.value * 5,
     );
 
-    if (nextMovies.length == 0) {
+    if (nextMovies.length === 0) {
       pageSignal.value = 1;
       fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
     } else {
       pageSignal.value++;
-      moviesSignal.value.concat(nextMovies);
+      moviesSignal.value = moviesSignal.value.concat(nextMovies);
     }
   };
 
@@ -93,12 +95,12 @@ const MovieListScreen = (): React.JSX.Element => {
         }
         refreshing={loadingMoviesSignal.value}
       />
-      {/*{loadingMoviesSignal.value && (*/}
-      {/*  <ActivityIndicator*/}
-      {/*    size="large"*/}
-      {/*    color={isLight ? colors.quaternary_light : colors.quaternary_dark}*/}
-      {/*  />*/}
-      {/*)}*/}
+      {loadingMoviesSignal.value && (
+        <ActivityIndicator
+          size="large"
+          color={isLight ? colors.quaternary_light : colors.quaternary_dark}
+        />
+      )}
     </View>
   );
 };

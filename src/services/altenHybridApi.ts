@@ -23,7 +23,7 @@ type Movie = {
 const instance: AxiosInstance = axios.create({
   baseURL: "https://api-w6avz2it7a-uc.a.run.app",
 });
-instance.defaults.headers.common["Accept"] = "application/json";
+instance.defaults.headers["Accept"] = "application/json";
 instance.defaults.headers.put["Content-Type"] = "application/json";
 
 const getMovieById = async (id: string): Promise<Movie | never> => {

@@ -63,7 +63,7 @@ const recoverPassword = (
   emailSignal: Signal<string>,
   passwordSignal: Signal<string>,
 ): void => {
-  if (emailSignal.value.trim() != "") {
+  if (emailSignal.value.trim() === "") {
     Alert.alert("Email field is empty.", "Please, fill it and try again.");
     return;
   }
@@ -128,8 +128,6 @@ const SignInScreen = (): React.JSX.Element => {
         secureTextEntry={true}
         onChangeText={handleOnChangePasswordText}
         value={passwordSignal.value}
-        keyboardType="visible-password"
-        textContentType="password"
         placeholder="Password"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark

@@ -3,7 +3,13 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
 import { colors } from "@src/styles/tailwindColors";
-import { Alert, TextInput, useColorScheme, View } from "react-native";
+import {
+  Alert,
+  AlertButton,
+  TextInput,
+  useColorScheme,
+  View,
+} from "react-native";
 import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
 
 const styles = {
@@ -31,9 +37,26 @@ const signUp = (
     return;
   }
 
-  const handleSignUpSuccess = (): void => {
+  const handleSignUpSuccess = (
+    userCredentials: FirebaseAuthTypes.UserCredential,
+  ): void => {
     const handleEmailVerificationSendSuccess = (): void => {
-      Alert.prompt("A verification email has been sent to you.");
+      const promptConfirmed = (): void => {
+        emailSignal.value = "";
+        passwordSignal.value = "";
+        navigation.goBack();
+      };
+
+      const okButton: AlertButton = {
+        text: "ok",
+        onPress: promptConfirmed,
+      };
+
+      Alert.alert(
+        "A verification email has been sent to you.",
+        "You must verify it to start using the app",
+        [okButton],
+      );
     };
 
     const handleEmailVerificationSendFailure = (): void => {
@@ -43,17 +66,10 @@ const signUp = (
       );
     };
 
-    const handleEmailVerificationSendFinally = (): void => {
-      emailSignal.value = "";
-      passwordSignal.value = "";
-      navigation.goBack();
-    };
-
-    auth()
-      .currentUser?.sendEmailVerification()
+    userCredentials.user
+      .sendEmailVerification()
       .then(handleEmailVerificationSendSuccess)
-      .catch(handleEmailVerificationSendFailure)
-      .finally(handleEmailVerificationSendFinally);
+      .catch(handleEmailVerificationSendFailure);
   };
 
   const handleSignUpFailure = (

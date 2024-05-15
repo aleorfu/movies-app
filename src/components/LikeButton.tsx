@@ -41,7 +41,7 @@ const sendLike = (
   };
 
   const handleLikeMovieFinally = (): void => {
-    loadingLikeSignal.value = true;
+    loadingLikeSignal.value = false;
   };
 
   likeMovie(movieId, userId)

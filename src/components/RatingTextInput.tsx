@@ -36,9 +36,6 @@ const RatingTextInput = ({
   const placeholderTextColor = isLight
     ? colors.quaternary_light
     : colors.quaternary_dark;
-  const textInputClassName = [style.textInput.common, style.textInput.top].join(
-    " ",
-  );
 
   const handleOnChangeRatingText = (text: string): void => {
     if (numberIsValid(text)) ratingText.value = text;
@@ -51,7 +48,7 @@ const RatingTextInput = ({
   return (
     <View>
       <TextInput // Rating text
-        className={textInputClassName}
+        className={[style.textInput.common, style.textInput.top].join(" ")}
         onChangeText={handleOnChangeRatingText}
         value={ratingText.value}
         keyboardType="number-pad"
@@ -61,7 +58,7 @@ const RatingTextInput = ({
         editable={editable}
       />
       <TextInput // Content text
-        className={textInputClassName}
+        className={[style.textInput.common, style.textInput.bottom].join(" ")}
         onChangeText={handleOnChangeContentText}
         value={contentText.value}
         placeholder="Comment"
