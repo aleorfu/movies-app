@@ -76,8 +76,12 @@ const getProfilePicture = async (uid: string): Promise<string> => {
   }
 };
 
-const addFileToStorage = async (uid: string, file: DocumentPickerAsset) => {
-  const url = `Files/${uid}/${file.name}`;
+const addFileToStorage = async (
+  uid: string,
+  file: DocumentPickerAsset,
+  route: string,
+) => {
+  const url = `Files/${uid}${route}${file.name}`;
 
   try {
     const response = await fetch(file.uri);
@@ -91,8 +95,20 @@ const addFileToStorage = async (uid: string, file: DocumentPickerAsset) => {
   }
 };
 
-const getFilesFromStorage = async (uid: string) => {
-  const url = `Files/${uid}/`;
+const createFolder = async (uid: string, route: string, folderName: string) => {
+  const url = `Files/${uid}${route}${folderName}/.hidden`;
+
+  try {
+    await storage().ref(url).putString("");
+  } catch (error) {
+    console.error("There was an error while creating your folder: %s", error);
+
+    throw error;
+  }
+};
+
+const getFilesFromStorage = async (uid: string, route: string) => {
+  const url = `Files/${uid}${route}`;
 
   try {
     const listResult = await storage().ref(url).listAll();
@@ -100,14 +116,16 @@ const getFilesFromStorage = async (uid: string) => {
     const files: DocumentPickerAsset[] = [];
 
     for (const item of listResult.items) {
-      const metadata = await item.getMetadata();
-      const file: DocumentPickerAsset = {
-        uri: await item.getDownloadURL(),
-        name: item.name,
-        size: metadata.size,
-      };
+      if (item.name != ".hidden") {
+        const metadata = await item.getMetadata();
+        const file: DocumentPickerAsset = {
+          uri: await item.getDownloadURL(),
+          name: item.name,
+          size: metadata.size,
+        };
 
-      files.push(file);
+        files.push(file);
+      }
     }
 
     return files;
@@ -125,4 +143,5 @@ export {
   getProfilePicture,
   addFileToStorage,
   getFilesFromStorage,
+  createFolder,
 };

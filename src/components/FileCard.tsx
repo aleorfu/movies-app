@@ -3,9 +3,10 @@ import { DocumentPickerAsset } from "expo-document-picker";
 import { Button } from "@src/components/Button";
 import { useSignal } from "@preact/signals-react";
 import { Fragment } from "react";
+import NoImage from "@src/assets/img/image-x-icon.svg";
 
 const style = {
-  view: "justify-center mx-2.5 my-2.5 p-2 rounded-lg shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
+  view: "w-24 justify-center ml-5 mr-3 my-2.5 p-2 rounded-lg shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
   image: "w-20 h-20 rounded-lg",
   modal: "flex-1 justify-center items-center bg-black/25",
   modalView:
@@ -20,6 +21,9 @@ const style = {
 
 const FileCard = ({ file }: { file: DocumentPickerAsset }) => {
   const modalVisibleSignal = useSignal(false);
+
+  const extension = file.name.split(".")[1];
+  const imageExtensions = ["png", "jpg", "jpeg"];
 
   const closeModal = () => {
     modalVisibleSignal.value = false;
@@ -39,8 +43,13 @@ const FileCard = ({ file }: { file: DocumentPickerAsset }) => {
       >
         <View className={style.modal}>
           <View className={style.modalView}>
-            <Image className={style.modalImage} src={file.uri} />
+            {imageExtensions.includes(extension) ? (
+              <Image className={style.modalImage} src={file.uri} />
+            ) : (
+              <NoImage width={180} height={180} />
+            )}
             <Text className={style.text}>{file.name}</Text>
+            <Text className={style.text}>size: {file.size}</Text>
             <Button
               buttonClassName={style.button.button}
               textClassName={style.button.text}
@@ -51,7 +60,18 @@ const FileCard = ({ file }: { file: DocumentPickerAsset }) => {
         </View>
       </Modal>
       <Button buttonClassName={style.view} onPress={handleOnPress}>
-        <Image className={style.image} src={file.uri} />
+        <Fragment>
+          {imageExtensions.includes(extension) ? (
+            <Fragment>
+              <Image className={style.image} src={file.uri} />
+            </Fragment>
+          ) : (
+            <NoImage width={80} height={80} />
+          )}
+          <Text numberOfLines={1} ellipsizeMode="tail" className="text-center">
+            {file.name}
+          </Text>
+        </Fragment>
       </Button>
     </Fragment>
   );

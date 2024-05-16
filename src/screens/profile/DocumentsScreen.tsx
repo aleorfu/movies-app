@@ -1,11 +1,15 @@
-import { Alert, FlatList, Text, View } from "react-native";
+import { Alert, FlatList, Modal, Text, TextInput, View } from "react-native";
 import React, { Fragment, useEffect } from "react";
 import { getUserSignal } from "@src/signals/userSignal";
 import { Button } from "@src/components/Button";
 import * as DocumentPicker from "expo-document-picker";
 import { DocumentPickerAsset } from "expo-document-picker";
-import { addFileToStorage, getFilesFromStorage } from "@src/services/firebase";
-import { useSignal } from "@preact/signals-react";
+import {
+  addFileToStorage,
+  createFolder,
+  getFilesFromStorage,
+} from "@src/services/firebase";
+import { Signal, useSignal } from "@preact/signals-react";
 import { FileCard } from "@src/components/FileCard";
 
 const style = {
@@ -18,12 +22,16 @@ const style = {
   list: "flex-1",
 };
 
-const openFilePicker = () => {
+const openFilePicker = (
+  filesSignal: Signal<DocumentPickerAsset[]>,
+  route: string,
+) => {
   const handleOnSuccess = (result: DocumentPicker.DocumentPickerResult) => {
     if (result.canceled) return;
 
     const handleUploadSuccess = () => {
       Alert.alert("File uploaded successfully.");
+      getFiles(filesSignal, route);
     };
 
     const handleUploadFailed = () => {
@@ -33,9 +41,9 @@ const openFilePicker = () => {
       );
     };
 
-    addFileToStorage(getUserSignal.value!!.uid, result.assets[0]).then(
-      handleUploadSuccess,
-    );
+    addFileToStorage(getUserSignal.value!!.uid, result.assets[0], route)
+      .then(handleUploadSuccess)
+      .catch(handleUploadFailed);
   };
 
   DocumentPicker.getDocumentAsync({
@@ -44,30 +52,95 @@ const openFilePicker = () => {
   }).then(handleOnSuccess);
 };
 
+const getFiles = (
+  filesSignal: Signal<DocumentPickerAsset[]>,
+  route: string,
+) => {
+  const handleOnSuccess = (files: DocumentPickerAsset[]) => {
+    filesSignal.value = files;
+  };
+
+  const handleOnFail = () => {
+    Alert.alert(
+      "There was an error while getting your files.",
+      "Please, try again later.",
+    );
+  };
+
+  getFilesFromStorage(getUserSignal.value!!.uid, route)
+    .then(handleOnSuccess)
+    .catch(handleOnFail);
+};
+
 const DocumentsScreen = (): React.JSX.Element => {
   const filesSignal = useSignal<DocumentPickerAsset[]>([]);
+  const modalVisibleSignal = useSignal(false);
+  const folderNameSignal = useSignal("");
+  const routeSignal = useSignal("/");
+
+  const handleOnClick = () => {
+    Alert.alert("Choose what you want to upload...", "", [
+      {
+        text: "file",
+        onPress: () => openFilePicker(filesSignal, routeSignal.value),
+      },
+      {
+        text: "folder",
+        onPress: () => {
+          modalVisibleSignal.value = true;
+        },
+      },
+    ]);
+  };
+
+  const handleOnChangeText = (text: string) => {
+    folderNameSignal.value = text;
+  };
+
+  const handleOnRequestClose = () => {
+    modalVisibleSignal.value = false;
+  };
+
+  const handleCreateFolderOnPress = () => {
+    createFolder(
+      getUserSignal.value!!.uid,
+      routeSignal.value,
+      folderNameSignal.value,
+    ).then(() => {
+      getFiles(filesSignal, routeSignal.value);
+    });
+    modalVisibleSignal.value = false;
+  };
 
   useEffect(() => {
-    if (!getUserSignal.value) return;
+    if (!getUserSignal.value) {
+      filesSignal.value = [];
+      return;
+    }
 
-    const handleOnSuccess = (files: DocumentPickerAsset[]) => {
-      filesSignal.value = files;
-    };
-
-    const handleOnFail = () => {
-      Alert.alert(
-        "There was an error while getting your files.",
-        "Please, try again later.",
-      );
-    };
-
-    getFilesFromStorage(getUserSignal.value!!.uid)
-      .then(handleOnSuccess)
-      .catch(handleOnFail);
-  }, [getUserSignal.value]);
+    getFiles(filesSignal, routeSignal.value);
+  }, [getUserSignal.value, routeSignal.value]);
 
   return (
     <View className={style.view}>
+      <Modal
+        animationType={"fade"}
+        transparent={true}
+        visible={modalVisibleSignal.value}
+        onRequestClose={handleOnRequestClose}
+      >
+        <View className="flex-1 justify-center bg-black/25">
+          <View className={"mx-5 p-5 bg-secondary_light"}>
+            <TextInput
+              className="bg-primary_light dark:bg-primary_dark text-quaternary_light dark:text-quaternary_dark"
+              value={folderNameSignal.value}
+              onChangeText={handleOnChangeText}
+            />
+            <Button text="Create" onPress={handleCreateFolderOnPress} />
+            <Button text="Cancel" onPress={handleOnRequestClose} />
+          </View>
+        </View>
+      </Modal>
       {getUserSignal.value ? (
         getUserSignal.value?.emailVerified ? (
           <Fragment>
@@ -82,7 +155,7 @@ const DocumentsScreen = (): React.JSX.Element => {
               buttonClassName={style.button.button}
               text="+"
               textClassName={style.button.text}
-              onPress={openFilePicker}
+              onPress={handleOnClick}
             />
           </Fragment>
         ) : (
