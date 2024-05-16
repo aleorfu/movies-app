@@ -4,7 +4,13 @@ import {
 } from "@react-navigation/material-top-tabs";
 import React, { Fragment, useEffect } from "react";
 import { colors } from "@src/styles/tailwindColors";
-import { Image, TouchableOpacity, useColorScheme, View } from "react-native";
+import {
+  Alert,
+  Image,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 import { DocumentsScreen } from "@src/screens/profile/DocumentsScreen";
 import { ProfileStackNav } from "@src/navigations/ProfileStackNav";
 import { Signal, useSignal } from "@preact/signals-react";
@@ -55,8 +61,21 @@ const selectPicture = (
     (result: ImagePickerResult): void => {
       if (result.canceled) return;
       if (result.assets[0].fileName?.split(".").pop() != "jpg") return;
-      profilePictureSignal.value = result.assets[0].uri;
-      setProfilePicture(userId, result.assets[0]);
+
+      const handleOnProfilePictureSetSuccess = (): void => {
+        profilePictureSignal.value = result.assets[0].uri;
+      };
+
+      const handleOnProfilePictureSetFailure = (): void => {
+        Alert.alert(
+          "There was an error while setting your profile photo.",
+          "Please, try again later.",
+        );
+      };
+
+      setProfilePicture(userId, result.assets[0])
+        .then(handleOnProfilePictureSetSuccess)
+        .catch(handleOnProfilePictureSetFailure);
     },
   );
 };
@@ -71,15 +90,23 @@ const ProfileTabNav = (): React.JSX.Element => {
   };
 
   useEffect(() => {
-    if (getUserSignal.value === null) return;
+    if (!getUserSignal.value) {
+      profilePictureSignal.value = undefined;
+      return;
+    }
+
     const handleGetProfilePictureSuccess = (url: string): void => {
       profilePictureSignal.value = url;
     };
 
-    getProfilePicture(getUserSignal.value.uid).then(
-      handleGetProfilePictureSuccess,
-    );
-  }, []);
+    const handleGetProfilePictureFaillure = (): void => {
+      profilePictureSignal.value = undefined;
+    };
+
+    getProfilePicture(getUserSignal.value.uid)
+      .then(handleGetProfilePictureSuccess)
+      .catch(handleGetProfilePictureFaillure);
+  }, [getUserSignal.value]);
 
   return (
     <Fragment>
