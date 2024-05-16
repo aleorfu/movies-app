@@ -1,6 +1,7 @@
 import database from "@react-native-firebase/database";
 import storage from "@react-native-firebase/storage";
 import { ImagePickerAsset } from "expo-image-picker";
+import { DocumentPickerAsset } from "expo-document-picker";
 
 type UserDataType = {
   displayName: string;
@@ -75,10 +76,53 @@ const getProfilePicture = async (uid: string): Promise<string> => {
   }
 };
 
+const addFileToStorage = async (uid: string, file: DocumentPickerAsset) => {
+  const url = `Files/${uid}/${file.name}`;
+
+  try {
+    const response = await fetch(file.uri);
+    const blob = await response.blob();
+
+    await storage().ref(url).put(blob);
+  } catch (error) {
+    console.error("There was an error while uploading your file: %s", error);
+
+    throw error;
+  }
+};
+
+const getFilesFromStorage = async (uid: string) => {
+  const url = `Files/${uid}/`;
+
+  try {
+    const listResult = await storage().ref(url).listAll();
+
+    const files: DocumentPickerAsset[] = [];
+
+    for (const item of listResult.items) {
+      const metadata = await item.getMetadata();
+      const file: DocumentPickerAsset = {
+        uri: await item.getDownloadURL(),
+        name: item.name,
+        size: metadata.size,
+      };
+
+      files.push(file);
+    }
+
+    return files;
+  } catch (error) {
+    console.error("There was an error while getting your files: %s", error);
+    throw error;
+  }
+};
+
 export {
   UserDataType,
   getUserData,
   setUserData,
   setProfilePicture,
   getProfilePicture,
+  addFileToStorage,
+  getFilesFromStorage,
 };
