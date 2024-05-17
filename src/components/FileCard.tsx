@@ -1,7 +1,7 @@
 import { Alert, Image, Modal, Text, useColorScheme, View } from "react-native";
 import { Button } from "@src/components/Button";
 import { useSignal } from "@preact/signals-react";
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
 import NoImage from "@src/assets/img/image-x-icon.svg";
 import { FileType } from "@src/services/firebase";
 import { colors } from "@src/styles/tailwindColors";
@@ -16,12 +16,93 @@ const style = {
   modalView:
     "justify-center items-center mx-5 p-5 rounded-lg shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
   text: "text-lg text-quaternary_light dark:text-quaternary_dark",
+  shortText: "text-center",
   modalImage: "w-40 h-40 rounded-lg mb-10",
   button: {
-    button: "",
     buttonX: "px-5 py-2.5 justify-center absolute top-0 right-0",
     text: "text-lg text-center text-quaternary_light dark:text-quaternary_dark",
   },
+};
+
+const IMAGE_EXTENSIONS = ["image/png", "image/jpg", "image/jpeg"];
+
+const downloadFile = (file: FileType) => {
+  const ERROR_MESSAGE = "Please, try again later";
+
+  const handlePermissionSuccess = (
+    permissions: FileSystem.FileSystemRequestDirectoryPermissionsResult,
+  ) => {
+    if (!permissions.granted) throw new Error("Permissions not granted.");
+
+    const handleDownloadSuccess = (
+      result: FileSystem.FileSystemDownloadResult,
+    ) => {
+      const handleReadingSuccess = (content: string) => {
+        if (!file.type) throw new Error("No file type.");
+
+        const handleFileCreationSuccess = (uri: string) => {
+          const handleWritingSuccess = () => {
+            Alert.alert("Your file has been successfully downloaded.");
+          };
+
+          const handleWritingFailure = (error: any) => {
+            const ERROR_TITLE = "There was an error while writing file.";
+            console.error("%s -> %s", [ERROR_TITLE, error]);
+            Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
+          };
+
+          FileSystem.writeAsStringAsync(uri, content)
+            .then(handleWritingSuccess)
+            .catch(handleWritingFailure);
+        };
+
+        const handleFileCreationFailure = (error: any) => {
+          const ERROR_TITLE = "There was an error while creating file.";
+          console.error("%s -> %s", [ERROR_TITLE, error]);
+          Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
+        };
+
+        StorageAccessFramework.createFileAsync(
+          permissions.directoryUri,
+          file.name,
+          file.type,
+        )
+          .then(handleFileCreationSuccess)
+          .catch(handleFileCreationFailure);
+      };
+
+      const handleReadingFailure = (error: any) => {
+        const ERROR_TITLE = "There was an error while reading file.";
+        console.error("%s -> %s", [ERROR_TITLE, error]);
+        Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
+      };
+
+      FileSystem.readAsStringAsync(result.uri)
+        .then(handleReadingSuccess)
+        .catch(handleReadingFailure);
+    };
+
+    const handleDownloadFailure = (error: any) => {
+      const ERROR_TITLE = "There was an error while downloading file.";
+      console.error("%s -> %s", [ERROR_TITLE, error]);
+      Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
+    };
+
+    FileSystem.downloadAsync(file.uri, FileSystem.cacheDirectory + file.name)
+      .then(handleDownloadSuccess)
+      .catch(handleDownloadFailure);
+  };
+
+  const handlePermissionFailure = (error: any) => {
+    const ERROR_TITLE =
+      "There was an error while getting directory permissions.";
+    console.error("%s -> %s", [ERROR_TITLE, error]);
+    Alert.alert(ERROR_TITLE, "Please, try again later.");
+  };
+
+  StorageAccessFramework.requestDirectoryPermissionsAsync()
+    .then(handlePermissionSuccess)
+    .catch(handlePermissionFailure);
 };
 
 const FileCard = ({ file }: { file: FileType }) => {
@@ -30,57 +111,17 @@ const FileCard = ({ file }: { file: FileType }) => {
   const isLight = useColorScheme() === "light";
   const iconColor = isLight ? colors.quaternary_light : colors.quaternary_dark;
 
-  const imageExtensions = ["image/png", "image/jpg", "image/jpeg"];
-
-  const closeModal = () => {
+  const handleCloseModal = useCallback(() => {
     modalVisibleSignal.value = false;
-  };
+  }, []);
 
-  const handleCloseOnPress = () => {
+  const handleCardOnPress = useCallback(() => {
     modalVisibleSignal.value = true;
-  };
+  }, []);
 
-  const handleDownloadOnPress = async () => {
-    const permissions =
-      await StorageAccessFramework.requestDirectoryPermissionsAsync();
-    if (!permissions.granted) {
-      return;
-    }
-
-    const downloadedFile = await FileSystem.downloadAsync(
-      file.uri,
-      FileSystem.cacheDirectory + file.name,
-    );
-
-    const content = await FileSystem.readAsStringAsync(downloadedFile.uri);
-
-    const handleSuccess = (uri: string) => {
-      console.log(content);
-      FileSystem.writeAsStringAsync(uri, content)
-        .then(() => {
-          Alert.alert("Your file has been successfully downloaded.");
-        })
-        .catch(() => {
-          Alert.alert("There was an error while downloading.");
-        });
-    };
-
-    const handleFailure = () => {
-      Alert.alert(
-        "There was an error while downloading your file.",
-        "Please, try again later.",
-      );
-    };
-
-    file.type &&
-      StorageAccessFramework.createFileAsync(
-        permissions.directoryUri,
-        file.name,
-        file.type,
-      )
-        .then(handleSuccess)
-        .catch(handleFailure);
-  };
+  const handleDownloadOnPress = useCallback(() => {
+    downloadFile(file);
+  }, [file]);
 
   return (
     <Fragment>
@@ -88,42 +129,41 @@ const FileCard = ({ file }: { file: FileType }) => {
         transparent={true}
         animationType="fade"
         visible={modalVisibleSignal.value}
-        onRequestClose={closeModal}
+        onRequestClose={handleCloseModal}
       >
         <View className={style.modal}>
           <View className={style.modalView}>
-            {file.type && imageExtensions.includes(file.type) ? (
+            {file.type && IMAGE_EXTENSIONS.includes(file.type) ? (
               <Image className={style.modalImage} src={file.uri} />
             ) : (
               <NoImage width={180} height={180} color={iconColor} />
             )}
             <Text className={style.text}>{file.name}</Text>
-            {"size" in file && (
-              <Text className={style.text}>size: {file.size} kb</Text>
-            )}
-            <Button
-              buttonClassName={style.button.button}
-              onPress={handleDownloadOnPress}
-            >
+            <Text className={style.text}>size: {file.size} kb</Text>
+            <Button onPress={handleDownloadOnPress}>
               <DownloadIcon width={50} height={50} color={iconColor} />
             </Button>
             <Button
               buttonClassName={style.button.buttonX}
               textClassName={style.button.text}
               text="x"
-              onPress={closeModal}
+              onPress={handleCloseModal}
             />
           </View>
         </View>
       </Modal>
-      <Button buttonClassName={style.view} onPress={handleCloseOnPress}>
+      <Button buttonClassName={style.view} onPress={handleCardOnPress}>
         <Fragment>
-          {file.type && imageExtensions.includes(file.type) ? (
+          {file.type && IMAGE_EXTENSIONS.includes(file.type) ? (
             <Image className={style.image} src={file.uri} />
           ) : (
             <NoImage width={80} height={80} color={iconColor} />
           )}
-          <Text numberOfLines={1} ellipsizeMode="tail" className="text-center">
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            className={style.shortText}
+          >
             {file.name}
           </Text>
         </Fragment>
