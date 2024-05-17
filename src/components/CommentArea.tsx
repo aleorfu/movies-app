@@ -4,7 +4,7 @@ import { CommentCard } from "@src/components/CommentCard";
 import { RatingTextInput } from "@src/components/RatingTextInput";
 import { rateMovie, Rating } from "@src/services/altenHybridApi";
 import { getUserSignal } from "@src/signals/userSignal";
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback } from "react";
 import { Alert, Text, View } from "react-native";
 
 type CommentAreaProps = {
@@ -29,7 +29,7 @@ const sendRating = (
   ratingTextSignal: Signal<string>,
   movieRatingsSignal: Signal<Rating[]>,
   loadingSendingSignal: Signal<boolean>,
-): void => {
+) => {
   loadingSendingSignal.value = true;
 
   const rating: Rating = {
@@ -38,7 +38,7 @@ const sendRating = (
     rating: Number(ratingTextSignal.value),
   };
 
-  const handleRateMovieSuccess = (): void => {
+  const handleRateMovieSuccess = () => {
     const newMovieRatings = [...movieRatingsSignal.value];
 
     const existingRatingIndex = newMovieRatings.findIndex(
@@ -76,32 +76,33 @@ const sendRating = (
 const CommentArea = ({
   movieId,
   movieRatings: initialMovieRatings,
-}: CommentAreaProps): React.JSX.Element => {
+}: CommentAreaProps) => {
   const loadingSendingSignal = useSignal(false);
   const ratingTextSignal = useSignal("");
   const contentTextSignal = useSignal("");
   const movieRatingsSignal = useSignal(initialMovieRatings);
 
-  const handleSendOnPress = (): void => {
+  const movieRatings = movieRatingsSignal.value;
+
+  const handleSendOnPress = useCallback(() => {
+    if (!getUserSignal.value) return;
     sendRating(
-      getUserSignal.value!!.uid,
+      getUserSignal.value.uid,
       movieId,
       contentTextSignal,
       ratingTextSignal,
       movieRatingsSignal,
       loadingSendingSignal,
     );
-  };
+  }, [movieId]);
 
   return (
     <View>
-      <Text className={style.title}>
-        Comments ({movieRatingsSignal.value?.length ?? "0"})
-      </Text>
-      {movieRatingsSignal.value?.map((rating) => (
+      <Text className={style.title}>Comments ({movieRatings.length})</Text>
+      {movieRatings.map((rating) => (
         <CommentCard key={rating.userId} rating={rating} />
       ))}
-      {getUserSignal.value && (
+      {localUser?.emailVerified && (
         <Fragment>
           <RatingTextInput
             ratingText={ratingTextSignal}
