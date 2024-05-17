@@ -45,22 +45,19 @@ const sendRating = (
       (r: Rating) => r.userId === userId,
     );
 
-    if (existingRatingIndex !== -1) {
+    if (existingRatingIndex !== -1)
       newMovieRatings[existingRatingIndex] = rating;
-    } else {
-      newMovieRatings.push(rating);
-    }
+    else newMovieRatings.push(rating);
 
     movieRatingsSignal.value = newMovieRatings;
     ratingTextSignal.value = "";
     contentTextSignal.value = "";
   };
 
-  const handleRateMovieFailure = () => {
-    Alert.alert(
-      "There was an error while uploading your rating.",
-      "Please, try again later.",
-    );
+  const handleRateMovieFailure = (error: any) => {
+    const ERROR_TITLE = "There was an error while uploading your rating.";
+    console.error("%s -> %s", [ERROR_TITLE, error]);
+    Alert.alert(ERROR_TITLE, "Please, try again later.");
   };
 
   const handleRateMovieFinally = () => {
