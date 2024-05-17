@@ -6,6 +6,7 @@ import NoImage from "@src/assets/img/image-x-icon.svg";
 import { FileType } from "@src/services/firebase";
 import { colors } from "@src/styles/tailwindColors";
 import * as FileSystem from "expo-file-system";
+import { StorageAccessFramework } from "expo-file-system";
 import DownloadIcon from "@src/assets/img/download-icon.svg";
 
 const style = {
@@ -29,8 +30,7 @@ const FileCard = ({ file }: { file: FileType }) => {
   const isLight = useColorScheme() === "light";
   const iconColor = isLight ? colors.quaternary_light : colors.quaternary_dark;
 
-  const extension = file.name.split(".")[1];
-  const imageExtensions = ["png", "jpg", "jpeg"];
+  const imageExtensions = ["image/png", "image/jpg", "image/jpeg"];
 
   const closeModal = () => {
     modalVisibleSignal.value = false;
@@ -40,15 +40,29 @@ const FileCard = ({ file }: { file: FileType }) => {
     modalVisibleSignal.value = true;
   };
 
-  const handleDownloadOnPress = () => {
-    const downloadResumable = FileSystem.createDownloadResumable(
+  const handleDownloadOnPress = async () => {
+    const permissions =
+      await StorageAccessFramework.requestDirectoryPermissionsAsync();
+    if (!permissions.granted) {
+      return;
+    }
+
+    const downloadedFile = await FileSystem.downloadAsync(
       file.uri,
-      FileSystem.documentDirectory + file.name,
+      FileSystem.cacheDirectory + file.name,
     );
-    const handleSuccess = (
-      value: FileSystem.FileSystemDownloadResult | undefined,
-    ) => {
-      Alert.alert("Your file has been successfully downloaded.", value?.uri);
+
+    const content = await FileSystem.readAsStringAsync(downloadedFile.uri);
+
+    const handleSuccess = (uri: string) => {
+      console.log(content);
+      FileSystem.writeAsStringAsync(uri, content)
+        .then(() => {
+          Alert.alert("Your file has been successfully downloaded.");
+        })
+        .catch(() => {
+          Alert.alert("There was an error while downloading.");
+        });
     };
 
     const handleFailure = () => {
@@ -58,7 +72,14 @@ const FileCard = ({ file }: { file: FileType }) => {
       );
     };
 
-    downloadResumable.downloadAsync().then(handleSuccess).catch(handleFailure);
+    file.type &&
+      StorageAccessFramework.createFileAsync(
+        permissions.directoryUri,
+        file.name,
+        file.type,
+      )
+        .then(handleSuccess)
+        .catch(handleFailure);
   };
 
   return (
@@ -71,7 +92,7 @@ const FileCard = ({ file }: { file: FileType }) => {
       >
         <View className={style.modal}>
           <View className={style.modalView}>
-            {imageExtensions.includes(extension) ? (
+            {file.type && imageExtensions.includes(file.type) ? (
               <Image className={style.modalImage} src={file.uri} />
             ) : (
               <NoImage width={180} height={180} color={iconColor} />
@@ -97,7 +118,7 @@ const FileCard = ({ file }: { file: FileType }) => {
       </Modal>
       <Button buttonClassName={style.view} onPress={handleCloseOnPress}>
         <Fragment>
-          {imageExtensions.includes(extension) ? (
+          {file.type && imageExtensions.includes(file.type) ? (
             <Image className={style.image} src={file.uri} />
           ) : (
             <NoImage width={80} height={80} color={iconColor} />

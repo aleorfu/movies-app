@@ -7,6 +7,7 @@ type FileType = {
   uri: string;
   name: string;
   size: number;
+  type: string | null | undefined;
 };
 
 type FolderType = {
@@ -132,8 +133,9 @@ const getFilesFromStorage = async (uid: string, route: string) => {
         const metadata = await item.getMetadata();
         const file: FileType = {
           uri: await item.getDownloadURL(),
-          name: item.name,
+          name: item.name.split(".")[0],
           size: metadata.size,
+          type: metadata.contentType,
         };
 
         documents.push(file);
