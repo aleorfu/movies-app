@@ -56,14 +56,14 @@ const sendRating = (
     contentTextSignal.value = "";
   };
 
-  const handleRateMovieFailure = (): void => {
+  const handleRateMovieFailure = () => {
     Alert.alert(
-      "There was an error while sending your rating.",
+      "There was an error while uploading your rating.",
       "Please, try again later.",
     );
   };
 
-  const handleRateMovieFinally = (): void => {
+  const handleRateMovieFinally = () => {
     loadingSendingSignal.value = false;
   };
 
