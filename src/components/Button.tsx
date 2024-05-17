@@ -26,9 +26,9 @@ const Button = ({
   textClassName,
   disabled = false,
   loading = false,
-  onPress,
   children,
-}: ButtonProps): React.JSX.Element => {
+  onPress,
+}: ButtonProps) => {
   const isLight = useColorScheme() === "light";
 
   return (
@@ -53,4 +53,5 @@ const Button = ({
     </TouchableOpacity>
   );
 };
+
 export { Button, ButtonProps };
