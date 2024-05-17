@@ -11,6 +11,14 @@ const style = {
 const requestPermissions = () => {
   // noinspection JSIgnoredPromiseFromCall
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  // noinspection JSIgnoredPromiseFromCall
+  PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  );
+  // noinspection JSIgnoredPromiseFromCall
+  PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  );
 };
 
 const App = (): React.JSX.Element => {

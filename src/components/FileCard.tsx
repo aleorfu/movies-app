@@ -1,10 +1,12 @@
-import { Image, Modal, Text, useColorScheme, View } from "react-native";
+import { Alert, Image, Modal, Text, useColorScheme, View } from "react-native";
 import { Button } from "@src/components/Button";
 import { useSignal } from "@preact/signals-react";
 import { Fragment } from "react";
 import NoImage from "@src/assets/img/image-x-icon.svg";
 import { FileType } from "@src/services/firebase";
 import { colors } from "@src/styles/tailwindColors";
+import * as FileSystem from "expo-file-system";
+import DownloadIcon from "@src/assets/img/download-icon.svg";
 
 const style = {
   view: "w-24 justify-center ml-5 mr-3 my-2.5 p-2 rounded-lg shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
@@ -15,7 +17,8 @@ const style = {
   text: "text-lg text-quaternary_light dark:text-quaternary_dark",
   modalImage: "w-40 h-40 rounded-lg mb-10",
   button: {
-    button: "px-5 py-2.5 justify-center absolute top-0 right-0",
+    button: "",
+    buttonX: "px-5 py-2.5 justify-center absolute top-0 right-0",
     text: "text-lg text-center text-quaternary_light dark:text-quaternary_dark",
   },
 };
@@ -33,8 +36,29 @@ const FileCard = ({ file }: { file: FileType }) => {
     modalVisibleSignal.value = false;
   };
 
-  const handleOnPress = () => {
+  const handleCloseOnPress = () => {
     modalVisibleSignal.value = true;
+  };
+
+  const handleDownloadOnPress = () => {
+    const downloadResumable = FileSystem.createDownloadResumable(
+      file.uri,
+      FileSystem.documentDirectory + file.name,
+    );
+    const handleSuccess = (
+      value: FileSystem.FileSystemDownloadResult | undefined,
+    ) => {
+      Alert.alert("Your file has been successfully downloaded.", value?.uri);
+    };
+
+    const handleFailure = () => {
+      Alert.alert(
+        "There was an error while downloading your file.",
+        "Please, try again later.",
+      );
+    };
+
+    downloadResumable.downloadAsync().then(handleSuccess).catch(handleFailure);
   };
 
   return (
@@ -58,6 +82,12 @@ const FileCard = ({ file }: { file: FileType }) => {
             )}
             <Button
               buttonClassName={style.button.button}
+              onPress={handleDownloadOnPress}
+            >
+              <DownloadIcon width={50} height={50} color={iconColor} />
+            </Button>
+            <Button
+              buttonClassName={style.button.buttonX}
               textClassName={style.button.text}
               text="x"
               onPress={closeModal}
@@ -65,7 +95,7 @@ const FileCard = ({ file }: { file: FileType }) => {
           </View>
         </View>
       </Modal>
-      <Button buttonClassName={style.view} onPress={handleOnPress}>
+      <Button buttonClassName={style.view} onPress={handleCloseOnPress}>
         <Fragment>
           {imageExtensions.includes(extension) ? (
             <Image className={style.image} src={file.uri} />
