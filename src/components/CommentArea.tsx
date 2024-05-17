@@ -82,8 +82,6 @@ const CommentArea = ({
   const contentTextSignal = useSignal("");
   const movieRatingsSignal = useSignal(initialMovieRatings);
 
-  const movieRatings = movieRatingsSignal.value;
-
   const handleSendOnPress = useCallback(() => {
     if (!getUserSignal.value) return;
     sendRating(
@@ -98,11 +96,13 @@ const CommentArea = ({
 
   return (
     <View>
-      <Text className={style.title}>Comments ({movieRatings.length})</Text>
-      {movieRatings.map((rating) => (
+      <Text className={style.title}>
+        Comments ({movieRatingsSignal.value.length})
+      </Text>
+      {movieRatingsSignal.value.map((rating) => (
         <CommentCard key={rating.userId} rating={rating} />
       ))}
-      {localUser?.emailVerified && (
+      {getUserSignal.value && (
         <Fragment>
           <RatingTextInput
             ratingText={ratingTextSignal}
