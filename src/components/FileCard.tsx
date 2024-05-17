@@ -1,9 +1,10 @@
-import { Image, Modal, Text, View } from "react-native";
-import { DocumentPickerAsset } from "expo-document-picker";
+import { Image, Modal, Text, useColorScheme, View } from "react-native";
 import { Button } from "@src/components/Button";
 import { useSignal } from "@preact/signals-react";
 import { Fragment } from "react";
 import NoImage from "@src/assets/img/image-x-icon.svg";
+import { FileType } from "@src/services/firebase";
+import { colors } from "@src/styles/tailwindColors";
 
 const style = {
   view: "w-24 justify-center ml-5 mr-3 my-2.5 p-2 rounded-lg shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
@@ -19,8 +20,11 @@ const style = {
   },
 };
 
-const FileCard = ({ file }: { file: DocumentPickerAsset }) => {
+const FileCard = ({ file }: { file: FileType }) => {
   const modalVisibleSignal = useSignal(false);
+
+  const isLight = useColorScheme() === "light";
+  const iconColor = isLight ? colors.quaternary_light : colors.quaternary_dark;
 
   const extension = file.name.split(".")[1];
   const imageExtensions = ["png", "jpg", "jpeg"];
@@ -46,10 +50,12 @@ const FileCard = ({ file }: { file: DocumentPickerAsset }) => {
             {imageExtensions.includes(extension) ? (
               <Image className={style.modalImage} src={file.uri} />
             ) : (
-              <NoImage width={180} height={180} />
+              <NoImage width={180} height={180} color={iconColor} />
             )}
             <Text className={style.text}>{file.name}</Text>
-            <Text className={style.text}>size: {file.size}</Text>
+            {"size" in file && (
+              <Text className={style.text}>size: {file.size} kb</Text>
+            )}
             <Button
               buttonClassName={style.button.button}
               textClassName={style.button.text}
@@ -62,11 +68,9 @@ const FileCard = ({ file }: { file: DocumentPickerAsset }) => {
       <Button buttonClassName={style.view} onPress={handleOnPress}>
         <Fragment>
           {imageExtensions.includes(extension) ? (
-            <Fragment>
-              <Image className={style.image} src={file.uri} />
-            </Fragment>
+            <Image className={style.image} src={file.uri} />
           ) : (
-            <NoImage width={80} height={80} />
+            <NoImage width={80} height={80} color={iconColor} />
           )}
           <Text numberOfLines={1} ellipsizeMode="tail" className="text-center">
             {file.name}

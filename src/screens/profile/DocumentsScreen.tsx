@@ -3,27 +3,32 @@ import React, { Fragment, useEffect } from "react";
 import { getUserSignal } from "@src/signals/userSignal";
 import { Button } from "@src/components/Button";
 import * as DocumentPicker from "expo-document-picker";
-import { DocumentPickerAsset } from "expo-document-picker";
 import {
   addFileToStorage,
   createFolder,
+  DocumentListType,
+  FileType,
+  FolderType,
   getFilesFromStorage,
 } from "@src/services/firebase";
 import { Signal, useSignal } from "@preact/signals-react";
+import { FolderCard } from "@src/components/FolderCard";
 import { FileCard } from "@src/components/FileCard";
 
 const style = {
   view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
   button: {
-    button:
+    addButton:
       "w-12 h-12 justify-center absolute bottom-5 right-5 rounded-full shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
+    backButton:
+      "w-12 h-12 justify-center absolute bottom-5 right-20 rounded-full shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
     text: "text-lg text-center text-quaternary_light dark:text-quaternary_dark",
   },
   list: "flex-1",
 };
 
 const openFilePicker = (
-  filesSignal: Signal<DocumentPickerAsset[]>,
+  filesSignal: Signal<DocumentListType>,
   route: string,
 ) => {
   const handleOnSuccess = (result: DocumentPicker.DocumentPickerResult) => {
@@ -52,11 +57,8 @@ const openFilePicker = (
   }).then(handleOnSuccess);
 };
 
-const getFiles = (
-  filesSignal: Signal<DocumentPickerAsset[]>,
-  route: string,
-) => {
-  const handleOnSuccess = (files: DocumentPickerAsset[]) => {
+const getFiles = (filesSignal: Signal<DocumentListType>, route: string) => {
+  const handleOnSuccess = (files: DocumentListType) => {
     filesSignal.value = files;
   };
 
@@ -73,12 +75,12 @@ const getFiles = (
 };
 
 const DocumentsScreen = (): React.JSX.Element => {
-  const filesSignal = useSignal<DocumentPickerAsset[]>([]);
+  const filesSignal = useSignal<DocumentListType>([]);
   const modalVisibleSignal = useSignal(false);
   const folderNameSignal = useSignal("");
   const routeSignal = useSignal("/");
 
-  const handleOnClick = () => {
+  const handleAddOnClick = () => {
     Alert.alert("Choose what you want to upload...", "", [
       {
         text: "file",
@@ -91,6 +93,13 @@ const DocumentsScreen = (): React.JSX.Element => {
         },
       },
     ]);
+  };
+
+  const handleBackOnPress = () => {
+    const route = routeSignal.value;
+    const parts = route.split("/");
+    const newRoute = parts.slice(0, -2).join("/") + "/";
+    routeSignal.value = newRoute;
   };
 
   const handleOnChangeText = (text: string) => {
@@ -146,16 +155,35 @@ const DocumentsScreen = (): React.JSX.Element => {
           <Fragment>
             <FlatList
               data={filesSignal.value}
-              renderItem={({ item }) => <FileCard file={item} />}
+              renderItem={({ item }) => {
+                if ("uri" in item) {
+                  return <FileCard file={item as FileType} />;
+                } else {
+                  return (
+                    <FolderCard
+                      folder={item as FolderType}
+                      routeSignal={routeSignal}
+                    />
+                  );
+                }
+              }}
               numColumns={3}
               keyExtractor={(_, index) => index.toString()}
               className={style.list}
             />
+            {routeSignal.value != "/" && (
+              <Button
+                buttonClassName={style.button.backButton}
+                text="<"
+                textClassName={style.button.text}
+                onPress={handleBackOnPress}
+              />
+            )}
             <Button
-              buttonClassName={style.button.button}
+              buttonClassName={style.button.addButton}
               text="+"
               textClassName={style.button.text}
-              onPress={handleOnClick}
+              onPress={handleAddOnClick}
             />
           </Fragment>
         ) : (

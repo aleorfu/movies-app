@@ -3,6 +3,18 @@ import storage from "@react-native-firebase/storage";
 import { ImagePickerAsset } from "expo-image-picker";
 import { DocumentPickerAsset } from "expo-document-picker";
 
+type FileType = {
+  uri: string;
+  name: string;
+  size: number;
+};
+
+type FolderType = {
+  name: string;
+};
+
+type DocumentListType = (FileType | FolderType)[];
+
 type UserDataType = {
   displayName: string;
   surname: string;
@@ -113,22 +125,30 @@ const getFilesFromStorage = async (uid: string, route: string) => {
   try {
     const listResult = await storage().ref(url).listAll();
 
-    const files: DocumentPickerAsset[] = [];
+    const documents: DocumentListType = [];
 
     for (const item of listResult.items) {
       if (item.name != ".hidden") {
         const metadata = await item.getMetadata();
-        const file: DocumentPickerAsset = {
+        const file: FileType = {
           uri: await item.getDownloadURL(),
           name: item.name,
           size: metadata.size,
         };
 
-        files.push(file);
+        documents.push(file);
       }
     }
 
-    return files;
+    for (const item of listResult.prefixes) {
+      const folder: FolderType = {
+        name: item.name,
+      };
+
+      documents.push(folder);
+    }
+
+    return documents;
   } catch (error) {
     console.error("There was an error while getting your files: %s", error);
     throw error;
@@ -144,4 +164,7 @@ export {
   addFileToStorage,
   getFilesFromStorage,
   createFolder,
+  DocumentListType,
+  FileType,
+  FolderType,
 };
