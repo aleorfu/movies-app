@@ -47,7 +47,7 @@ const downloadFile = (file: FileType) => {
 
           const handleWritingFailure = (error: any) => {
             const ERROR_TITLE = "There was an error while writing file.";
-            console.error("%s -> %s", [ERROR_TITLE, error]);
+            console.error("%s -> %s", ERROR_TITLE, error);
             Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
           };
 
@@ -58,7 +58,7 @@ const downloadFile = (file: FileType) => {
 
         const handleFileCreationFailure = (error: any) => {
           const ERROR_TITLE = "There was an error while creating file.";
-          console.error("%s -> %s", [ERROR_TITLE, error]);
+          console.error("%s -> %s", ERROR_TITLE, error);
           Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
         };
 
@@ -73,7 +73,7 @@ const downloadFile = (file: FileType) => {
 
       const handleReadingFailure = (error: any) => {
         const ERROR_TITLE = "There was an error while reading file.";
-        console.error("%s -> %s", [ERROR_TITLE, error]);
+        console.error("%s -> %s", ERROR_TITLE, error);
         Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
       };
 
