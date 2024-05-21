@@ -56,7 +56,7 @@ const sendRating = (
 
   const handleRateMovieFailure = (error: any) => {
     const ERROR_TITLE = "There was an error while uploading your rating.";
-    console.error("%s -> %s", [ERROR_TITLE, error]);
+    console.error("%s -> %s", ERROR_TITLE, error);
     Alert.alert(ERROR_TITLE, "Please, try again later.");
   };
 

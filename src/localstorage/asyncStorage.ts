@@ -10,7 +10,8 @@ const saveSubscribed = async (value: boolean): Promise<void | never> => {
   } catch (error) {
     console.error(
       'There was an error while setting "subscribed" to %b on AsyncStorage: %s',
-      [value, error],
+      value,
+      error,
     );
 
     throw error;
