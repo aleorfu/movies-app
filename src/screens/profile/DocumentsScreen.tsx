@@ -25,6 +25,7 @@ const style = {
     text: "text-lg text-center text-quaternary_light dark:text-quaternary_dark",
   },
   list: "flex-1",
+  text: "text-lg text-center text-quaternary_light dark:text-quaternary_dark",
 };
 
 const openFilePicker = (
@@ -187,10 +188,14 @@ const DocumentsScreen = (): React.JSX.Element => {
             />
           </Fragment>
         ) : (
-          <Text>You must verify your email to access this feature.</Text>
+          <Text className={style.text}>
+            You must verify your email to access this feature.
+          </Text>
         )
       ) : (
-        <Text>You must sign-in to access this feature.</Text>
+        <Text className={style.text}>
+          You must sign-in to access this feature.
+        </Text>
       )}
     </View>
   );
