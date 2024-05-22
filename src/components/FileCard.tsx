@@ -51,7 +51,9 @@ const downloadFile = (file: FileType) => {
             Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
           };
 
-          FileSystem.writeAsStringAsync(uri, content)
+          FileSystem.writeAsStringAsync(uri, content, {
+            encoding: FileSystem.EncodingType.Base64,
+          })
             .then(handleWritingSuccess)
             .catch(handleWritingFailure);
         };
@@ -77,7 +79,9 @@ const downloadFile = (file: FileType) => {
         Alert.alert(ERROR_TITLE, ERROR_MESSAGE);
       };
 
-      FileSystem.readAsStringAsync(result.uri)
+      FileSystem.readAsStringAsync(result.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      })
         .then(handleReadingSuccess)
         .catch(handleReadingFailure);
     };
