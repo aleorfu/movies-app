@@ -15,6 +15,11 @@
       "**/*"
     ],
     "android": {
+      "permissions": [
+        "NOTIFICATIONS",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "googleServicesFile": "./private/google-services.json",
       "package": "com.aleorfu.moviesapp",
       "adaptiveIcon": {
