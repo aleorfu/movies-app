@@ -7,6 +7,7 @@ import {
   Alert,
   FlatList,
   RefreshControl,
+  TextInput,
   useColorScheme,
   View,
 } from "react-native";
@@ -14,6 +15,8 @@ import { colors } from "@src/styles/tailwindColors";
 
 const style = {
   view: "flex-1 bg-secondary_light dark:bg-secondary_dark",
+  textfield:
+    "p-2 shadow-lg shadow-black text-quaternary_light bg-primary_light dark:shadow-white dark:text-quaternary_dark dark:bg-primary_dark",
 };
 
 const fetchFiveMovies = (
@@ -60,9 +63,10 @@ const MovieListScreen = (): React.JSX.Element => {
   const refreshingSignal = useSignal(false);
   const loadingMoviesSignal = useSignal(false);
   const pageSignal = useSignal(1);
+  const searchSignal = useSignal("");
   const isLight = useColorScheme() === "light";
 
-  const handleOnRefresh = (): void => {
+  const handleOnRefresh = () => {
     refreshingSignal.value = true;
     pageSignal.value = 1;
     moviesSignal.value = [];
@@ -70,8 +74,12 @@ const MovieListScreen = (): React.JSX.Element => {
     refreshingSignal.value = false;
   };
 
-  const handleOnEndReached = (): void => {
+  const handleOnEndReached = () => {
     fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+  };
+
+  const handleOnChangeText = (text: string) => {
+    searchSignal.value = text;
   };
 
   useEffect(() => {
@@ -80,6 +88,12 @@ const MovieListScreen = (): React.JSX.Element => {
 
   return (
     <View className={style.view}>
+      <TextInput
+        className={style.textfield}
+        onChangeText={handleOnChangeText}
+        value={searchSignal.value}
+        placeholder="Search bar"
+      />
       <FlatList
         data={moviesSignal.value}
         renderItem={({ item }) => <MovieCard movie={item} />}
