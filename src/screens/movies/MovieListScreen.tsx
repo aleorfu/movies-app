@@ -1,4 +1,4 @@
-import { Signal, useSignal } from "@preact/signals-react";
+import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import { MovieCard } from "@src/components/MovieCard";
 import { getAllMovies, Movie } from "@src/services/altenHybridApi";
 import React, { useEffect } from "react";
@@ -66,16 +66,29 @@ const MovieListScreen = (): React.JSX.Element => {
   const searchSignal = useSignal("");
   const isLight = useColorScheme() === "light";
 
+  const computedCanRefresh = useComputed(() => {
+    return searchSignal.value == "";
+  });
+  const computedMovies = useComputed(() => {
+    return moviesSignal.value.filter((movie) => {
+      return movie.name.includes(searchSignal.value);
+    });
+  });
+
   const handleOnRefresh = () => {
-    refreshingSignal.value = true;
-    pageSignal.value = 1;
-    moviesSignal.value = [];
-    fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
-    refreshingSignal.value = false;
+    if (computedCanRefresh.value) {
+      refreshingSignal.value = true;
+      pageSignal.value = 1;
+      moviesSignal.value = [];
+      fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+      refreshingSignal.value = false;
+    }
   };
 
   const handleOnEndReached = () => {
-    fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+    if (computedCanRefresh.value) {
+      fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+    }
   };
 
   const handleOnChangeText = (text: string) => {
@@ -95,7 +108,7 @@ const MovieListScreen = (): React.JSX.Element => {
         placeholder="Search bar"
       />
       <FlatList
-        data={moviesSignal.value}
+        data={computedMovies.value}
         renderItem={({ item }) => <MovieCard movie={item} />}
         keyExtractor={(movie) => movie.id}
         onEndReached={handleOnEndReached}
