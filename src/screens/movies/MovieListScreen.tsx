@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { colors } from "@src/styles/tailwindColors";
+import { refreshLikedMovies } from "@src/signals/likedMoviesSignal";
 
 const style = {
   view: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -66,9 +67,12 @@ const MovieListScreen = (): React.JSX.Element => {
   const searchSignal = useSignal("");
   const isLight = useColorScheme() === "light";
 
+  refreshLikedMovies();
+
   const computedCanRefresh = useComputed(() => {
     return searchSignal.value == "";
   });
+
   const computedMovies = useComputed(() => {
     return moviesSignal.value.filter((movie) => {
       return movie.name.includes(searchSignal.value);

@@ -6,6 +6,7 @@ import { Alert, useColorScheme } from "react-native";
 import FilledLikeIcon from "../assets/img/like-filled-icon.svg";
 import LikeIcon from "../assets/img/like-icon.svg";
 import { colors } from "@src/styles/tailwindColors";
+import { refreshLikedMovies } from "@src/signals/likedMoviesSignal";
 
 type LikeButtonProps = {
   movieId: string;
@@ -31,6 +32,7 @@ const sendLike = (
 
   const handleLikeMovieSuccess = (movie: Movie): void => {
     movieLikedSignal.value = movie.userLiked?.includes(userId) ?? false;
+    refreshLikedMovies();
   };
 
   const handleLikeMovieFailure = (): void => {
