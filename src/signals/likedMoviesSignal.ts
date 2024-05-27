@@ -17,6 +17,10 @@ const refreshLikedMovies = async () => {
     }
   });
 
+  await localUser.getIdToken(true);
+  const idToken = await localUser.getIdTokenResult();
+  idToken.claims.likes = counter;
+
   getLikedMoviesSignal.value = counter;
 };
 

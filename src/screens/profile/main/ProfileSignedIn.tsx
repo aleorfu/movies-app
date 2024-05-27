@@ -94,6 +94,13 @@ const ProfileSignedIn = (): React.JSX.Element => {
 
   const isLight = useColorScheme() === "light";
 
+  const localUser = getUserSignal.value;
+  if (localUser) {
+    localUser.getIdTokenResult().then((idToken) => {
+      console.log(idToken.claims.likes);
+    });
+  }
+
   const handleOnDisplayNameTextChanged = (text: string): void => {
     displayNameSignal.value = text;
   };
