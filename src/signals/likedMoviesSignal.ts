@@ -1,6 +1,7 @@
 import { signal } from "@preact/signals-react";
 import { getAllMovies } from "@src/services/altenHybridApi";
 import { getUserSignal } from "@src/signals/userSignal";
+import { setMovieLiked } from "@src/services/firebase";
 
 const getLikedMoviesSignal = signal(0);
 
@@ -17,9 +18,7 @@ const refreshLikedMovies = async () => {
     }
   });
 
-  await localUser.getIdToken(true);
-  const idToken = await localUser.getIdTokenResult();
-  idToken.claims.likes = counter;
+  setMovieLiked(localUser.uid, counter);
 
   getLikedMoviesSignal.value = counter;
 };

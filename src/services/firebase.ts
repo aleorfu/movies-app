@@ -22,6 +22,7 @@ type UserDataType = {
   phoneNumber: string;
   gender: string;
   dateOfBirth: string;
+  likedMovies: number;
 };
 
 const setUserData = async (
@@ -48,6 +49,22 @@ const getUserData = async (uid: string): Promise<UserDataType | never> => {
     return data.val() as UserDataType;
   } catch (error) {
     console.error("There was an error while getting your user data: %s", error);
+
+    throw error;
+  }
+};
+
+const setMovieLiked = async (uid: string, movieLiked: number) => {
+  const url = `/users/${uid}`;
+
+  const data = {
+    likedMovies: movieLiked,
+  };
+
+  try {
+    await database().ref(url).update(data);
+  } catch (error) {
+    console.error("There was an error while setting your user data: %s", error);
 
     throw error;
   }
@@ -166,6 +183,7 @@ export {
   addFileToStorage,
   getFilesFromStorage,
   createFolder,
+  setMovieLiked,
   DocumentListType,
   FileType,
   FolderType,
