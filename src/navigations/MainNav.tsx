@@ -1,4 +1,4 @@
-import { ColorSchemeName, Image, useColorScheme } from "react-native";
+import { useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   BottomTabNavigationOptions,
@@ -9,28 +9,21 @@ import { ProfileNav } from "@src/navigations/ProfileNav";
 import { MoviesNav } from "@src/navigations/MoviesNav";
 import { colors } from "@src/styles/tailwindColors";
 import React from "react";
+import Home from "@src/assets/img/home-icon.svg";
+import List from "@src/assets/img/list-icon.svg";
+import Profile from "@src/assets/img/profile-icon.svg";
 
 const Tab = createBottomTabNavigator();
 
 const getOptions = (
   isLight: boolean,
   title: string,
-  icon: number,
+  icon: React.JSX.Element,
   headerShown: boolean = true,
 ): BottomTabNavigationOptions => {
   return {
     title: title,
-    tabBarIcon: () => (
-      <Image
-        source={icon}
-        className="w-6 h-6"
-        style={
-          isLight
-            ? { tintColor: colors.quaternary_light }
-            : { tintColor: colors.quaternary_dark }
-        }
-      />
-    ),
+    tabBarIcon: () => icon,
     tabBarActiveTintColor: isLight
       ? colors.quaternary_light
       : colors.quaternary_dark,
@@ -62,8 +55,12 @@ const getOptions = (
 };
 
 const MainNav = (): React.JSX.Element => {
-  const colorScheme: ColorSchemeName = useColorScheme();
-  const isLight: boolean = colorScheme === "light";
+  const isLight = useColorScheme() === "light";
+  const iconColor = isLight ? colors.quaternary_light : colors.quaternary_dark;
+
+  const HomeIcon = <Home width={30} height={30} color={iconColor} />;
+  const ListIcon = <List width={30} height={30} color={iconColor} />;
+  const ProfileIcon = <Profile width={20} height={20} color={iconColor} />;
 
   return (
     <NavigationContainer>
@@ -71,31 +68,17 @@ const MainNav = (): React.JSX.Element => {
         <Tab.Screen
           name="HomeTab"
           component={HomeScreen}
-          options={getOptions(
-            isLight,
-            "Home",
-            require("@src/assets/img/home-icon.png"),
-          )}
+          options={getOptions(isLight, "Home", HomeIcon)}
         />
         <Tab.Screen
           name="MoviesTab"
           component={MoviesNav}
-          options={getOptions(
-            isLight,
-            "Movies",
-            require("@src/assets/img/list-icon.png"),
-            false,
-          )}
+          options={getOptions(isLight, "Movies", ListIcon, false)}
         />
         <Tab.Screen
           name="ProfileTab"
           component={ProfileNav}
-          options={getOptions(
-            isLight,
-            "Profile",
-            require("@src/assets/img/profile-icon.png"),
-            false,
-          )}
+          options={getOptions(isLight, "Profile", ProfileIcon, false)}
         />
       </Tab.Navigator>
     </NavigationContainer>

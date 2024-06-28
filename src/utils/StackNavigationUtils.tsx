@@ -1,12 +1,20 @@
 import { StackNavigationOptions } from "@react-navigation/stack";
 import { colors } from "@src/styles/tailwindColors";
-import { Image } from "react-native";
 import React from "react";
+import Back from "@src/assets/img/back-icon.svg";
+import { useColorScheme } from "react-native";
 
-const getOptions = (
-  isLight: boolean,
-  title: string,
-): StackNavigationOptions => {
+const getOptions = (title: string): StackNavigationOptions => {
+  const isLight = useColorScheme() === "light";
+
+  const BackIcon = (
+    <Back
+      width={40}
+      height={40}
+      color={isLight ? colors.quaternary_light : colors.quaternary_dark}
+    />
+  );
+
   return {
     title: title,
     headerTitleAlign: "center",
@@ -22,17 +30,7 @@ const getOptions = (
     headerTitleStyle: isLight
       ? { color: colors.quaternary_light }
       : { color: colors.quaternary_dark },
-    headerBackImage: () => (
-      <Image
-        style={
-          isLight
-            ? { tintColor: colors.quaternary_light }
-            : { tintColor: colors.quaternary_dark }
-        }
-        className="w-6 h-6"
-        source={require("@src/assets/img/back-icon.png")}
-      />
-    ),
+    headerBackImage: () => BackIcon,
   };
 };
 

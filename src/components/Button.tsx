@@ -2,7 +2,7 @@ import { colors } from "@src/styles/tailwindColors";
 import React, { Fragment } from "react";
 import {
   ActivityIndicator,
-  Image,
+  GestureResponderEvent,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -10,13 +10,12 @@ import {
 
 type ButtonProps = {
   text?: string;
-  image?: number;
+  image?: React.JSX.Element;
   buttonClassName?: string;
   textClassName?: string;
-  imageClassName?: string;
   disabled?: boolean;
   loading?: boolean;
-  onPress?: () => void;
+  onPress?: (event: GestureResponderEvent) => void;
 };
 
 const Button = ({
@@ -24,12 +23,11 @@ const Button = ({
   image,
   buttonClassName,
   textClassName,
-  imageClassName,
   disabled = false,
   loading = false,
   onPress,
 }: ButtonProps): React.JSX.Element => {
-  const isLight: boolean = useColorScheme() === "light";
+  const isLight = useColorScheme() === "light";
 
   return (
     <TouchableOpacity
@@ -44,15 +42,7 @@ const Button = ({
         />
       ) : (
         <Fragment>
-          {image && (
-            <Image
-              source={image}
-              className={imageClassName}
-              tintColor={
-                isLight ? colors.quaternary_light : colors.quaternary_dark
-              }
-            />
-          )}
+          {image}
           {text && <Text className={textClassName}>{text}</Text>}
         </Fragment>
       )}
