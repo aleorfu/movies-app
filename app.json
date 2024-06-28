@@ -14,7 +14,7 @@
     "assetBundlePatterns": ["**/*"],
     "android": {
       "googleServicesFile": "./private/google-services.json",
-      "package": "com.iendawel.moviesapp",
+      "package": "com.aleorfu.moviesapp",
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
