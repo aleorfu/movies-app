@@ -4,9 +4,11 @@ import { CommentArea } from "@src/components/CommentArea";
 import { LikeButton } from "@src/components/LikeButton";
 import { ListCard } from "@src/components/ListCard";
 import { TextCard } from "@src/components/TextCard";
-import { Movie, getMovieByIdApi } from "@src/services/altenHybridApi";
-import { Fragment, useCallback, useEffect } from "react";
+import { getMovieByIdApi, Movie } from "@src/services/altenHybridApi";
+import React, { Fragment, useCallback, useEffect } from "react";
 import { Image, RefreshControl, ScrollView, Text } from "react-native";
+import { getUserSignal, UserType } from "@src/signals/userSignal";
+import { MoviesNavProps } from "@src/navigations/MoviesNav";
 
 const style = {
   scrollView: "flex-1 bg-secondary_light dark:bg-secondary_dark",
@@ -25,21 +27,20 @@ const MovieDetailsScreen = (): React.JSX.Element => {
   const movie: Signal<Movie | null> = useSignal<Movie | null>(null);
   const refreshing: Signal<boolean> = useSignal<boolean>(false);
 
-  const { movieId, movieLiked } = useRoute().params as {
-    movieId: string;
-    movieLiked: Signal<boolean>;
-  };
+  const { movieId }: MoviesNavProps = useRoute().params as MoviesNavProps;
 
-  const onRefresh = useCallback(() => {
+  const localUser: UserType = getUserSignal.value;
+
+  const onRefresh = useCallback((): void => {
     refreshing.value = true;
-    getMovieByIdApi(movieId).then((fetchedMovie) => {
+    getMovieByIdApi(movieId).then((fetchedMovie: Movie): void => {
       movie.value = fetchedMovie;
     });
     refreshing.value = false;
   }, []);
 
-  useEffect(() => {
-    getMovieByIdApi(movieId).then((fetchedMovie) => {
+  useEffect((): void => {
+    getMovieByIdApi(movieId).then((fetchedMovie: Movie): void => {
       movie.value = fetchedMovie;
     });
   }, []);
@@ -59,7 +60,13 @@ const MovieDetailsScreen = (): React.JSX.Element => {
             resizeMode="cover"
           />
           <Text className={style.title}>{movie.value.name}</Text>
-          <LikeButton movie={movie.value} movieLiked={movieLiked} />
+          {localUser && (
+            <LikeButton
+              movieId={movie.value?.id}
+              movieUserLiked={movie.value?.userLiked ?? []}
+              userId={localUser.uid}
+            />
+          )}
           <TextCard title={"Description"} content={movie.value.description} />
           <ListCard title={"Actors"} content={movie.value.actors} />
           <ListCard title={"Categories"} content={movie.value.categories} />
@@ -71,7 +78,10 @@ const MovieDetailsScreen = (): React.JSX.Element => {
               `Likes: ${movie.value.likes}`,
             ]}
           />
-          <CommentArea movie={movie.value} />
+          <CommentArea
+            movieId={movie.value?.id}
+            movieRatings={movie.value?.ratings}
+          />
         </Fragment>
       )}
     </ScrollView>

@@ -1,8 +1,9 @@
 import messaging from "@react-native-firebase/messaging";
 import { Button } from "@src/components/Button";
 import { getSubscribed, saveSubscribed } from "@src/localstorage/asyncStorage";
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Alert, View } from "react-native";
+import { Signal, useSignal } from "@preact/signals-react";
 
 const styles = {
   view: "flex-1 justify-center bg-secondary_light dark:bg-secondary_dark",
@@ -17,45 +18,51 @@ const toggleSubscribed = async (subscribed: boolean): Promise<void> => {
   if (!subscribed) {
     await messaging()
       .subscribeToTopic("alten_cantera_2024")
-      .then(async () => {
+      .then(async (): Promise<void> => {
         await saveSubscribed(true);
       });
   } else {
     await messaging()
       .unsubscribeFromTopic("alten_cantera_2024")
-      .then(async () => {
+      .then(async (): Promise<void> => {
         await saveSubscribed(false);
       });
   }
 };
 
 const HomeScreen = (): React.JSX.Element => {
-  const [isSubscribed, setSubscribed] = useState<boolean>(false);
+  const isSubscribedSignal: Signal<boolean> = useSignal<boolean>(false);
+  const loadingSignal: Signal<boolean> = useSignal<boolean>(false);
 
-  useEffect(() => {
-    getSubscribed().then((value: boolean) => {
-      setSubscribed(value);
+  useEffect((): void => {
+    getSubscribed().then((value: boolean): void => {
+      isSubscribedSignal.value = value;
     });
   }, []);
 
   return (
     <View className={styles.view}>
       <Button
-        text={isSubscribed ? "Unsubscribe" : "Subscribe"}
+        text={isSubscribedSignal.value ? "Unsubscribe" : "Subscribe"}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        onPress={async () => {
-          await toggleSubscribed(isSubscribed)
-            .then(() => {
-              setSubscribed(!isSubscribed);
+        onPress={(): void => {
+          loadingSignal.value = true;
+          toggleSubscribed(isSubscribedSignal.value)
+            .then((): void => {
+              isSubscribedSignal.value = !isSubscribedSignal.value;
             })
-            .catch(() => {
+            .catch((): void => {
               Alert.alert(
                 "There has been an error while subscribing or unsubscribing",
-                "Please, try again later."
+                "Please, try again later.",
               );
+            })
+            .finally((): void => {
+              loadingSignal.value = false;
             });
         }}
+        loading={loadingSignal.value}
       />
     </View>
   );

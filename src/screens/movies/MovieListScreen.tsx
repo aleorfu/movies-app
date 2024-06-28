@@ -1,14 +1,14 @@
 import { Signal, useSignal } from "@preact/signals-react";
 import { MovieCard } from "@src/components/MovieCard";
-import { Movie, getAllMoviesApi } from "@src/services/altenHybridApi";
+import { getAllMoviesApi, Movie } from "@src/services/altenHybridApi";
 import { colors } from "@src/styles/tailwindColors";
 import { useCallback, useEffect } from "react";
 import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  View,
   useColorScheme,
+  View,
 } from "react-native";
 
 let page: number = 1;
@@ -19,10 +19,10 @@ const style = {
 
 const fetchFiveMovies = (
   movies: Signal<Movie[]>,
-  loadingMovies: Signal<boolean>
-) => {
+  loadingMovies: Signal<boolean>,
+): void => {
   loadingMovies.value = true;
-  getAllMoviesApi().then((fetchedMovies: Movie[]) => {
+  getAllMoviesApi().then((fetchedMovies: Movie[]): void => {
     const newMovies: Movie[] = fetchedMovies.slice((page - 1) * 5, page * 5);
     if (newMovies.length == 0) {
       page = 1;
@@ -39,10 +39,9 @@ const MovieListScreen = () => {
   const movies: Signal<Movie[]> = useSignal<Movie[]>([]);
   const refreshing: Signal<boolean> = useSignal<boolean>(false);
   const loadingMovies: Signal<boolean> = useSignal<boolean>(false);
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
+  const isLight: boolean = useColorScheme() === "light";
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback((): void => {
     refreshing.value = true;
     page = 1;
     movies.value = [];
@@ -50,7 +49,7 @@ const MovieListScreen = () => {
     refreshing.value = false;
   }, []);
 
-  useEffect(() => {
+  useEffect((): void => {
     fetchFiveMovies(movies, loadingMovies);
   }, []);
 
@@ -58,8 +57,8 @@ const MovieListScreen = () => {
     <View className={style.view}>
       <FlatList
         data={movies.value}
-        renderItem={({ item }) => <MovieCard movie={item} />}
-        keyExtractor={(_, index) => index.toString()}
+        renderItem={({ item }: { item: Movie }) => <MovieCard movie={item} />}
+        keyExtractor={(_: Movie, index: number) => index.toString()}
         onEndReached={() => fetchFiveMovies(movies, loadingMovies)}
         onEndReachedThreshold={0.2}
         removeClippedSubviews={true}

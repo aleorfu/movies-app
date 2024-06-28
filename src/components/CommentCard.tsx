@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { Rating } from "@src/services/altenHybridApi";
+import React from "react";
 
 type CommentCardProps = {
   rating: Rating;

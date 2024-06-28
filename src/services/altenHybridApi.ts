@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance } from "axios";
 
 type Rating = {
   userId: string;
@@ -17,71 +17,45 @@ type Movie = {
   actors: string[];
   ratings: Rating[];
   likes: number;
-  userLiked: string[];
+  userLiked?: string[];
 };
 
-const instance = axios.create({
+const instance: AxiosInstance = axios.create({
   baseURL: "https://api-w6avz2it7a-uc.a.run.app",
 });
 instance.defaults.headers["Accept"] = "application/json";
+instance.defaults.headers.put["Content-Type"] = "application/json";
 
-const getPetition = async (
-  url: string,
-  config: AxiosRequestConfig = {}
-): Promise<Movie | Movie[] | never> => {
-  try {
-    const response = await instance.get(url, config);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      `There has been an error with api "get" petition:\n\t${error}`
-    );
-  }
-};
+const getPetition = async (url: string): Promise<Movie | Movie[] | never> =>
+  (await instance.get(url)).data;
 
-const putPetition = async (
-  url: string,
-  data: string,
-  config: AxiosRequestConfig = {}
-): Promise<Movie | never> => {
-  try {
-    const response = await instance.put(url, data, config);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      `There has been an error with api "put" petition:\n\t${error}`
-    );
-  }
-};
+const putPetition = async (url: string, data: string): Promise<Movie | never> =>
+  (await instance.put(url, data)).data;
 
 const getMovieByIdApi = async (id: string): Promise<Movie | never> =>
   (await getPetition(`/movies/${id}`)) as Movie;
 
 const getAllMoviesApi = async (): Promise<Movie[] | never> =>
-  Object.values(await getPetition("/movies"));
+  Object.values(await getPetition("/movies")) as Movie[];
 
 const rateMovie = async (id: string, rating: Rating): Promise<void | never> => {
-  const config: AxiosRequestConfig = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  await putPetition(`/movies/${id}/rate`, JSON.stringify(rating), config);
+  await putPetition(`/movies/${id}/rate`, JSON.stringify(rating));
 };
 
-const likeMovie = async (id: string, userId: string): Promise<void | never> => {
-  const config: AxiosRequestConfig = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
+const likeMovie = async (
+  id: string,
+  userId: string,
+): Promise<boolean | never> => {
   const data: { userId: string } = {
     userId: userId,
   };
 
-  await putPetition(`/movies/${id}/like`, JSON.stringify(data), config);
+  const response: Movie = (await putPetition(
+    `/movies/${id}/like`,
+    JSON.stringify(data),
+  )) as Movie;
+
+  return response?.userLiked?.includes(userId) ?? false;
 };
 
 export {

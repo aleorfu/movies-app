@@ -7,10 +7,9 @@ const style = {
   safeAreaView: "flex-1 bg-primary_light dark:bg-primary_dark",
 };
 
-const requestPermissions = async () => {
-  await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-  );
+const requestPermissions = (): void => {
+  // noinspection JSIgnoredPromiseFromCall
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 };
 
 const App = () => {
@@ -24,4 +23,5 @@ const App = () => {
   );
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default App;

@@ -4,8 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Button } from "@src/components/Button";
 import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
 import { colors } from "@src/styles/tailwindColors";
-import { useColorScheme } from "nativewind";
-import { Alert, TextInput, View } from "react-native";
+import { Alert, TextInput, useColorScheme, View } from "react-native";
+import React from "react";
 
 const styles = {
   textInput:
@@ -28,20 +28,20 @@ const recoverPassword = async (email: string): Promise<void> => {
 };
 
 const SignInScreen = (): React.JSX.Element => {
-  const email: Signal<string> = useSignal<string>("");
-  const password: Signal<string> = useSignal<string>("");
-  const { colorScheme } = useColorScheme();
+  const emailSignal: Signal<string> = useSignal<string>("");
+  const passwordSignal: Signal<string> = useSignal<string>("");
   const navigation: ProfileNavStackNavigation =
     useNavigation() as ProfileNavStackNavigation;
-  const isLight: boolean = colorScheme === "light";
+  const isLight: boolean = useColorScheme() === "light";
+  const loadingSignal: Signal<boolean> = useSignal<boolean>(false);
 
   return (
     <View className={styles.view}>
       <TextInput
         className={styles.textInput}
         keyboardType="email-address"
-        onChangeText={(text) => (email.value = text)}
-        value={email.value}
+        onChangeText={(text: string) => (emailSignal.value = text)}
+        value={emailSignal.value}
         placeholder="Email"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -50,8 +50,8 @@ const SignInScreen = (): React.JSX.Element => {
       <TextInput
         className={styles.textInput}
         secureTextEntry={true}
-        onChangeText={(text) => (password.value = text)}
-        value={password.value}
+        onChangeText={(text) => (passwordSignal.value = text)}
+        value={passwordSignal.value}
         placeholder="Password"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -59,26 +59,31 @@ const SignInScreen = (): React.JSX.Element => {
       />
       <Button
         text="Sign-In"
-        onPress={async () => {
-          if (email.value != "" && password.value != "") {
-            await signIn(email.value, password.value)
+        onPress={async (): Promise<void> => {
+          if (emailSignal.value != "" && passwordSignal.value != "") {
+            loadingSignal.value = true;
+            await signIn(emailSignal.value, passwordSignal.value)
               .then(() => {
-                email.value = "";
-                password.value = "";
+                emailSignal.value = "";
+                passwordSignal.value = "";
                 navigation.goBack();
               })
               .catch(() => {
                 Alert.alert(
                   "There was an error while signing you in.",
-                  "Please, verify your credentials and try again."
+                  "Please, verify your credentials and try again.",
                 );
+              })
+              .finally((): void => {
+                loadingSignal.value = false;
               });
           } else
             Alert.alert(
               "One or more fields are empty.",
-              "Please, fill every field and try again."
+              "Please, fill every field and try again.",
             );
         }}
+        loading={loadingSignal.value}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
       />
@@ -87,22 +92,22 @@ const SignInScreen = (): React.JSX.Element => {
         buttonClassName={styles.button.noBgButton}
         textClassName={styles.button.text}
         onPress={async () => {
-          if (email.value != "") {
-            await recoverPassword(email.value)
+          if (emailSignal.value != "") {
+            await recoverPassword(emailSignal.value)
               .then(() => {
-                email.value = "";
-                password.value = "";
+                emailSignal.value = "";
+                passwordSignal.value = "";
               })
               .catch(() => {
                 Alert.alert(
                   "There was an error while sending your password recovery email.",
-                  "Please, try again later."
+                  "Please, try again later.",
                 );
               });
           } else
             Alert.alert(
               "Email field is empty.",
-              "Please, fill it and try again."
+              "Please, fill it and try again.",
             );
         }}
       />
