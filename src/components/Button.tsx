@@ -15,6 +15,7 @@ type ButtonProps = {
   textClassName?: string;
   disabled?: boolean;
   loading?: boolean;
+  children?: React.JSX.Element;
   onPress?: (event: GestureResponderEvent) => void;
 };
 
@@ -25,8 +26,9 @@ const Button = ({
   textClassName,
   disabled = false,
   loading = false,
+  children,
   onPress,
-}: ButtonProps): React.JSX.Element => {
+}: ButtonProps) => {
   const isLight = useColorScheme() === "light";
 
   return (
@@ -41,12 +43,15 @@ const Button = ({
           color={isLight ? colors.quaternary_light : colors.quaternary_dark}
         />
       ) : (
-        <Fragment>
-          {image}
-          {text && <Text className={textClassName}>{text}</Text>}
-        </Fragment>
+        children || (
+          <Fragment>
+            {image}
+            {text && <Text className={textClassName}>{text}</Text>}
+          </Fragment>
+        )
       )}
     </TouchableOpacity>
   );
 };
+
 export { Button, ButtonProps };

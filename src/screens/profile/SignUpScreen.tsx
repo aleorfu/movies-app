@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
+import { ProfileNavStackNavigation } from "@src/navigations/ProfileStackNav";
 
 const styles = {
   textInput:

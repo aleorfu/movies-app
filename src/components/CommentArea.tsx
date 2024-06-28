@@ -4,7 +4,7 @@ import { CommentCard } from "@src/components/CommentCard";
 import { RatingTextInput } from "@src/components/RatingTextInput";
 import { rateMovie, Rating } from "@src/services/altenHybridApi";
 import { getUserSignal } from "@src/signals/userSignal";
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback } from "react";
 import { Alert, Text, View } from "react-native";
 
 type CommentAreaProps = {
@@ -29,7 +29,7 @@ const sendRating = (
   ratingTextSignal: Signal<string>,
   movieRatingsSignal: Signal<Rating[]>,
   loadingSendingSignal: Signal<boolean>,
-): void => {
+) => {
   loadingSendingSignal.value = true;
 
   const rating: Rating = {
@@ -38,32 +38,29 @@ const sendRating = (
     rating: Number(ratingTextSignal.value),
   };
 
-  const handleRateMovieSuccess = (): void => {
+  const handleRateMovieSuccess = () => {
     const newMovieRatings = [...movieRatingsSignal.value];
 
     const existingRatingIndex = newMovieRatings.findIndex(
       (r: Rating) => r.userId === userId,
     );
 
-    if (existingRatingIndex !== -1) {
+    if (existingRatingIndex !== -1)
       newMovieRatings[existingRatingIndex] = rating;
-    } else {
-      newMovieRatings.push(rating);
-    }
+    else newMovieRatings.push(rating);
 
     movieRatingsSignal.value = newMovieRatings;
     ratingTextSignal.value = "";
     contentTextSignal.value = "";
   };
 
-  const handleRateMovieFailure = (): void => {
-    Alert.alert(
-      "There was an error while sending your rating.",
-      "Please, try again later.",
-    );
+  const handleRateMovieFailure = (error: any) => {
+    const ERROR_TITLE = "There was an error while uploading your rating.";
+    console.error("%s -> %s", ERROR_TITLE, error);
+    Alert.alert(ERROR_TITLE, "Please, try again later.");
   };
 
-  const handleRateMovieFinally = (): void => {
+  const handleRateMovieFinally = () => {
     loadingSendingSignal.value = false;
   };
 
@@ -76,34 +73,33 @@ const sendRating = (
 const CommentArea = ({
   movieId,
   movieRatings: initialMovieRatings,
-}: CommentAreaProps): React.JSX.Element => {
+}: CommentAreaProps) => {
   const loadingSendingSignal = useSignal(false);
   const ratingTextSignal = useSignal("");
   const contentTextSignal = useSignal("");
   const movieRatingsSignal = useSignal(initialMovieRatings);
 
-  const localUser = getUserSignal.value;
-
-  const handleSendOnPress = (): void => {
+  const handleSendOnPress = useCallback(() => {
+    if (!getUserSignal.value) return;
     sendRating(
-      localUser!!.uid,
+      getUserSignal.value.uid,
       movieId,
       contentTextSignal,
       ratingTextSignal,
       movieRatingsSignal,
       loadingSendingSignal,
     );
-  };
+  }, [movieId]);
 
   return (
     <View>
       <Text className={style.title}>
-        Comments ({movieRatingsSignal.value?.length ?? "0"})
+        Comments ({movieRatingsSignal.value.length})
       </Text>
-      {movieRatingsSignal.value?.map((rating) => (
+      {movieRatingsSignal.value.map((rating) => (
         <CommentCard key={rating.userId} rating={rating} />
       ))}
-      {localUser && (
+      {getUserSignal.value && (
         <Fragment>
           <RatingTextInput
             ratingText={ratingTextSignal}

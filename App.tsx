@@ -9,7 +9,6 @@ const style = {
 };
 
 const requestPermissions = () => {
-  // noinspection JSIgnoredPromiseFromCall
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 };
 

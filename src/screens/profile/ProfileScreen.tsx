@@ -9,11 +9,9 @@ const style = {
 };
 
 const ProfileScreen = (): React.JSX.Element => {
-  const localUser = getUserSignal.value;
-
   return (
     <View className={style.view}>
-      {!localUser ? <ProfileSignedOut /> : <ProfileSignedIn />}
+      {!getUserSignal.value ? <ProfileSignedOut /> : <ProfileSignedIn />}
     </View>
   );
 };

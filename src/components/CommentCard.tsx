@@ -12,7 +12,7 @@ const style = {
   text: "text-quaternary_light dark:text-quaternary_dark",
 };
 
-const CommentCard = ({ rating }: CommentCardProps): React.JSX.Element => {
+const CommentCard = ({ rating }: CommentCardProps) => {
   return (
     <View className={style.comment}>
       <Text className={style.text}>{rating.rating}/5</Text>
