@@ -1,23 +1,29 @@
-import { Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from "../screens/HomeScreen";
-import { ProfileScreen } from "../screens/ProfileScreen";
-import { MoviesScreen } from "../screens/MoviesScreen";
-import { colors } from "../styles/tailwindColors";
 import { images } from "../constants/images";
+import { ProfileNav } from "./ProfileNav";
+import { MoviesNav } from "./MoviesNav";
+import { Image } from "react-native";
+import { colors } from "../styles/tailwindColors";
 import { ComponentType } from "react";
 
 const Tab = createBottomTabNavigator();
 
-const getTabScreen = (name: string, component: ComponentType, icon: number) => {
+const getTabScreen = (
+  name: string,
+  title: string,
+  component: ComponentType,
+  icon: number,
+  headerShown: boolean = true
+) => {
   return (
     <Tab.Screen
       name={name}
       component={component}
       options={{
-        title: name,
-        tabBarIcon: ({ focused }) => (
+        title: title,
+        tabBarIcon: ({ focused }: { focused: boolean }) => (
           <Image
             source={icon}
             className="w-6 h-6"
@@ -35,21 +41,28 @@ const getTabScreen = (name: string, component: ComponentType, icon: number) => {
         headerStyle: { backgroundColor: colors.primary_color },
         headerTitleStyle: { color: colors.quaternary_color },
         headerTitleAlign: "center",
+        headerShown: headerShown,
       }}
     />
   );
 };
 
-const MainBottomTabNav = () => {
+const MainNav = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        {getTabScreen("Home", HomeScreen, images.home_icon)}
-        {getTabScreen("Movies", MoviesScreen, images.list_icon)}
-        {getTabScreen("Profile", ProfileScreen, images.profile_icon)}
+        {getTabScreen("HomeTab", "Home", HomeScreen, images.home_icon)}
+        {getTabScreen("MoviesTab", "Movies", MoviesNav, images.list_icon)}
+        {getTabScreen(
+          "ProfileTab",
+          "Profile",
+          ProfileNav,
+          images.profile_icon,
+          false
+        )}
       </Tab.Navigator>
     </NavigationContainer>
   );
 };
 
-export { MainBottomTabNav };
+export { MainNav };

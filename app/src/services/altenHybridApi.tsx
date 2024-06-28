@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 
-export type Movie = {
+type Movie = {
   id: string;
   name: string;
   rating: string;
@@ -29,14 +29,10 @@ const getPetition = async (
   }
 };
 
-const getMovieByIdApi = async (id: string | number): Promise<Movie> => {
-  const movie: any = await getPetition(`/movies/${id}`);
-  return movie;
-};
+const getMovieByIdApi = async (id: string | number): Promise<Movie> =>
+  (await getPetition(`/movies/${id}`)) as Movie;
 
-const getAllMoviesApi = async (): Promise<Movie[]> => {
-  const movies: Movie[] = Object.values(await getPetition("/movies"));
-  return movies;
-};
+const getAllMoviesApi = async (): Promise<Movie[]> =>
+  Object.values(await getPetition("/movies"));
 
-export { getMovieByIdApi, getAllMoviesApi };
+export { getMovieByIdApi, getAllMoviesApi, Movie };

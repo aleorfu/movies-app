@@ -27,16 +27,14 @@ const fetchFiveMovies = (
   });
 };
 
-const MovieListScreen = ({ navigation }: { navigation: any }) => {
+const MovieListScreen = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   fetchFiveMovies(setMovies);
   return (
     <View className="flex-1 bg-secondary_color">
       <FlatList
         data={movies}
-        renderItem={({ item }) => (
-          <MovieCard movie={item} navigation={navigation} />
-        )}
+        renderItem={({ item }) => <MovieCard movie={item} />}
         keyExtractor={(_, index) => index.toString()}
         onEndReached={() => fetchFiveMovies(setMovies)}
         removeClippedSubviews={true}
