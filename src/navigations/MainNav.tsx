@@ -12,6 +12,7 @@ import Home from "@src/assets/img/home-icon.svg";
 import List from "@src/assets/img/list-icon.svg";
 import Profile from "@src/assets/img/profile-icon.svg";
 import { ProfileTabNav } from "@src/navigations/ProfileTabNav";
+import { getLikedMoviesSignal } from "@src/signals/likedMoviesSignal";
 
 const Tab = createBottomTabNavigator();
 
@@ -73,7 +74,12 @@ const MainNav = (): React.JSX.Element => {
         <Tab.Screen
           name="MoviesTab"
           component={MoviesNav}
-          options={getOptions(isLight, "Movies", ListIcon, false)}
+          options={getOptions(
+            isLight,
+            `Movies (${getLikedMoviesSignal.value})`,
+            ListIcon,
+            false,
+          )}
         />
         <Tab.Screen
           name="ProfileTab"

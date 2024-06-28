@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import parsePhoneNumber from "libphonenumber-js";
 import { PhoneNumber } from "libphonenumber-js/types";
+import { getLikedMoviesSignal } from "@src/signals/likedMoviesSignal";
 
 const style = {
   title:
@@ -58,6 +59,7 @@ const saveData = (
     phoneNumber: parsedPhoneNumber?.number ?? "",
     gender: genderSignal.value,
     dateOfBirth: dateOfBirthSignal.value,
+    likedMovies: getLikedMoviesSignal.value,
   };
 
   const handleSetUserDataSuccess = (): void => {
@@ -151,6 +153,7 @@ const ProfileSignedIn = (): React.JSX.Element => {
       phoneNumberSignal.value = fetchedUserData.phoneNumber;
       genderSignal.value = fetchedUserData.gender;
       dateOfBirthSignal.value = fetchedUserData.dateOfBirth;
+      getLikedMoviesSignal.value = fetchedUserData.likedMovies;
     };
 
     const handleGetUserDataFinally = (): void => {

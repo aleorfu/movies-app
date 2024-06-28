@@ -1,4 +1,4 @@
-import { Signal, useSignal } from "@preact/signals-react";
+import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import { MovieCard } from "@src/components/MovieCard";
 import { getAllMovies, Movie } from "@src/services/altenHybridApi";
 import React, { useEffect } from "react";
@@ -7,13 +7,17 @@ import {
   Alert,
   FlatList,
   RefreshControl,
+  TextInput,
   useColorScheme,
   View,
 } from "react-native";
 import { colors } from "@src/styles/tailwindColors";
+import { refreshLikedMovies } from "@src/signals/likedMoviesSignal";
 
 const style = {
   view: "flex-1 bg-secondary_light dark:bg-secondary_dark",
+  textfield:
+    "p-2 shadow-lg shadow-black text-quaternary_light bg-primary_light dark:shadow-white dark:text-quaternary_dark dark:bg-primary_dark",
 };
 
 const fetchFiveMovies = (
@@ -60,18 +64,39 @@ const MovieListScreen = (): React.JSX.Element => {
   const refreshingSignal = useSignal(false);
   const loadingMoviesSignal = useSignal(false);
   const pageSignal = useSignal(1);
+  const searchSignal = useSignal("");
   const isLight = useColorScheme() === "light";
 
-  const handleOnRefresh = (): void => {
-    refreshingSignal.value = true;
-    pageSignal.value = 1;
-    moviesSignal.value = [];
-    fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
-    refreshingSignal.value = false;
+  refreshLikedMovies();
+
+  const computedCanRefresh = useComputed(() => {
+    return searchSignal.value == "";
+  });
+
+  const computedMovies = useComputed(() => {
+    return moviesSignal.value.filter((movie) => {
+      return movie.name.includes(searchSignal.value);
+    });
+  });
+
+  const handleOnRefresh = () => {
+    if (computedCanRefresh.value) {
+      refreshingSignal.value = true;
+      pageSignal.value = 1;
+      moviesSignal.value = [];
+      fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+      refreshingSignal.value = false;
+    }
   };
 
-  const handleOnEndReached = (): void => {
-    fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+  const handleOnEndReached = () => {
+    if (computedCanRefresh.value) {
+      fetchFiveMovies(moviesSignal, loadingMoviesSignal, pageSignal);
+    }
+  };
+
+  const handleOnChangeText = (text: string) => {
+    searchSignal.value = text;
   };
 
   useEffect(() => {
@@ -80,8 +105,14 @@ const MovieListScreen = (): React.JSX.Element => {
 
   return (
     <View className={style.view}>
+      <TextInput
+        className={style.textfield}
+        onChangeText={handleOnChangeText}
+        value={searchSignal.value}
+        placeholder="Search bar"
+      />
       <FlatList
-        data={moviesSignal.value}
+        data={computedMovies.value}
         renderItem={({ item }) => <MovieCard movie={item} />}
         keyExtractor={(movie) => movie.id}
         onEndReached={handleOnEndReached}
