@@ -1,20 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { MainNav } from "@src/navigations/MainNav";
+import { StatusBar } from "expo-status-bar";
+import { PermissionsAndroid } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import React from "react";
 
-export default function App() {
+const style = {
+  safeAreaView: "flex-1 bg-primary_light dark:bg-primary_dark",
+};
+
+const requestPermissions = () => {
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+};
+
+const App = (): React.JSX.Element => {
+  requestPermissions();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <SafeAreaView className={style.safeAreaView}>
+      <MainNav />
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// noinspection JSUnusedGlobalSymbols
+export default App;

@@ -1,0 +1,6 @@
+.expo/
+.vscode/
+android
+node_modules
+private
+.gitignore
