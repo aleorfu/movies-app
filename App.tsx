@@ -1,9 +1,30 @@
-import { MainNav } from "./app/src/navigations/MainNav";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { MainNav } from "./src/navigations/MainNav";
 import { PermissionsAndroid } from "react-native";
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+import { StatusBar } from "expo-status-bar";
+import { UserProvider } from "./src/contexts/UserContext";
+
+const style = {
+  safeAreaView: "flex-1 bg-primary_light dark:bg-primary_dark",
+};
+
+const requestPermissions = async () => {
+  await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+  );
+};
 
 const App = () => {
-  return <MainNav />;
+  requestPermissions();
+
+  return (
+    <SafeAreaView className={style.safeAreaView}>
+      <UserProvider>
+        <MainNav />
+      </UserProvider>
+      <StatusBar style="auto" />
+    </SafeAreaView>
+  );
 };
 
 export default App;

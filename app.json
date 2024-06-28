@@ -4,10 +4,10 @@
     "slug": "movies-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./app/assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./app/assets/splash.png",
+      "image": "./src/assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,17 +16,30 @@
       "googleServicesFile": "./private/google-services.json",
       "package": "com.aleorfu.moviesapp",
       "adaptiveIcon": {
-        "foregroundImage": "./app/assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
+    "ios": {
+      "supportsTablet": true,
+      "googleServicesFile": "./private/GoogleService-Info.plist",
+      "bundleIdentifier": "com.aleorfu.moviesapp"
+    },
     "web": {
-      "favicon": "./app/assets/favicon.png"
+      "favicon": "./src/assets/favicon.png"
     },
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "@react-native-firebase/crashlytics"
+      "@react-native-firebase/crashlytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ]
   }
 }
