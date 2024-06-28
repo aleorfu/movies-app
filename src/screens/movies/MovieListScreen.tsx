@@ -1,15 +1,15 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { Signal, useSignal } from "@preact/signals-react";
+import { MovieCard } from "@src/components/MovieCard";
+import { Movie, getAllMoviesApi } from "@src/services/altenHybridApi";
+import { colors } from "@src/styles/tailwindColors";
+import { useCallback, useEffect } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
   RefreshControl,
   View,
-  FlatList,
-  ActivityIndicator,
   useColorScheme,
 } from "react-native";
-import { Movie, getAllMoviesApi } from "../../services/altenHybridApi";
-import { MovieCard } from "../../components/MovieCard";
-import { UserContext } from "../../contexts/UserContext";
-import { colors } from "../../styles/tailwindColors";
 
 let page: number = 1;
 
@@ -18,61 +18,57 @@ const style = {
 };
 
 const fetchFiveMovies = (
-  setMovies: React.Dispatch<React.SetStateAction<Movie[]>>,
-  loadingMovies: boolean,
-  setLoadingMovies: React.Dispatch<React.SetStateAction<boolean>>
+  movies: Signal<Movie[]>,
+  loadingMovies: Signal<boolean>
 ) => {
-  setLoadingMovies(true);
-  getAllMoviesApi().then((movies: Movie[]) => {
-    const newMovies: Movie[] = movies.slice((page - 1) * 5, page * 5);
+  loadingMovies.value = true;
+  getAllMoviesApi().then((fetchedMovies: Movie[]) => {
+    const newMovies: Movie[] = fetchedMovies.slice((page - 1) * 5, page * 5);
     if (newMovies.length == 0) {
       page = 1;
-      fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies);
+      fetchFiveMovies(movies, loadingMovies);
     } else {
       page++;
-      setMovies((prevMovies) => [...prevMovies, ...newMovies]);
-      setLoadingMovies(false);
+      movies.value = [...movies.value, ...newMovies];
+      loadingMovies.value = false;
     }
   });
 };
 
 const MovieListScreen = () => {
-  const user = useContext(UserContext);
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [loadingMovies, setLoadingMovies] = useState<boolean>(false);
+  const movies: Signal<Movie[]> = useSignal<Movie[]>([]);
+  const refreshing: Signal<boolean> = useSignal<boolean>(false);
+  const loadingMovies: Signal<boolean> = useSignal<boolean>(false);
   const colorScheme = useColorScheme();
   const isLight = colorScheme === "light";
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
+    refreshing.value = true;
     page = 1;
-    setMovies([]);
-    fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies);
-    setRefreshing(false);
+    movies.value = [];
+    fetchFiveMovies(movies, loadingMovies);
+    refreshing.value = false;
   }, []);
 
   useEffect(() => {
-    fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies);
+    fetchFiveMovies(movies, loadingMovies);
   }, []);
 
   return (
     <View className={style.view}>
       <FlatList
-        data={movies}
-        renderItem={({ item }) => <MovieCard movie={item} user={user} />}
+        data={movies.value}
+        renderItem={({ item }) => <MovieCard movie={item} />}
         keyExtractor={(_, index) => index.toString()}
-        onEndReached={() =>
-          fetchFiveMovies(setMovies, loadingMovies, setLoadingMovies)
-        }
+        onEndReached={() => fetchFiveMovies(movies, loadingMovies)}
         onEndReachedThreshold={0.2}
         removeClippedSubviews={true}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing.value} onRefresh={onRefresh} />
         }
-        refreshing={loadingMovies}
+        refreshing={loadingMovies.value}
       />
-      {loadingMovies && (
+      {loadingMovies.value && (
         <ActivityIndicator
           size="large"
           color={isLight ? colors.quaternary_light : colors.quaternary_dark}

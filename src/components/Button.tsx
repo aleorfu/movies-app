@@ -1,47 +1,52 @@
+import { Signal, useSignal } from "@preact/signals-react";
+import { colors } from "@src/styles/tailwindColors";
+import { Fragment } from "react";
 import {
   ActivityIndicator,
-  GestureResponderEvent,
+  ColorSchemeName,
   Image,
   Text,
-  useColorScheme,
   TouchableOpacity,
+  useColorScheme,
 } from "react-native";
-import { colors } from "../styles/tailwindColors";
-import { Fragment } from "react";
 
 type ButtonProps = {
   text?: string;
   image?: number;
-  component?: React.JSX.Element;
   buttonClassName?: string;
   textClassName?: string;
   imageClassName?: string;
-  disable?: boolean;
-  loading?: boolean;
-  onPress?: ((event: GestureResponderEvent) => void) & (() => void);
+  disabled?: boolean;
+  onPress?: () => Promise<void>;
 };
 
 const Button = ({
   text,
   image,
-  component,
   buttonClassName,
   textClassName,
   imageClassName,
-  disable = false,
-  loading = false,
+  disabled = false,
   onPress,
 }: ButtonProps): React.JSX.Element => {
-  const colorScheme = useColorScheme();
-  const isLight = colorScheme === "light";
+  const loading: Signal<boolean> = useSignal<boolean>(false);
+  const colorScheme: ColorSchemeName = useColorScheme();
+  const isLight: boolean = colorScheme === "light";
 
   return (
     <TouchableOpacity
-      disabled={loading ? true : disable}
+      disabled={loading.value ? true : disabled}
       className={buttonClassName}
-      onPress={onPress}
+      onPress={() => {
+        if (!onPress) return;
+
+        loading.value = true;
+        onPress().then(() => {
+          loading.value = false;
+        });
+      }}
     >
-      {loading ? (
+      {loading.value ? (
         <ActivityIndicator
           size="small"
           color={isLight ? colors.quaternary_light : colors.quaternary_dark}
@@ -58,7 +63,6 @@ const Button = ({
             />
           )}
           {text && <Text className={textClassName}>{text}</Text>}
-          {component}
         </Fragment>
       )}
     </TouchableOpacity>

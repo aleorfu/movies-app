@@ -1,13 +1,13 @@
+import { Image, useColorScheme } from "react-native";
+import { NavigationProp } from "@react-navigation/native";
 import {
   StackNavigationOptions,
   createStackNavigator,
 } from "@react-navigation/stack";
-import { SignInScreen } from "../screens/profile/SignInScreen";
-import { SignUpScreen } from "../screens/profile/SignUpScreen";
-import { ProfileScreen } from "../screens/profile/ProfileScreen";
-import { colors } from "../styles/tailwindColors";
-import { Image, useColorScheme } from "react-native";
-import { NavigationProp } from "@react-navigation/native";
+import { SignInScreen } from "@src/screens/profile/SignInScreen";
+import { SignUpScreen } from "@src/screens/profile/SignUpScreen";
+import { ProfileScreen } from "@src/screens/profile/ProfileScreen";
+import { colors } from "@src/styles/tailwindColors";
 
 type ScreenNames = [
   "ProfileProfileStack",
@@ -46,7 +46,7 @@ const getOptions = (
             : { tintColor: colors.quaternary_dark }
         }
         className="w-6 h-6"
-        source={require("../assets/img/back-icon.png")}
+        source={require("@src/assets/img/back-icon.png")}
       />
     ),
   };

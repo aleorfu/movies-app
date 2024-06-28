@@ -1,11 +1,10 @@
-import { Alert, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { Button } from "../../components/Button";
-import { useState } from "react";
+import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
-import { colors } from "../../styles/tailwindColors";
+import { Button } from "@src/components/Button";
+import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "nativewind";
+import { Alert, TextInput, View } from "react-native";
 
 const styles = {
   textInput:
@@ -23,9 +22,8 @@ const signUp = async (email: string, password: string) => {
 };
 
 const SignUpScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const email: Signal<string> = useSignal<string>("");
+  const password: Signal<string> = useSignal<string>("");
   const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
   const isLight: boolean = colorScheme === "light";
@@ -36,9 +34,9 @@ const SignUpScreen = () => {
         className={styles.textInput}
         keyboardType="email-address"
         onChangeText={(text) => {
-          setEmail(text);
+          email.value = text;
         }}
-        value={email}
+        value={email.value}
         placeholder="Email"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -48,9 +46,9 @@ const SignUpScreen = () => {
         className={styles.textInput}
         secureTextEntry={true}
         onChangeText={(text) => {
-          setPassword(text);
+          password.value = text;
         }}
-        value={password}
+        value={password.value}
         placeholder="Password"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -60,13 +58,12 @@ const SignUpScreen = () => {
         text="Sign-Up"
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        onPress={() => {
-          if (email != "" && password != "") {
-            setLoading(true);
-            signUp(email, password)
+        onPress={async () => {
+          if (email.value != "" && password.value != "") {
+            await signUp(email.value, password.value)
               .then(() => {
-                setEmail("");
-                setPassword("");
+                email.value = "";
+                password.value = "";
                 auth().currentUser?.sendEmailVerification();
                 navigation.goBack();
               })
@@ -82,9 +79,6 @@ const SignUpScreen = () => {
                     "Please, try again with another one."
                   );
                 }
-              })
-              .finally(() => {
-                setLoading(false);
               });
           } else
             Alert.alert(
@@ -92,7 +86,6 @@ const SignUpScreen = () => {
               "Please, fill every field and try again."
             );
         }}
-        loading={loading}
       />
     </View>
   );

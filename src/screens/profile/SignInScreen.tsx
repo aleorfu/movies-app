@@ -1,12 +1,11 @@
-import { Alert, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { Button } from "../../components/Button";
+import { Signal, useSignal } from "@preact/signals-react";
 import auth from "@react-native-firebase/auth";
-import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { colors } from "../../styles/tailwindColors";
-import { ProfileNavStackNavigation } from "../../navigations/ProfileNav";
+import { Button } from "@src/components/Button";
+import { ProfileNavStackNavigation } from "@src/navigations/ProfileNav";
+import { colors } from "@src/styles/tailwindColors";
 import { useColorScheme } from "nativewind";
+import { Alert, TextInput, View } from "react-native";
 
 const styles = {
   textInput:
@@ -16,7 +15,7 @@ const styles = {
     button:
       "p-3 mx-5 my-3 rounded-md shadow-lg bg-primary_light shadow-black dark:bg-primary_dark dark:shadow-white",
     text: "text-md font-bold text-center text-quaternary_light dark:text-quaternary_dark",
-    nobgButton: "mx-5 my-3",
+    noBgButton: "mx-5 my-3",
   },
 };
 
@@ -29,10 +28,8 @@ const recoverPassword = async (email: string): Promise<void> => {
 };
 
 const SignInScreen = (): React.JSX.Element => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading1, setLoading1] = useState<boolean>(false);
-  const [loading2, setLoading2] = useState<boolean>(false);
+  const email: Signal<string> = useSignal<string>("");
+  const password: Signal<string> = useSignal<string>("");
   const { colorScheme } = useColorScheme();
   const navigation: ProfileNavStackNavigation =
     useNavigation() as ProfileNavStackNavigation;
@@ -43,10 +40,8 @@ const SignInScreen = (): React.JSX.Element => {
       <TextInput
         className={styles.textInput}
         keyboardType="email-address"
-        onChangeText={(text) => {
-          setEmail(text);
-        }}
-        value={email}
+        onChangeText={(text) => (email.value = text)}
+        value={email.value}
         placeholder="Email"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -55,10 +50,8 @@ const SignInScreen = (): React.JSX.Element => {
       <TextInput
         className={styles.textInput}
         secureTextEntry={true}
-        onChangeText={(text) => {
-          setPassword(text);
-        }}
-        value={password}
+        onChangeText={(text) => (password.value = text)}
+        value={password.value}
         placeholder="Password"
         placeholderTextColor={
           isLight ? colors.quaternary_light : colors.quaternary_dark
@@ -66,13 +59,12 @@ const SignInScreen = (): React.JSX.Element => {
       />
       <Button
         text="Sign-In"
-        onPress={() => {
-          if (email != "" && password != "") {
-            setLoading1(true);
-            signIn(email, password)
+        onPress={async () => {
+          if (email.value != "" && password.value != "") {
+            await signIn(email.value, password.value)
               .then(() => {
-                setEmail("");
-                setPassword("");
+                email.value = "";
+                password.value = "";
                 navigation.goBack();
               })
               .catch(() => {
@@ -80,9 +72,6 @@ const SignInScreen = (): React.JSX.Element => {
                   "There was an error while signing you in.",
                   "Please, verify your credentials and try again."
                 );
-              })
-              .finally(() => {
-                setLoading1(false);
               });
           } else
             Alert.alert(
@@ -92,28 +81,23 @@ const SignInScreen = (): React.JSX.Element => {
         }}
         buttonClassName={styles.button.button}
         textClassName={styles.button.text}
-        loading={loading1}
       />
       <Button
         text="I forgot the password"
-        buttonClassName={styles.button.nobgButton}
+        buttonClassName={styles.button.noBgButton}
         textClassName={styles.button.text}
-        onPress={() => {
-          if (email != "") {
-            setLoading2(true);
-            recoverPassword(email)
+        onPress={async () => {
+          if (email.value != "") {
+            await recoverPassword(email.value)
               .then(() => {
-                setEmail("");
-                setPassword("");
+                email.value = "";
+                password.value = "";
               })
               .catch(() => {
                 Alert.alert(
                   "There was an error while sending your password recovery email.",
                   "Please, try again later."
                 );
-              })
-              .finally(() => {
-                setLoading2(false);
               });
           } else
             Alert.alert(
@@ -121,7 +105,6 @@ const SignInScreen = (): React.JSX.Element => {
               "Please, fill it and try again."
             );
         }}
-        loading={loading2}
       />
     </View>
   );
